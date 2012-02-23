@@ -12,10 +12,10 @@ class Cell {
   Cell (int col, int row, string img = "");
   void moveMe (Direction dir);
   void drawMe ();
-  
+
  private:
   int col, row;
-  double x, y;
+//  double x, y;
   string image;
 
 };

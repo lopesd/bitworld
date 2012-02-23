@@ -7,7 +7,7 @@
 using namespace std;
 
 class CellGroup {
-  
+
  public:
   CellGroup ();
   ~CellGroup ();
@@ -16,9 +16,13 @@ class CellGroup {
   virtual void move (); //Define system for keeping track of directions. Pair object?
   virtual void handleNeighbors (vector neighbors);
   virtual void queueStandardOrders (int cycles) = 0; //Must be overloaded
+  virtual vector<Location> getLocations //should they contain information on their location somehow...?
+  //They could access their cells for that, or query the map...
+  //Seems like they don't need that info, do they? Not too readily, that is.
+  //They can just iterate through their list of cell objects, i think. (); //returns location or locations in a vector
 
   //virtual vector getLocations (); //returns location or locations in a vector
-  
+
  private:
   vector cells;
 
@@ -28,7 +32,7 @@ class CellGroup {
 
   //should they contain information on their location somehow...?
   //They could access their cells for that, or query the map...
-  //Seems like they don't need that info, do they? Not too readily, that is. 
+  //Seems like they don't need that info, do they? Not too readily, that is.
   //They can just iterate through their list of cell objects, i think.
 
 };

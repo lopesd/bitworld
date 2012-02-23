@@ -10,7 +10,7 @@ CellGroup::~CellGroup () {}
 CellGroup::void drawMe () {}
 
 //The default neighbor handler -- do nothing
-CellGroup::void handleNeighbors (vector neighbors) {}
+CellGroup::void handleNeighbors (vector<CellGroup*> neighbors) {}
 
 CellGroup::void move () {}
 
