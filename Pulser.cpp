@@ -1,4 +1,3 @@
-// Pulser.cpp
 #include "Pulser.h"
 
 Pulser::Pulser () {}

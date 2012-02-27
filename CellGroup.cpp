@@ -1,7 +1,6 @@
-//CellGroup.cpp
 #include "CellGroup.h"
 
-#include <iostream> // FOR TESTING                                                                                                                                                                                                  
+#include <iostream> // FOR TESTING
 
 CellGroup::CellGroup (vector<Cell*> c) {
   std::cout << "Size of cell vector: " << c.size() << endl;
@@ -25,7 +24,7 @@ void CellGroup::drawMe () {
 
 }
 
-// The default neighbor handler -- do nothing                                                                                                                                                                                       
+// The default neighbor handler -- do nothing
 void CellGroup::handleNeighbors (vector<CellGroup*> neighbors) {}
 
 void CellGroup::move (Direction dir) {
@@ -35,7 +34,7 @@ void CellGroup::move (Direction dir) {
 }
 
 void CellGroup::queueStandardMovementOrders (int cycles) {
-
+  
 }
 
 void CellGroup::issueMovementOrder (Direction dir) {
@@ -44,14 +43,15 @@ void CellGroup::issueMovementOrder (Direction dir) {
 
 }
 
-// MOVEMENT OCCURS ON THE UPCYCLE                                                                                                                                                                                     
+// MOVEMENT OCCURS ON THE UPCYCLE
 void CellGroup::upCycle () {
-
-  if ( movementQueue.empty() ) return; // Do not move if there are no movement orders                                                                                                                                               
+  
+  if ( movementQueue.empty() ) return; // Do not move if there are no movement orders
+  
   for (int i = 0; i < cells.size(); ++i) {
     cells.at( i )->move( movementQueue.front() );
   }
-
+  
   movementQueue.pop_front();
 }
 

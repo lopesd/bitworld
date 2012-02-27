@@ -1,4 +1,3 @@
-//Cell.cpp
 #include "Cell.h"
 
 Cell::Cell (int c, int r, string img) {
@@ -10,11 +9,11 @@ Cell::Cell (int c, int r, string img) {
 void Cell::move (Direction dir) {
   col += dir.x;
   row += dir.y;
-  //animate?                                                                                                                                                                                                                        
+  //animate?
 }
 
 void Cell::draw () {
-  //draw!                                                                                                                                                                                                                           
+  //draw!
 }
 
 Location Cell::getGridLocation () {
@@ -26,4 +25,3 @@ Location Cell::getScreenLocation () {
   Location temp = {x, y};
   return temp;
 }
-

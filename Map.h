@@ -1,12 +1,26 @@
-// Map.h
-//ifndef
+// DEPRECATED CODE, MIGHT BE REVIVED LATER
+
+#ifndef MAP_H
+#define MAP_H
+
+#include "CellGroup.h"
+#include "structures"
+#include <vector>
+
+class CellGroup;
 
 class Map {
 
-	public:
-		Map();
+ public:
+  Map ();
+  
+  vector<CellGroup*> findNeighbors (CellGroup* unit);
 
-	private:
-		vector<CellGroup*>             units;
-		map<Location, CellGroup*> grid;
+
+ private:
+  vector<CellGroup*> units;
+  vector<vector<CellGroup*> > grid;  
+  
 };
+
+#endif
