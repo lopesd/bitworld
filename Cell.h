@@ -2,7 +2,8 @@
 #ifndef CELL_H
 #define CELL_H
 
-#include "structure"
+#include "structures.h"
+#include <string>
 
 using namespace std;
 
@@ -10,12 +11,15 @@ class Cell {
 
  public:
   Cell (int col, int row, string img = "");
-  void moveMe (Direction dir);
-  void drawMe ();
+  void move (Direction dir);
+  void draw ();
+
+  Location getGridLocation ();
+  Location getScreenLocation ();
 
  private:
   int col, row;
-//  double x, y;
+  double x, y;
   string image;
 
 };
