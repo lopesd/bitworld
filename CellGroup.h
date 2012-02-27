@@ -1,39 +1,42 @@
-// CellGroup.h
 #ifndef CELLGROUP_H
 #define CELLGROUP_H
+ 
+#include "Cell.h"
+#include "ControlGroup.h"
 
-#include "GridCell.h"
+#include <vector>
+#include <deque>
 
 using namespace std;
 
-class CellGroup {
 
+class ControlGroup; //Forward declaration
+
+class CellGroup {
+  
  public:
-  CellGroup ();
+  CellGroup (vector<Cell*> cells);
+  CellGroup (Cell* cells);
   ~CellGroup ();
 
   virtual void drawMe ();
-  virtual void move (); //Define system for keeping track of directions. Pair object?
-  virtual void handleNeighbors (vector neighbors);
-  virtual void queueStandardOrders (int cycles) = 0; //Must be overloaded
-  virtual vector<Location> getLocations //should they contain information on their location somehow...?
-  //They could access their cells for that, or query the map...
-  //Seems like they don't need that info, do they? Not too readily, that is.
-  //They can just iterate through their list of cell objects, i think. (); //returns location or locations in a vector
+  virtual char getImage (); // TEMPORARY
+  virtual void move (Direction dir);
+  virtual void handleNeighbors (vector<CellGroup*> neighbors);
+  virtual void queueStandardMovementOrders (int cycles);
+  virtual void issueMovementOrder (Direction dir);
+  virtual void upCycle   ();
+  virtual void downCycle ();
+  virtual vector<Location> getLocations (); //returns location or locations in a vector
 
-  //virtual vector getLocations (); //returns location or locations in a vector
-
+  ControlGroup* controlGroup;
+  
  private:
-  vector cells;
-
-  //vector standardOrders; //need some way to pack orders?
-  //vector actionQueue;
-  int standardOrderCounter;
-
-  //should they contain information on their location somehow...?
-  //They could access their cells for that, or query the map...
-  //Seems like they don't need that info, do they? Not too readily, that is.
-  //They can just iterate through their list of cell objects, i think.
+  vector<Cell*> cells;
+  
+  vector<Direction> standardMovementOrders;
+  deque<Direction> movementQueue;
+  int SMOCounter;
 
 };
 
