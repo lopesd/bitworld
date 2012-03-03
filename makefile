@@ -1,5 +1,5 @@
 main=main
-dep=classes/Cell.o classes/Bit.o classes/CellGroup.o classes/ControlGroup.o classes/UserControlGroup.o classes/Level.o
+dep=Cell.o Bit.o CellGroup.o ControlGroup.o UserControlGroup.o Level.o
 compile=g++ -c
 link=g++ -o
 libs=-lsfml-graphics -lsfml-window -lsfml-system
@@ -11,4 +11,4 @@ $(main): $(main).o $(dep)
 	$(compile) $^
 
 clean:
-	rm -rf $(main) $(main).o $(dep) *~ *# classes/*~
+	rm -rf $(main) $(main).o $(dep) *~ *# *~
