@@ -1,6 +1,6 @@
 #ifndef CELLGROUP_H
 #define CELLGROUP_H
- 
+
 #include "Cell.h"
 #include "ControlGroup.h"
 
@@ -13,7 +13,7 @@ using namespace std;
 class ControlGroup; //Forward declaration
 
 class CellGroup {
-  
+
  public:
   CellGroup (vector<Cell*> cells);
   CellGroup (Cell* cells);
@@ -30,14 +30,13 @@ class CellGroup {
   virtual vector<Location> getLocations (); //returns location or locations in a vector
 
   ControlGroup* controlGroup;
-  
+
  private:
   vector<Cell*> cells;
-  
+
   vector<Direction> standardMovementOrders;
   deque<Direction> movementQueue;
   int SMOCounter;
-
 };
 
 #endif

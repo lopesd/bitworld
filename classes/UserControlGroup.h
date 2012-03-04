@@ -13,7 +13,7 @@ class UserControlGroup : public ControlGroup {
 
  private:
   CellGroup* selectedUnit;
-  
+
   void toggleSelection (CellGroup* unit);
 
 

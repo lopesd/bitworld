@@ -4,6 +4,10 @@
 #include "ControlGroup.h"
 #include "CellGroup.h"
 #include "structures.h"
+
+#include <SFML/System.hpp>
+#include <SFML/Graphics.hpp>
+
 #include <vector>
 #include <map>
 
@@ -11,15 +15,15 @@
 class Level {
 
  public:
-  Level (vector<ControlGroup*>, vector<CellGroup*> units, int width=10, int height=10, int cpp=3);
+  Level (sf::RenderWindow &window, vector<ControlGroup*>, vector<CellGroup*> units,
+         int width=10, int height=10, int cpp=3);
 
   void display     ();
   void handleInput (Location  loc);
   void handleInput (Direction dir);
   void run         ();
-
   vector<CellGroup*> findNeighbors (CellGroup*);
-
+  void drawGrid    ();
  private:
   ControlGroup*                activeGroup;
   vector<ControlGroup*>        controlGroups;
@@ -28,8 +32,12 @@ class Level {
   int width, height;
   int cyclesPerPeriod;
 
-  void updateGrid();
+  int gridRowHeight;
+  int gridColWidth;
 
+  sf::RenderWindow& window;
+
+  void updateGrid();
 };
 
 #endif

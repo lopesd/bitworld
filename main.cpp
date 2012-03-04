@@ -1,6 +1,9 @@
-/*#include <SFML/System.hpp>
-  #include <SFML/Graphics.hpp> */
+#define VERT_RES 800
+#define HORIZ_RES 1280
 
+#include <SFML/System.hpp>
+#include <SFML/Graphics.hpp>
+#include <SFML/Window.hpp>
 #include <iostream>
 
 #include "classes/structures.h"
@@ -17,7 +20,7 @@ int main (void) {
   int        inp;    // The raw integer input in the terminal version
   Location   Lorder; // Input interpreted as location
   Direction  Dorder; // Input interperted as direction
-  
+
   // INITIALIZE IMAGES AND LEVELS
   Cell cell  ( 0, 0 );
   Cell cell2 ( 1, 1 );
@@ -42,17 +45,21 @@ int main (void) {
   UserControlGroup usg (groupVector);
   vector<ControlGroup*> cgv;
   cgv.push_back (&usg);
-  Level level (cgv, groupVector);  
-  
+
+  sf::RenderWindow window;
+  window.Create(sf::VideoMode(HORIZ_RES, VERT_RES, 32), "BitWorld", sf::Style::Fullscreen,
+                sf::WindowSettings(24, 8, 16));
+  Level level (window, cgv, groupVector);
+
   // INITIAL DRAWING
-  level.display ();
-  
+/*
   // MAIN LOOP
   while (1) {
-    
+
     // POLL FOR EVENT
     cout << "Click or direction? [c/d]";
     cin  >> cinp;
+
     if (cinp == 'c') {
       cout << "X: ";
       cin >> inp;
@@ -62,7 +69,7 @@ int main (void) {
       Lorder.y = inp;
       level.handleInput (Lorder);
     }
-    
+
     if (cinp == 'd') {
       cout << "X: ";
       cin >> inp;
@@ -72,7 +79,7 @@ int main (void) {
       Dorder.y = inp;
       level.handleInput (Dorder);
     }
-    
+
     if (cinp == 'r') {
       level.run ();
     }
@@ -83,15 +90,23 @@ int main (void) {
 
     // DISPLAY LEVEL
   }
+*/
 
-  
-  /*
-  sf::RenderWindow window(sf::VideoMode(640,480), "BitWorld");
-  
+  sf::Image background;
+  if(!background.LoadFromFile("background.png"))
+  {
+    cout << "Can't load the background." << endl;
+  }
+
+  sf::Sprite sBackground(background);
+  sBackground.Resize(window.GetWidth(), window.GetHeight());
   // MAIN LOOP
-  while (window.IsOpened()) 
+
+  window.Clear();
+
+  while (window.IsOpened())
     {
-      
+
       // EVENT HANDLING LOOP
       sf::Event Event;
       while (window.GetEvent(Event))
@@ -99,17 +114,16 @@ int main (void) {
 	  // Window closed
 	  if (Event.Type == sf::Event::Closed)
             window.Close();
-	  
+
 	  // Escape key pressed
 	  if ((Event.Type == sf::Event::KeyPressed) && (Event.Key.Code == sf::Key::Escape))
             window.Close();
 	}
-      
-      sf::Sleep(0.5f);
+
+      window.Draw(sBackground);
+      level.display ();
       window.Display();
     }
 
-  */
-    
   return 0;
 }

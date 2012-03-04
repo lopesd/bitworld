@@ -12,10 +12,10 @@ class Cell {
   Cell (int col, int row, string img = "");
   void move (Direction dir);
   void draw ();
-  
+
   Location getGridLocation ();
   Location getScreenLocation ();
-  
+
  private:
   int col, row;
   double x, y;

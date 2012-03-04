@@ -9,10 +9,10 @@
 class CellGroup; //Forward declaration
 
 class ControlGroup {
-  
+
  public:
   ControlGroup (vector<CellGroup*>);
-  
+
   virtual void handleInput (Direction dir) = 0;
   virtual void handleInput (CellGroup* unit) = 0;
 
