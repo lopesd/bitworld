@@ -113,28 +113,56 @@ int main (void) {
   window.Clear();
 
   while (window.IsOpened())
+  {
+    // EVENT HANDLING LOOP
+    sf::Event Event;
+    while (window.GetEvent(Event))
     {
-      // EVENT HANDLING LOOP
-      sf::Event Event;
-      while (window.GetEvent(Event))
-	{
-	  // Window closed
-	  if (Event.Type == sf::Event::Closed)
+      // Window closed
+      if (Event.Type == sf::Event::Closed)
+        window.Close();
+
+      // Escape key pressed
+      if (Event.Type == sf::Event::KeyPressed)
+        switch(Event.Key.Code)
+        {
+          case sf::Key::Escape:
             window.Close();
+            break;
+          case sf::Key::Left:
+            Dorder.x = -1;
+            Dorder.y = 0;
+            level.handleInput(Dorder);
+            break;
+          case sf::Key::Right:
+            Dorder.x = 1;
+            Dorder.y = 0;
+            level.handleInput(Dorder);
+            break;
+          case sf::Key::Up:
+            Dorder.x = 0;
+            Dorder.y = -1;
+            level.handleInput(Dorder);
+            break;
+          case sf::Key::Down:
+            Dorder.x = 0;
+            Dorder.y = 1;
+            level.handleInput(Dorder);
+            break;
+          case sf::Key::R:
+            level.run();
+        }
 
-	  // Escape key pressed
-	  if ((Event.Type == sf::Event::KeyPressed) && (Event.Key.Code == sf::Key::Escape))
-            window.Close();
-
-          if(Event.Type == sf::Event::MouseButtonReleased)
-            if(Event.MouseButton.Button == sf::Mouse::Left)
-              level.prepareInput(Event.MouseButton.X, Event.MouseButton.Y);
-	}
-
-      window.Draw(sBackground);
-      level.display ();
-      window.Display();
+      if(Event.Type == sf::Event::MouseButtonReleased)
+        if(Event.MouseButton.Button == sf::Mouse::Left)
+          level.prepareInput(Event.MouseButton.X, Event.MouseButton.Y);
     }
 
+    window.Draw(sBackground);
+    level.display ();
+    window.Display();
+  }
+
   return 0;
+
 }

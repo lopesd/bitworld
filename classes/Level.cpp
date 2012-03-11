@@ -81,7 +81,8 @@ void Level::handleInput (Direction dir)
   activeGroup->handleInput (dir);
 }
 
-void Level::run () {
+void Level::run ()
+{
   //commit all movements, doing collision detection and stuff
   //cycle a certain number of times
 
@@ -198,17 +199,23 @@ void Level::highlightSelect()
 
   sf::Color highlightColor = sf::Color(255, 140, 0);
 
-  sf::Shape horLine;
-  sf::Shape vertLine;
+  sf::Shape square;
+
+  int vertexXLeft;
+  int vertexXRight;
+  int vertexYUp;
+  int vertexYDown;
 
   for(vector<Location>::iterator it = groupLocations.begin(); it != groupLocations.end(); it++)
   {
-    horLine = sf::Shape::Line(LEFT_OFFSET + it->x * gridColWidth,
-                              TOP_OFFSET + it->y * gridRowHeight,
-                              LEFT_OFFSET + (it->x + 1) * gridColWidth,
-                              TOP_OFFSET + it->y * gridRowHeight,
-                              4, highlightColor);
-    window.Draw(horLine);
+    vertexXLeft = LEFT_OFFSET + it->x * gridColWidth + 3;
+    vertexXRight = LEFT_OFFSET + (it->x + 1) * gridColWidth - 3;
+    vertexYUp = TOP_OFFSET + it->y * gridRowHeight + 3;
+    vertexYDown = TOP_OFFSET + (it->y + 1) * gridRowHeight - 3;
+
+    square = sf::Shape::Rectangle(vertexXLeft, vertexYUp, vertexXRight, vertexYDown,
+             sf::Color(0, 0, 0, 0), 3, highlightColor);
+    window.Draw(square);
   }
 
 }
