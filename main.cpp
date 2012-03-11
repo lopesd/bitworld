@@ -1,5 +1,4 @@
-#define VERT_RES 800
-#define HORIZ_RES 1280
+#define FULLSCREEN 0
 
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
@@ -47,8 +46,15 @@ int main (void) {
   cgv.push_back (&usg);
 
   sf::RenderWindow window;
-  window.Create(sf::VideoMode(HORIZ_RES, VERT_RES, 32), "BitWorld", sf::Style::Fullscreen,
-                sf::WindowSettings(24, 8, 16));
+  sf::VideoMode nativeResolution = sf::VideoMode::GetDesktopMode();
+
+  if(FULLSCREEN)
+    window.Create(nativeResolution, "BitWorld", sf::Style::Fullscreen,
+                  sf::WindowSettings(24, 8, 4));
+  else
+    window.Create(sf::VideoMode(1280, 720), "BitWorld", sf::Style::Close,
+                  sf::WindowSettings(24, 8, 4));
+
   Level level (window, cgv, groupVector);
 
   // INITIAL DRAWING
@@ -92,6 +98,7 @@ int main (void) {
   }
 */
 
+  //Load the Background
   sf::Image background;
   if(!background.LoadFromFile("background.png"))
   {
@@ -100,13 +107,13 @@ int main (void) {
 
   sf::Sprite sBackground(background);
   sBackground.Resize(window.GetWidth(), window.GetHeight());
+
   // MAIN LOOP
 
   window.Clear();
 
   while (window.IsOpened())
     {
-
       // EVENT HANDLING LOOP
       sf::Event Event;
       while (window.GetEvent(Event))
@@ -118,6 +125,10 @@ int main (void) {
 	  // Escape key pressed
 	  if ((Event.Type == sf::Event::KeyPressed) && (Event.Key.Code == sf::Key::Escape))
             window.Close();
+
+          if(Event.Type == sf::Event::MouseButtonReleased)
+            if(Event.MouseButton.Button == sf::Mouse::Left)
+              level.prepareInput(Event.MouseButton.X, Event.MouseButton.Y);
 	}
 
       window.Draw(sBackground);

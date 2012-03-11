@@ -15,11 +15,12 @@ class ControlGroup {
 
   virtual void handleInput (Direction dir) = 0;
   virtual void handleInput (CellGroup* unit) = 0;
+  CellGroup* getSelectedUnit();
 
- private:
+ protected:
   vector<CellGroup*> units;
-  CellGroup* selectedUnit;
 
+  CellGroup* selectedUnit;
 };
 
 #endif

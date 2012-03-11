@@ -1,14 +1,15 @@
 main=main
-dep=classes/Cell.o classes/Bit.o classes/CellGroup.o classes/ControlGroup.o classes/UserControlGroup.o classes/Level.o
+dep=classes/Cell.cpp classes/Bit.cpp classes/CellGroup.cpp classes/ControlGroup.cpp classes/UserControlGroup.cpp classes/Level.cpp
+objects=$(dep:.cpp=.o)
 compile=g++ -c
-link=g++ -o
+link=g++
 libs=-lsfml-graphics -lsfml-window -lsfml-system
 
-$(main): $(main).o $(dep)
-	 $(link) $@ $^ $(libs)
+$(main): $(objects)
+	$(link) main.cpp $(objects) $(libs) -o $@
 
-%.o: %.c
-	$(compile) $^
+classes/*.o: %.o: %.cpp %.h
+	$(compile) $< -o $@
 
 clean:
-	rm -rf $(main) $(main).o $(dep) *~ *# classes/*~
+	rm -rf $(main) $(main).o $(objects)

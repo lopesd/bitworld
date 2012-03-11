@@ -13,17 +13,19 @@
 
 
 class Level {
-
  public:
   Level (sf::RenderWindow &window, vector<ControlGroup*>, vector<CellGroup*> units,
-         int width=10, int height=10, int cpp=3);
+         int width=13, int height=9, int cpp=3);
 
   void display     ();
+  void prepareInput(int x, int y);
   void handleInput (Location  loc);
   void handleInput (Direction dir);
   void run         ();
   vector<CellGroup*> findNeighbors (CellGroup*);
   void drawGrid    ();
+  void drawUnits   ();
+  void highlightSelect();
  private:
   ControlGroup*                activeGroup;
   vector<ControlGroup*>        controlGroups;

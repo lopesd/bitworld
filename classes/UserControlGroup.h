@@ -12,11 +12,7 @@ class UserControlGroup : public ControlGroup {
   void handleInput (Direction dir);
 
  private:
-  CellGroup* selectedUnit;
-
   void toggleSelection (CellGroup* unit);
-
-
 };
 
 #endif

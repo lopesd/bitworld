@@ -18,9 +18,8 @@ CellGroup::~CellGroup () {}
 
 void CellGroup::drawMe () {
 
-  for (vector<Cell*>::iterator i = cells.begin(); i != cells.end(); ++i) {
+  for (vector<Cell*>::iterator i = cells.begin(); i != cells.end(); ++i)
     (*i)->draw();
-  }
 
 }
 
@@ -28,13 +27,12 @@ void CellGroup::drawMe () {
 void CellGroup::handleNeighbors (vector<CellGroup*> neighbors) {}
 
 void CellGroup::move (Direction dir) {
-  for (int i = 0; i < cells.size(); ++i) {
+  for (int i = 0; i < cells.size(); ++i)
     cells.at(i)->move( dir );
-  }
 }
 
 void CellGroup::queueStandardMovementOrders (int cycles) {
-  
+
 }
 
 void CellGroup::issueMovementOrder (Direction dir) {
@@ -45,13 +43,12 @@ void CellGroup::issueMovementOrder (Direction dir) {
 
 // MOVEMENT OCCURS ON THE UPCYCLE
 void CellGroup::upCycle () {
-  
+
   if ( movementQueue.empty() ) return; // Do not move if there are no movement orders
-  
-  for (int i = 0; i < cells.size(); ++i) {
+
+  for (int i = 0; i < cells.size(); ++i)
     cells.at( i )->move( movementQueue.front() );
-  }
-  
+
   movementQueue.pop_front();
 }
 
@@ -60,12 +57,10 @@ void CellGroup::downCycle () {
 }
 
 
-vector<Location> CellGroup::getLocations () {
-  vector<Location> locations;
-  for (int i = 0; i < cells.size(); i++) {
+vector<Location>& CellGroup::getLocations ()
+{
+  for (int i = 0; i < cells.size(); i++)
     locations.push_back( cells.at(i)->getGridLocation() );
-    cout << "Returning grid location " << i << endl;
-  }
 
   return locations;
 }
