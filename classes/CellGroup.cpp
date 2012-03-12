@@ -57,13 +57,11 @@ void CellGroup::downCycle () {
 }
 
 
-vector<pair<int, int> >& CellGroup::getLocations ()
+vector<Location>& CellGroup::getLocations ()
 {
-  locations.clear();
   for (int i = 0; i < cells.size(); i++)
     locations.push_back( cells.at(i)->getGridLocation() );
 
-  cout << "CELLGROUP: My cells vector size is " << cells.size() << "and locations are " << locations.size() << endl;
   return locations;
 }
 

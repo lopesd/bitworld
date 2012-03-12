@@ -19,7 +19,7 @@ class Level {
 
   void display     ();
   void prepareInput(int x, int y);
-  void handleInput (pair<int, int>  loc);
+  void handleInput (Location  loc);
   void handleInput (Direction dir);
   void run         ();
   vector<CellGroup*> findNeighbors (CellGroup*);
@@ -30,7 +30,7 @@ class Level {
   ControlGroup*                activeGroup;
   vector<ControlGroup*>        controlGroups;
   vector<CellGroup*>           units;
-  map<pair<int, int>, CellGroup*>    grid;
+  map<Location, CellGroup*>    grid;
   int width, height;
   int cyclesPerPeriod;
 
