@@ -11,7 +11,7 @@
 #define LEFT_OFFSET 300
 #define ARROW_HEIGHT 50
 #define ARROW_LENGTH 50
-
+#define PI 3.14159265358979
 Level::Level (sf::RenderWindow &newWindow, vector<ControlGroup*> c, vector<CellGroup*> u,
               int w, int h, int cpp)
 :window(newWindow)
@@ -60,6 +60,8 @@ void Level::display ()
   drawUnits();
 
   highlightSelect();
+
+  drawArrows();
 
 //  drawCycle();
 }
@@ -154,7 +156,6 @@ void Level::drawGrid()
 void Level::drawUnits()
 {
   Location loc;
-  char img;
 
   sf::Image bit;
 
@@ -162,17 +163,15 @@ void Level::drawUnits()
   sf::Sprite sBit(bit);
   sBit.Resize(gridColWidth, gridRowHeight);
 
-  int unitsFound = 0;
   for (int i = 0; i < width; ++i)
     for (int j = 0; j < height; ++j)
     {
-      loc.x = j; loc.y = i;
+      loc.x = i;
+      loc.y = j;
 
       if ( grid.find( loc ) != grid.end() )
       {
-	unitsFound++;
-	img = grid[loc]->getImage();
-        sBit.SetPosition(LEFT_OFFSET + gridColWidth * j, TOP_OFFSET + gridRowHeight * i);
+        sBit.SetPosition(LEFT_OFFSET + gridColWidth * i, TOP_OFFSET + gridRowHeight * j);
         window.Draw(sBit);
       }
     }
@@ -235,34 +234,54 @@ void Level::drawArrows()
   if(unit == 0)
     return;
 
+  sf::Color darkBlue = sf::Color(0, 0, 205, 190);
+
   for(int count = 0; count < unit->numOfMovements(); count++)
   {
-    cout << "TESTING" << endl;
-    window.Draw(sf::Shape::Rectangle(LEFT_OFFSET, BOTTOM_OFFSET, LEFT_OFFSET + ARROW_LENGTH,
-                                     BOTTOM_OFFSET + ARROW_HEIGHT,
-                                     sf::Color(0, 0, 0)));
+    window.Draw(sf::Shape::Rectangle(LEFT_OFFSET + ARROW_LENGTH * count,
+                                     window.GetHeight() - BOTTOM_OFFSET,
+                                     LEFT_OFFSET + ARROW_LENGTH * (count + 1),
+                                     window.GetHeight() - BOTTOM_OFFSET + ARROW_HEIGHT,
+                                     sf::Color(50, 50, 50, 100)));
+    window.Draw(sf::Shape::Rectangle(LEFT_OFFSET + ARROW_LENGTH * (count + 0.3),
+                                     window.GetHeight() - BOTTOM_OFFSET + ARROW_HEIGHT * 0.3,
+                                     LEFT_OFFSET + ARROW_LENGTH * (count + 0.7),
+                                     window.GetHeight() - BOTTOM_OFFSET + ARROW_HEIGHT * 0.7,
+                                     darkBlue));
+    int x1 = ARROW_LENGTH * -0.4;
+    int x2 = ARROW_LENGTH * 0.4;
+    int y1 = -ARROW_HEIGHT * 0.2;
+    int y2 = -ARROW_HEIGHT * 0.5;
+
+    sf::Shape Triangle;
+
+    Triangle.SetPosition((LEFT_OFFSET + ARROW_LENGTH * (count + 0.5)),
+                         (window.GetHeight() - BOTTOM_OFFSET + ARROW_HEIGHT * 0.5));
+
+    Triangle.AddPoint(x1, y1, darkBlue);
+    Triangle.AddPoint(x2, y1, darkBlue);
+    Triangle.AddPoint((x1 + x2) / 2, y2, darkBlue);
+
     switch(unit->getMovement(count).x)
     {
       case 0:
         if(unit->getMovement(count).y == 1)
-          drawUpArrow(count);
-        else
-          drawDownArrow(count);
+          Triangle.SetRotation(180);
         break;
       case -1:
-        drawLeftArrow(count);
+        Triangle.SetRotation(90);
         break;
       case 1:
-        drawRightArrow(count);
+        Triangle.SetRotation(270);
         break;
     }
-  }
 
+    window.Draw(Triangle);
+  }
 }
 
 void Level::drawUpArrow(int moveNumber)
 {
-  int arrowStart = BOTTOM_OFFSET - 2;
 }
 
 void Level::drawDownArrow(int moveNumber)

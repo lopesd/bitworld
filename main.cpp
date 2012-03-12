@@ -23,21 +23,14 @@ int main (void) {
   Direction  Dorder; // Input interperted as direction
 
   // INITIALIZE IMAGES AND LEVELS
-<<<<<<< HEAD
-  Cell cell  ( 0, 0 );
-//  Cell cell2 ( 0, 1 );
-//  Cell cell3 ( 1, 0 );
-//  Cell cell4 ( 1, 1 );
-=======
   Cell cell  ( 5, 6 );
   Cell cell2 ( 7, 7 );
   Cell cell3 ( 2, 3 );
   Cell cell4 ( 8, 2 );
->>>>>>> e71c7b7867fc01a6aabb45e5593ffdba1452b154
   CellGroup group1 (&cell);
-//  CellGroup group2 (&cell2);
-//  CellGroup group3 (&cell3);
-//  CellGroup group4 (&cell4);
+  CellGroup group2 (&cell2);
+  CellGroup group3 (&cell3);
+  CellGroup group4 (&cell4);
 
   Cell cell5 ( 1, 1 );
   Cell cell6 ( 1, 2 );
@@ -53,9 +46,9 @@ int main (void) {
   vector<CellGroup*> groupVector;
   groupVector.push_back (&cellGroup);
   groupVector.push_back ( &group1 );
-//  groupVector.push_back ( &group2 );
-//  groupVector.push_back ( &group3 );
-//  groupVector.push_back ( &group4 );
+  groupVector.push_back ( &group2 );
+  groupVector.push_back ( &group3 );
+  groupVector.push_back ( &group4 );
   UserControlGroup usg (groupVector);
   vector<ControlGroup*> cgv;
   cgv.push_back (&usg);
