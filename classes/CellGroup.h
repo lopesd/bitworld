@@ -28,6 +28,8 @@ class CellGroup {
   virtual void upCycle   ();
   virtual void downCycle ();
   virtual vector<Location>& getLocations (); //returns location or locations in a vector
+  virtual Direction getMovement(int num);
+  virtual int numOfMovements();
 
   ControlGroup* controlGroup;
 

@@ -9,6 +9,8 @@
 #define BOTTOM_OFFSET 200
 #define RIGHT_OFFSET 300
 #define LEFT_OFFSET 300
+#define ARROW_HEIGHT 50
+#define ARROW_LENGTH 50
 
 Level::Level (sf::RenderWindow &newWindow, vector<ControlGroup*> c, vector<CellGroup*> u,
               int w, int h, int cpp)
@@ -51,11 +53,15 @@ void Level::updateGrid () { // Clears and remakes the entire grid
 
 void Level::display ()
 {
+  drawBackground();
+
   drawGrid();
 
   drawUnits();
 
   highlightSelect();
+
+//  drawCycle();
 }
 
 void Level::handleInput (Location loc)
@@ -93,9 +99,9 @@ void Level::run ()
 
     updateGrid();
     display();
+    window.Display();
     usleep(100000);
   }
-
 }
 
 void Level::drawGrid()
@@ -218,4 +224,79 @@ void Level::highlightSelect()
     window.Draw(square);
   }
 
+}
+
+void Level::drawArrows()
+{
+  vector<Location> groupLocations;
+  CellGroup* unit;
+  unit = activeGroup->getSelectedUnit();
+
+  if(unit == 0)
+    return;
+
+  for(int count = 0; count < unit->numOfMovements(); count++)
+  {
+    cout << "TESTING" << endl;
+    window.Draw(sf::Shape::Rectangle(LEFT_OFFSET, BOTTOM_OFFSET, LEFT_OFFSET + ARROW_LENGTH,
+                                     BOTTOM_OFFSET + ARROW_HEIGHT,
+                                     sf::Color(0, 0, 0)));
+    switch(unit->getMovement(count).x)
+    {
+      case 0:
+        if(unit->getMovement(count).y == 1)
+          drawUpArrow(count);
+        else
+          drawDownArrow(count);
+        break;
+      case -1:
+        drawLeftArrow(count);
+        break;
+      case 1:
+        drawRightArrow(count);
+        break;
+    }
+  }
+
+}
+
+void Level::drawUpArrow(int moveNumber)
+{
+  int arrowStart = BOTTOM_OFFSET - 2;
+}
+
+void Level::drawDownArrow(int moveNumber)
+{
+}
+
+void Level::drawRightArrow(int moveNumber)
+{
+}
+
+void Level::drawLeftArrow(int moveNumber)
+{
+}
+
+/*
+void Level::drawCycle()
+{
+  int lowOffset = BOTTOM_OFFSET / 5;
+  int highOffset = BOTTOM_OFFSET / 5;
+
+  int height = BOTTOM_OFFSET - lowOffset - highOffset;
+}
+*/
+
+void Level::drawBackground()
+{
+  sf::Image background;
+  if(!background.LoadFromFile("background.png"))
+  {
+    cout << "Can't load the background." << endl;
+  }
+
+  sf::Sprite sBackground(background);
+  sBackground.Resize(window.GetWidth(), window.GetHeight());
+
+  window.Draw(sBackground);
 }

@@ -45,4 +45,3 @@ void UserControlGroup::toggleSelection (CellGroup* unit)
   else
     selectedUnit = unit;
 }
-

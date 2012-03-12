@@ -26,6 +26,12 @@ class Level {
   void drawGrid    ();
   void drawUnits   ();
   void highlightSelect();
+  void drawArrows  ();
+  void drawBackground();
+  void drawUpArrow(int);
+  void drawDownArrow(int);
+  void drawLeftArrow(int);
+  void drawRightArrow(int);
  private:
   ControlGroup*                activeGroup;
   vector<ControlGroup*>        controlGroups;

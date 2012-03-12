@@ -22,13 +22,13 @@ int main (void) {
 
   // INITIALIZE IMAGES AND LEVELS
   Cell cell  ( 0, 0 );
-  Cell cell2 ( 1, 1 );
-  Cell cell3 ( 1, 0 );
-  Cell cell4 ( 0, 1 );
+//  Cell cell2 ( 0, 1 );
+//  Cell cell3 ( 1, 0 );
+//  Cell cell4 ( 1, 1 );
   CellGroup group1 (&cell);
-  CellGroup group2 (&cell2);
-  CellGroup group3 (&cell3);
-  CellGroup group4 (&cell4);
+//  CellGroup group2 (&cell2);
+//  CellGroup group3 (&cell3);
+//  CellGroup group4 (&cell4);
 
   //vector<Cell*> cellVector;
   /*llVector.push_back( &cell  );
@@ -38,9 +38,9 @@ int main (void) {
   //CellGroup cellGroup ( cellVector );
   vector<CellGroup*> groupVector;
   groupVector.push_back ( &group1 );
-  groupVector.push_back ( &group2 );
-  groupVector.push_back ( &group3 );
-  groupVector.push_back ( &group4 );
+//  groupVector.push_back ( &group2 );
+//  groupVector.push_back ( &group3 );
+//  groupVector.push_back ( &group4 );
   UserControlGroup usg (groupVector);
   vector<ControlGroup*> cgv;
   cgv.push_back (&usg);
@@ -98,16 +98,6 @@ int main (void) {
   }
 */
 
-  //Load the Background
-  sf::Image background;
-  if(!background.LoadFromFile("background.png"))
-  {
-    cout << "Can't load the background." << endl;
-  }
-
-  sf::Sprite sBackground(background);
-  sBackground.Resize(window.GetWidth(), window.GetHeight());
-
   // MAIN LOOP
 
   window.Clear();
@@ -157,12 +147,9 @@ int main (void) {
         if(Event.MouseButton.Button == sf::Mouse::Left)
           level.prepareInput(Event.MouseButton.X, Event.MouseButton.Y);
     }
-
-    window.Draw(sBackground);
     level.display ();
     window.Display();
   }
 
   return 0;
-
 }

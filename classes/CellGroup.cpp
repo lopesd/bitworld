@@ -59,6 +59,8 @@ void CellGroup::downCycle () {
 
 vector<Location>& CellGroup::getLocations ()
 {
+  locations.clear();
+
   for (int i = 0; i < cells.size(); i++)
     locations.push_back( cells.at(i)->getGridLocation() );
 
@@ -67,4 +69,14 @@ vector<Location>& CellGroup::getLocations ()
 
 char CellGroup::getImage () {
   return 'O';
+}
+
+Direction CellGroup::getMovement(int num)
+{
+  return movementQueue[num];
+}
+
+int CellGroup::numOfMovements()
+{
+  return movementQueue.size();
 }
