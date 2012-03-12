@@ -38,6 +38,12 @@ void UserControlGroup::handleInput (Direction dir)
   }
 }
 
+void UserControlGroup::handleInput (sf::Key::Code keyPressed)
+{
+  if(keyPressed == sf::Key::Back)
+    selectedUnit->removeLastMoveOrder();
+}
+
 void UserControlGroup::toggleSelection (CellGroup* unit)
 {
   if (selectedUnit == unit)

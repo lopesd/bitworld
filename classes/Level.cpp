@@ -89,6 +89,11 @@ void Level::handleInput (Direction dir)
   activeGroup->handleInput (dir);
 }
 
+void Level::handleInput (sf::Key::Code keyPressed)
+{
+  activeGroup->handleInput (keyPressed);
+}
+
 void Level::run ()
 {
   //commit all movements, doing collision detection and stuff
@@ -278,22 +283,6 @@ void Level::drawArrows()
 
     window.Draw(Triangle);
   }
-}
-
-void Level::drawUpArrow(int moveNumber)
-{
-}
-
-void Level::drawDownArrow(int moveNumber)
-{
-}
-
-void Level::drawRightArrow(int moveNumber)
-{
-}
-
-void Level::drawLeftArrow(int moveNumber)
-{
 }
 
 /*

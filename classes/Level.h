@@ -21,6 +21,7 @@ class Level {
   void prepareInput(int x, int y);
   void handleInput (Location  loc);
   void handleInput (Direction dir);
+  void handleInput (sf::Key::Code);
   void run         ();
   vector<CellGroup*> findNeighbors (CellGroup*);
   void drawGrid    ();

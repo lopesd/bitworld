@@ -42,7 +42,7 @@ int main (void) {
   cellVector.push_back( &cell7 );
   cellVector.push_back( &cell8 );
   CellGroup cellGroup ( cellVector );
-  
+
   vector<CellGroup*> groupVector;
   groupVector.push_back (&cellGroup);
   groupVector.push_back ( &group1 );
@@ -146,6 +146,9 @@ int main (void) {
             Dorder.x = 0;
             Dorder.y = 1;
             level.handleInput(Dorder);
+            break;
+          case sf::Key::Back:
+            level.handleInput(sf::Key::Back);
             break;
           case sf::Key::R:
             level.run();

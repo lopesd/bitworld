@@ -25,6 +25,7 @@ class CellGroup {
   virtual void handleNeighbors (vector<CellGroup*> neighbors);
   virtual void queueStandardMovementOrders (int cycles);
   virtual void issueMovementOrder (Direction dir);
+  virtual void removeLastMoveOrder();
   virtual void upCycle   ();
   virtual void downCycle ();
   virtual vector<Location>& getLocations (); //returns location or locations in a vector
