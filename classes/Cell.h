@@ -4,6 +4,7 @@
 #include "structures.h"
 #include <string>
 
+
 using namespace std;
 
 class Cell {
@@ -13,8 +14,8 @@ class Cell {
   void move (Direction dir);
   void draw ();
 
-  Location getGridLocation ();
-  Location getScreenLocation ();
+  pair<int, int> getGridLocation ();
+  pair<double, double> getScreenLocation ();
 
  private:
   int col, row;

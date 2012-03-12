@@ -14,6 +14,8 @@
 
 int main (void) {
 
+  sf::Clock clock;
+
   // SET PARAMETERS, INITIALIZE VARIABLES
   char       cinp;   // The raw character input in the terminal version
   int        inp;    // The raw integer input in the terminal version
@@ -25,10 +27,10 @@ int main (void) {
   Cell cell2 ( 1, 1 );
   Cell cell3 ( 1, 0 );
   Cell cell4 ( 0, 1 );
-  CellGroup group1 (&cell);
   CellGroup group2 (&cell2);
   CellGroup group3 (&cell3);
   CellGroup group4 (&cell4);
+  CellGroup group1 (&cell);
 
   //vector<Cell*> cellVector;
   /*llVector.push_back( &cell  );

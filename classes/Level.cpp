@@ -31,21 +31,22 @@ void Level::updateGrid () { // Clears and remakes the entire grid
   // Clear grid first
   grid.clear();
 
-  vector<Location> locs;
+  vector<pair<int, int> > locs;
 
   for (int i = 0; i < units.size(); ++i)
   {
     locs = units.at(i)->getLocations(); // Get all the locations of a cellGroup (could be more than 1)
+  cout << "Size of location vector is " << locs.size() << endl;
     for (int j = 0; j < locs.size(); ++j)// Set all a unit's positions to pointers to itself
     {
-      cout << "Inserting pointer at location: " << locs.at(j).x << ", " << locs.at(j).y << endl;
-      grid.insert( pair<Location, CellGroup*>( locs.at(j), units.at(i) ) );
+      cout << "Inserting pointer at location: " << locs.at(j).first << ", " << locs.at(j).second << endl;
+      grid.insert( pair< pair<int, int>, CellGroup*>( locs.at(j), units.at(i) ) );
     }
   }
 
   int count = 0;
-  for ( map<Location, CellGroup*>::iterator i = grid.begin(); i != grid.end(); ++i, count++)
-    cout << "Elements in the grid, " << count << ": " << i->first.x << " " << i->first.y << endl;
+  for ( map<pair<int, int>, CellGroup*>::iterator i = grid.begin(); i != grid.end(); ++i, count++)
+    cout << "Elements in the grid, " << count << endl;// << ": " << i->first << " " << i->second << endl;
 
 }
 
@@ -58,10 +59,10 @@ void Level::display ()
   highlightSelect();
 }
 
-void Level::handleInput (Location loc)
+void Level::handleInput (pair<int, int> loc)
 {
-  cout << "Location: " << loc.x << ", " << loc.y << endl;
-  map<Location, CellGroup*>::iterator clickedUnit = grid.find( loc );
+  cout << "Location: " << loc.first << ", " << loc.second << endl;
+  map<pair<int, int>, CellGroup*>::iterator clickedUnit = grid.find( loc );
 
   if (clickedUnit != grid.end() )
   {
@@ -75,7 +76,7 @@ void Level::handleInput (Location loc)
     activeGroup->handleInput ( nullPointer );
   }
 }
-
+  
 void Level::handleInput (Direction dir)
 {
   activeGroup->handleInput (dir);
@@ -147,7 +148,7 @@ void Level::drawGrid()
 
 void Level::drawUnits()
 {
-  Location loc;
+  pair<int, int> loc;
   char img;
 
   sf::Image bit;
@@ -160,7 +161,7 @@ void Level::drawUnits()
   for (int i = 0; i < width; ++i)
     for (int j = 0; j < height; ++j)
     {
-      loc.x = j; loc.y = i;
+      loc.first = j; loc.second = i;
 
       if ( grid.find( loc ) != grid.end() )
       {
@@ -174,13 +175,13 @@ void Level::drawUnits()
 
 void Level::prepareInput(int x, int y)
 {
-  Location Lorder;
+  pair<int, int> Lorder;
 
   if(y > TOP_OFFSET && y < window.GetHeight() - BOTTOM_OFFSET &&
      x > LEFT_OFFSET && x < window.GetWidth() - RIGHT_OFFSET)
   {
-    Lorder.x = (x - LEFT_OFFSET) / gridColWidth;
-    Lorder.y = (y - TOP_OFFSET) / gridRowHeight;
+    Lorder.first = (x - LEFT_OFFSET) / gridColWidth;
+    Lorder.second = (y - TOP_OFFSET) / gridRowHeight;
   }
 
   handleInput(Lorder);
@@ -188,7 +189,7 @@ void Level::prepareInput(int x, int y)
 
 void Level::highlightSelect()
 {
-  vector<Location> groupLocations;
+  vector<pair<int, int> > groupLocations;
   CellGroup* unit;
   unit = activeGroup->getSelectedUnit();
 
@@ -206,12 +207,12 @@ void Level::highlightSelect()
   int vertexYUp;
   int vertexYDown;
 
-  for(vector<Location>::iterator it = groupLocations.begin(); it != groupLocations.end(); it++)
+  for(vector<pair<int, int> >::iterator it = groupLocations.begin(); it != groupLocations.end(); it++)
   {
-    vertexXLeft = LEFT_OFFSET + it->x * gridColWidth + 3;
-    vertexXRight = LEFT_OFFSET + (it->x + 1) * gridColWidth - 3;
-    vertexYUp = TOP_OFFSET + it->y * gridRowHeight + 3;
-    vertexYDown = TOP_OFFSET + (it->y + 1) * gridRowHeight - 3;
+    vertexXLeft = LEFT_OFFSET + it->first * gridColWidth + 3;
+    vertexXRight = LEFT_OFFSET + (it->first + 1) * gridColWidth - 3;
+    vertexYUp = TOP_OFFSET + it->second * gridRowHeight + 3;
+    vertexYDown = TOP_OFFSET + (it->second + 1) * gridRowHeight - 3;
 
     square = sf::Shape::Rectangle(vertexXLeft, vertexYUp, vertexXRight, vertexYDown,
              sf::Color(0, 0, 0, 0), 3, highlightColor);

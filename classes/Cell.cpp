@@ -16,12 +16,12 @@ void Cell::draw () {
   //draw!
 }
 
-Location Cell::getGridLocation () {
-  Location temp = {col, row};
+pair<int, int> Cell::getGridLocation () {
+  pair<int, int> temp(col,row);
   return temp;
 }
 
-Location Cell::getScreenLocation () {
-  Location temp = {x, y};
+pair<double, double> Cell::getScreenLocation () {
+  pair<double, double> temp(x, y);
   return temp;
 }

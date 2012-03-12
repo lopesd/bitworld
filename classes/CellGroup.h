@@ -27,14 +27,14 @@ class CellGroup {
   virtual void issueMovementOrder (Direction dir);
   virtual void upCycle   ();
   virtual void downCycle ();
-  virtual vector<Location>& getLocations (); //returns location or locations in a vector
+  virtual vector<pair<int, int> >& getLocations (); //returns location or locations in a vector
 
   ControlGroup* controlGroup;
 
  private:
   vector<Cell*> cells;
 
-  vector<Location> locations;
+  vector<pair<int, int> > locations;
   vector<Direction> standardMovementOrders;
   deque<Direction> movementQueue;
   int SMOCounter;
