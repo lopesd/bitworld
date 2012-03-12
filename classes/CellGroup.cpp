@@ -59,6 +59,7 @@ void CellGroup::downCycle () {
 
 vector<Location>& CellGroup::getLocations ()
 {
+  locations.clear();
   for (int i = 0; i < cells.size(); i++)
     locations.push_back( cells.at(i)->getGridLocation() );
 

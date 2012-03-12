@@ -14,6 +14,8 @@
 
 int main (void) {
 
+  sf::Clock clock;
+
   // SET PARAMETERS, INITIALIZE VARIABLES
   char       cinp;   // The raw character input in the terminal version
   int        inp;    // The raw integer input in the terminal version
@@ -21,22 +23,28 @@ int main (void) {
   Direction  Dorder; // Input interperted as direction
 
   // INITIALIZE IMAGES AND LEVELS
-  Cell cell  ( 0, 0 );
-  Cell cell2 ( 1, 1 );
-  Cell cell3 ( 1, 0 );
-  Cell cell4 ( 0, 1 );
+  Cell cell  ( 5, 6 );
+  Cell cell2 ( 7, 7 );
+  Cell cell3 ( 2, 3 );
+  Cell cell4 ( 8, 2 );
   CellGroup group1 (&cell);
   CellGroup group2 (&cell2);
   CellGroup group3 (&cell3);
   CellGroup group4 (&cell4);
 
-  //vector<Cell*> cellVector;
-  /*llVector.push_back( &cell  );
-  cellVector.push_back( &cell2 );
-  cellVector.push_back( &cell3 );
-  cellVector.push_back( &cell4 );*/
-  //CellGroup cellGroup ( cellVector );
+  Cell cell5 ( 1, 1 );
+  Cell cell6 ( 1, 2 );
+  Cell cell7 ( 2, 1 );
+  Cell cell8 ( 2, 2 );
+  vector<Cell*> cellVector;
+  cellVector.push_back( &cell5  );
+  cellVector.push_back( &cell6 );
+  cellVector.push_back( &cell7 );
+  cellVector.push_back( &cell8 );
+  CellGroup cellGroup ( cellVector );
+  
   vector<CellGroup*> groupVector;
+  groupVector.push_back (&cellGroup);
   groupVector.push_back ( &group1 );
   groupVector.push_back ( &group2 );
   groupVector.push_back ( &group3 );
