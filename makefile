@@ -12,8 +12,4 @@ classes/*.o: %.o: %.cpp %.h
 	$(compile) $< -o $@
 
 clean:
-<<<<<<< HEAD
 	rm -rf $(main) $(main).o $(objects)
-=======
-	rm -rf $(main) $(main).o $(objects)
->>>>>>> fda10f06b89de4dfb230d3a678443bf9c6789ac0
