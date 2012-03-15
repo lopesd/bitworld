@@ -1,9 +1,7 @@
 #include "Bit.h"
 
-Bit::Bit (vector<Cell*> cells) : CellGroup (cells) {
-  
-}
+Bit::Bit () {}
 
-Bit::Bit (Cell* cell) : CellGroup (cell) {
+Bit::Bit (vector<Cell> cells) : CellGroup (cells) { }
 
-}
+Bit::Bit (Cell cell) : CellGroup (cell) {}

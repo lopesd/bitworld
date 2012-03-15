@@ -1,0 +1,15 @@
+DESCRIPTION
+A gate's weight determines how many bit-cycles within a period are needed to open it.
+This gate's weight is 3. If you visit it for all 3 cycles of a period, it will open.
+
+METADATA
+MAP: name:Gates tag:2 links(1,3) -tutorial
+G1: tag:1 dest(map:1,gate:2) weight:1 priorities(b)
+G2: tag:2 dest(map:3,gate:1) weight:3 priorities(b)
+
+GRID
+--- --- --- --- --- ---
+G1a --- --- --- --- G2a
+G1b --- --- --- --- G2b
+G1c --- --- --- --- G2c
+--- --- --- --- --- ---

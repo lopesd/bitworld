@@ -1,5 +1,5 @@
 main=main
-dep=classes/Cell.cpp classes/Bit.cpp classes/CellGroup.cpp classes/ControlGroup.cpp classes/UserControlGroup.cpp classes/Level.cpp
+dep=classes/Cell.cpp classes/Bit.cpp classes/Pulser.cpp classes/CellGroup.cpp classes/ControlGroup.cpp classes/UserControlGroup.cpp classes/AIControlGroup.cpp classes/Level.cpp classes/LevelParser.cpp
 objects=$(dep:.cpp=.o)
 compile=g++ -c
 link=g++

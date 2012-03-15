@@ -11,11 +11,12 @@
 #include "classes/Cell.h"
 #include "classes/ControlGroup.h"
 #include "classes/UserControlGroup.h"
+#include "classes/LevelParser.h"
 
 int main (void) {
 
   sf::Clock clock;
-
+  
   // SET PARAMETERS, INITIALIZE VARIABLES
   char       cinp;   // The raw character input in the terminal version
   int        inp;    // The raw integer input in the terminal version
@@ -27,20 +28,20 @@ int main (void) {
   Cell cell2 ( 7, 7 );
   Cell cell3 ( 2, 3 );
   Cell cell4 ( 8, 2 );
-  CellGroup group1 (&cell);
-  CellGroup group2 (&cell2);
-  CellGroup group3 (&cell3);
-  CellGroup group4 (&cell4);
+  CellGroup group1 (cell);
+  CellGroup group2 (cell2);
+  CellGroup group3 (cell3);
+  CellGroup group4 (cell4);
 
   Cell cell5 ( 1, 1 );
   Cell cell6 ( 1, 2 );
   Cell cell7 ( 2, 1 );
   Cell cell8 ( 2, 2 );
-  vector<Cell*> cellVector;
-  cellVector.push_back( &cell5  );
-  cellVector.push_back( &cell6 );
-  cellVector.push_back( &cell7 );
-  cellVector.push_back( &cell8 );
+  vector<Cell> cellVector;
+  cellVector.push_back( cell5 );
+  cellVector.push_back( cell6 );
+  cellVector.push_back( cell7 );
+  cellVector.push_back( cell8 );
   CellGroup cellGroup ( cellVector );
   
   vector<CellGroup*> groupVector;
@@ -63,7 +64,12 @@ int main (void) {
     window.Create(sf::VideoMode(1280, 720), "BitWorld", sf::Style::Close,
                   sf::WindowSettings(24, 8, 4));
 
-  Level level (window, cgv, groupVector);
+  LevelParser parser;
+  //Level level (window);
+  Level level = parser.parse ("levels/level_T1.bit", window);
+
+  
+  //Level level (window, cgv, groupVector);
 
   // INITIAL DRAWING
 /*
@@ -105,10 +111,10 @@ int main (void) {
     // DISPLAY LEVEL
   }
 */
-
+  
   //Load the Background
   sf::Image background;
-  if(!background.LoadFromFile("background.png"))
+  if(!background.LoadFromFile("images/background.png"))
   {
     cout << "Can't load the background." << endl;
   }

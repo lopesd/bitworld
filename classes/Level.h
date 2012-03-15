@@ -13,9 +13,14 @@
 
 
 class Level {
+
  public:
   Level (sf::RenderWindow &window, vector<ControlGroup*>, vector<CellGroup*> units,
          int width=13, int height=9, int cpp=3);
+  Level (sf::RenderWindow &window);
+  Level (const Level&);
+  
+  void init (vector<ControlGroup*>, vector<CellGroup*> units, int width=13, int height=9, int cpp=3);
 
   void display     ();
   void prepareInput(int x, int y);
@@ -26,6 +31,7 @@ class Level {
   void drawGrid    ();
   void drawUnits   ();
   void highlightSelect();
+
  private:
   ControlGroup*                activeGroup;
   vector<ControlGroup*>        controlGroups;
@@ -37,9 +43,9 @@ class Level {
   int gridRowHeight;
   int gridColWidth;
 
-  sf::RenderWindow& window;
-
   void updateGrid();
+
+  sf::RenderWindow& window;
 };
 
 #endif

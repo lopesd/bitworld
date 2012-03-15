@@ -2,12 +2,14 @@
 
 Pulser::Pulser () {}
 
-Pulser::~Pulser () {}
+Pulser::Pulser (vector<Cell> cells) : CellGroup(cells) {}
 
-void queueStandardOrders (int cycles) {
-  for (int i = 0; i < cycles; ++i, ++standardOrderCounter) {
-    actionQueue.push_back( standardOrders.at( standardOrderCounter ));
-    if (standardOrderCounter >= standardOrders.size())
-      standardOrderCounter = 0;
+Pulser::Pulser (Cell cell) : CellGroup(cell) {}
+
+void Pulser::queueStandardActionOrders (int cycles) {
+  for (int i = 0; i < cycles; ++i, ++SAOCounter) {
+    actionQueue.push_back( standardActionOrders.at( SAOCounter ));
+    if (SAOCounter >= standardActionOrders.size())
+      SAOCounter = 0;
   }
 }

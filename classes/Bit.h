@@ -6,8 +6,9 @@
 class Bit : public CellGroup {
 
  public:
-  Bit (vector<Cell*> cells);
-  Bit (Cell* cell);
+  Bit (vector<Cell> cells);
+  Bit (Cell cell);
+  Bit ();
 
  private:
 

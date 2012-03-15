@@ -3,6 +3,11 @@
 
 #include <fstream>
 #include <string>
+#include <vector>
+#include <map>
+
+#include "Cell.h"
+#include "Level.h"
 
 using namespace std;
 
@@ -12,13 +17,11 @@ class LevelParser {
   LevelParser ();
   ~LevelParser ();
 
-  void parse (const char* filename);
+  Level parse (const char* filename, sf::RenderWindow& window);
 
  private:
   ifstream file;
   char commentChar;
-
-  bool getNextLine (string line);
 
 };
 

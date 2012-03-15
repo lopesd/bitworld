@@ -28,7 +28,7 @@ class CellGroup {
   virtual void issueMovementOrder (Direction dir);
   virtual void upCycle   ();
   virtual void downCycle ();
-  virtual vector<Location> getLocations (); //returns location or locations in a vector
+  virtual vector<Location>& getLocations (); //returns location or locations in a vector
 
   ControlGroup* controlGroup;
 

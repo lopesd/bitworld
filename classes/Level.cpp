@@ -12,7 +12,7 @@
 
 Level::Level (sf::RenderWindow &newWindow, vector<ControlGroup*> c, vector<CellGroup*> u,
               int w, int h, int cpp)
-:window(newWindow)
+: window(newWindow)
 {
   controlGroups = c;
   activeGroup = c.at(0); // set active group to be the first in the list
@@ -20,6 +20,40 @@ Level::Level (sf::RenderWindow &newWindow, vector<ControlGroup*> c, vector<CellG
   width = w;
   height = h;
   cyclesPerPeriod = cpp;
+  
+  updateGrid();
+  
+  gridRowHeight = (window.GetHeight() - TOP_OFFSET - BOTTOM_OFFSET) / height;
+  gridColWidth = (window.GetWidth() - LEFT_OFFSET - RIGHT_OFFSET) / width;
+}
+
+/*
+Level::Level (sf::RendewrWindow &newWindow) : window(newWindow) {
+  cout << "Warning -- level not initialized. Call level.init() to initialize" << endl;
+  }*/
+
+void Level::init (vector<ControlGroup*> c, vector<CellGroup*> u, int w, int h, int cpp) {
+  cout << "Initializing level" << endl;
+  controlGroups = c;
+  activeGroup = c.at(0); // set active group to be the first in the list
+  units = u;
+  width = w;
+  height = h;
+  cyclesPerPeriod = cpp;
+  
+  updateGrid();
+  
+  gridRowHeight = (window.GetHeight() - TOP_OFFSET - BOTTOM_OFFSET) / height;
+  gridColWidth = (window.GetWidth() - LEFT_OFFSET - RIGHT_OFFSET) / width;
+}
+
+Level::Level (const Level& L) : window(L.window) {
+  controlGroups = L.controlGroups;
+  activeGroup = controlGroups.at(0);
+  units = L.units;
+  width = L.width;
+  height = L.height;
+  cyclesPerPeriod = L.cyclesPerPeriod;
 
   updateGrid();
 
@@ -38,15 +72,9 @@ void Level::updateGrid () { // Clears and remakes the entire grid
     locs = units.at(i)->getLocations(); // Get all the locations of a cellGroup (could be more than 1)
     for (int j = 0; j < locs.size(); ++j)// Set all a unit's positions to pointers to itself
     {
-      cout << "Inserting pointer at location: " << locs.at(j).x << ", " << locs.at(j).y << endl;
       grid.insert( pair<Location, CellGroup*>( locs.at(j), units.at(i) ) );
     }
   }
-
-  int count = 0;
-  for ( map<Location, CellGroup*>::iterator i = grid.begin(); i != grid.end(); ++i, count++)
-    cout << "Elements in the grid, " << count << ": " << i->first.x << " " << i->first.y << endl;
-
 }
 
 void Level::display ()
@@ -60,17 +88,12 @@ void Level::display ()
 
 void Level::handleInput (Location loc)
 {
-  cout << "Location: " << loc.x << ", " << loc.y << endl;
   map<Location, CellGroup*>::iterator clickedUnit = grid.find( loc );
 
-  if (clickedUnit != grid.end() )
-  {
-    cout << "There is a unit at that location." << endl;
+  if (clickedUnit != grid.end() ) {
     clickedUnit->second->controlGroup->handleInput ( clickedUnit->second );
   }
-  else
-  {
-    cout << "NO UNIT at that location." << endl;
+  else {
     CellGroup* nullPointer = 0;
     activeGroup->handleInput ( nullPointer );
   }
@@ -152,7 +175,7 @@ void Level::drawUnits()
 
   sf::Image bit;
 
-  bit.LoadFromFile("Normal1.png");
+  bit.LoadFromFile("images/simple_bit.png");
   sf::Sprite sBit(bit);
   sBit.Resize(gridColWidth, gridRowHeight);
 
@@ -188,14 +211,11 @@ void Level::prepareInput(int x, int y)
 
 void Level::highlightSelect()
 {
-  vector<Location> groupLocations;
-  CellGroup* unit;
-  unit = activeGroup->getSelectedUnit();
-
+  CellGroup* unit = activeGroup->getSelectedUnit();
   if(unit == 0)
     return;
 
-  groupLocations = unit->getLocations();
+  vector<Location> groupLocations = unit->getLocations();
 
   sf::Color highlightColor = sf::Color(255, 140, 0);
 
@@ -205,7 +225,7 @@ void Level::highlightSelect()
   int vertexXRight;
   int vertexYUp;
   int vertexYDown;
-
+  
   for(vector<Location>::iterator it = groupLocations.begin(); it != groupLocations.end(); it++)
   {
     vertexXLeft = LEFT_OFFSET + it->x * gridColWidth + 3;

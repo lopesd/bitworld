@@ -9,7 +9,7 @@ using namespace std;
 class Cell {
 
  public:
-  Cell (int col, int row, string img = "");
+  Cell (int col = -1, int row = -1, string img = "");
   void move (Direction dir);
   void draw ();
 

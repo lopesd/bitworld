@@ -3,11 +3,12 @@
 
 #include "CellGroup.h"
 
-class Pulser : CellGroup {
+class Pulser : public CellGroup {
   
  public:
+  Pulser (vector<Cell> cells);
+  Pulser (Cell cell);
   Pulser ();
-  ~Pulser ();
 
   //Pulsers don't handle neighbors, so use default empty neighbor handler
   void queueStandardActionOrders (int cycles);
@@ -15,7 +16,7 @@ class Pulser : CellGroup {
  private:
   vector<int> standardActionOrders; //1 for pulse, 0 for hold
   vector<int> actionQueue;
-  int SAOcounter;
+  int SAOCounter;
 
 };
 

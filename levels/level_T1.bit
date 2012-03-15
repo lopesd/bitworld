@@ -1,0 +1,17 @@
+#DESCRIPTION
+#This is a viral bit. You control it. It can move one square per cycle. 
+#In this area, three cycles define a period. Visit the gate to open it.
+
+~GRID
+B2b --- --- --- --- --- --- ;
+--- --- --- --- --- B4a --- ;
+--- B1a --- --- --- B4b --- ;
+--- --- --- --- --- B4c --- ;
+B3a --- --- --- --- --- --- ;
+
+~METADATA
+MAP: name:Step_One tag:1 links(2) -tutorial -first;
+B1: -cg-user ;
+B2: ;
+B3: ;
+B4: ; tag:1 dest(map:2,gate:1) weight:1 priorities(b);
