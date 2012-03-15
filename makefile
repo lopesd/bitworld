@@ -12,4 +12,4 @@ classes/*.o: %.o: %.cpp %.h
 	$(compile) $< -o $@
 
 clean:
-	rm -rf $(main) $(main).o $(objects)
+	rm -rf classes/*~ $(main) $(main).o $(objects)

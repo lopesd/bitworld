@@ -111,8 +111,7 @@ int main (void) {
     // DISPLAY LEVEL
   }
 */
-<<<<<<< HEAD
-  
+
   //Load the Background
   sf::Image background;
   if(!background.LoadFromFile("images/background.png"))
@@ -122,8 +121,6 @@ int main (void) {
 
   sf::Sprite sBackground(background);
   sBackground.Resize(window.GetWidth(), window.GetHeight());
-=======
->>>>>>> a16d182554ed6141604fb84d38f467cc60a51c2a
 
   // MAIN LOOP
 

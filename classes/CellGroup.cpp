@@ -2,24 +2,13 @@
 
 #include <iostream> // FOR TESTING
 
-<<<<<<< HEAD
-CellGroup::CellGroup (vector<Cell> c) {
-=======
-CellGroup::CellGroup (vector<Cell*> c)
-{
-  std::cout << "Size of cell vector: " << c.size() << endl;
->>>>>>> a16d182554ed6141604fb84d38f467cc60a51c2a
+CellGroup::CellGroup ( vector<Cell> c ) {
   SMOCounter = 0;
   cells = c;
   controlGroup = 0;
 }
 
-<<<<<<< HEAD
 CellGroup::CellGroup (Cell c) {
-=======
-CellGroup::CellGroup (Cell* c)
-{
->>>>>>> a16d182554ed6141604fb84d38f467cc60a51c2a
   SMOCounter = 0;
   cells.push_back( c );
   controlGroup = 0;
@@ -29,20 +18,12 @@ CellGroup::CellGroup () {
   SMOCounter = 0;
 }
 
-CellGroup::~CellGroup ()
-{
-}
+CellGroup::~CellGroup () {}
 
-<<<<<<< HEAD
-  for (vector<Cell>::iterator i = cells.begin(); i != cells.end(); ++i)
-    i->draw();
-
-=======
 void CellGroup::drawMe ()
 {
-  for (vector<Cell*>::iterator i = cells.begin(); i != cells.end(); ++i)
-    (*i)->draw();
->>>>>>> a16d182554ed6141604fb84d38f467cc60a51c2a
+  for (vector<Cell>::iterator i = cells.begin(); i != cells.end(); ++i)
+    i->draw();
 }
 
 // The default neighbor handler -- do nothing
@@ -81,12 +62,7 @@ void CellGroup::downCycle ()
 {
 }
 
-<<<<<<< HEAD
-
 vector<Location> CellGroup::getLocations ()
-=======
-vector<Location>& CellGroup::getLocations ()
->>>>>>> a16d182554ed6141604fb84d38f467cc60a51c2a
 {
   locations.clear();
   for (int i = 0; i < cells.size(); i++)

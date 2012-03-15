@@ -32,16 +32,14 @@ class Level {
   void drawGrid    ();
   void drawUnits   ();
   void highlightSelect();
-<<<<<<< HEAD
 
-=======
   void drawArrows  ();
   void drawBackground();
   void drawUpArrow(int);
   void drawDownArrow(int);
   void drawLeftArrow(int);
   void drawRightArrow(int);
->>>>>>> a16d182554ed6141604fb84d38f467cc60a51c2a
+
  private:
   ControlGroup*                activeGroup;
   vector<ControlGroup*>        controlGroups;

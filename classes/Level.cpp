@@ -318,7 +318,7 @@ void Level::drawCycle()
 void Level::drawBackground()
 {
   sf::Image background;
-  if(!background.LoadFromFile("background.png"))
+  if(!background.LoadFromFile("images/background.png"))
   {
     cout << "Can't load the background." << endl;
   }
