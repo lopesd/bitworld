@@ -43,7 +43,7 @@ int main (void) {
   cellVector.push_back( cell7 );
   cellVector.push_back( cell8 );
   CellGroup cellGroup ( cellVector );
-  
+
   vector<CellGroup*> groupVector;
   groupVector.push_back (&cellGroup);
   groupVector.push_back ( &group1 );
@@ -111,6 +111,7 @@ int main (void) {
     // DISPLAY LEVEL
   }
 */
+<<<<<<< HEAD
   
   //Load the Background
   sf::Image background;
@@ -121,6 +122,8 @@ int main (void) {
 
   sf::Sprite sBackground(background);
   sBackground.Resize(window.GetWidth(), window.GetHeight());
+=======
+>>>>>>> a16d182554ed6141604fb84d38f467cc60a51c2a
 
   // MAIN LOOP
 
@@ -163,6 +166,9 @@ int main (void) {
             Dorder.y = 1;
             level.handleInput(Dorder);
             break;
+          case sf::Key::Back:
+            level.handleInput(sf::Key::Back);
+            break;
           case sf::Key::R:
             level.run();
         }
@@ -171,12 +177,9 @@ int main (void) {
         if(Event.MouseButton.Button == sf::Mouse::Left)
           level.prepareInput(Event.MouseButton.X, Event.MouseButton.Y);
     }
-
-    window.Draw(sBackground);
     level.display ();
     window.Display();
   }
 
   return 0;
-
 }
