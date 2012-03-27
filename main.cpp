@@ -16,7 +16,7 @@
 int main (void) {
 
   sf::Clock clock;
-  
+
   // SET PARAMETERS, INITIALIZE VARIABLES
   char       cinp;   // The raw character input in the terminal version
   int        inp;    // The raw integer input in the terminal version
@@ -65,52 +65,7 @@ int main (void) {
                   sf::WindowSettings(24, 8, 4));
 
   LevelParser parser;
-  //Level level (window);
   Level level = parser.parse ("levels/level_T1.bit", window);
-
-  
-  //Level level (window, cgv, groupVector);
-
-  // INITIAL DRAWING
-/*
-  // MAIN LOOP
-  while (1) {
-
-    // POLL FOR EVENT
-    cout << "Click or direction? [c/d]";
-    cin  >> cinp;
-
-    if (cinp == 'c') {
-      cout << "X: ";
-      cin >> inp;
-      Lorder.x = inp;
-      cout << "Y: ";
-      cin >> inp;
-      Lorder.y = inp;
-      level.handleInput (Lorder);
-    }
-
-    if (cinp == 'd') {
-      cout << "X: ";
-      cin >> inp;
-      Dorder.x = inp;
-      cout << "Y: ";
-      cin >> inp;
-      Dorder.y = inp;
-      level.handleInput (Dorder);
-    }
-
-    if (cinp == 'r') {
-      level.run ();
-    }
-
-    // HANDLE EVENT
-
-    // CYCLE LEVEL EVENTS
-
-    // DISPLAY LEVEL
-  }
-*/
 
   //Load the Background
   sf::Image background;
@@ -123,9 +78,6 @@ int main (void) {
   sBackground.Resize(window.GetWidth(), window.GetHeight());
 
   // MAIN LOOP
-
-  window.Clear();
-
   while (window.IsOpened())
   {
     // EVENT HANDLING LOOP
