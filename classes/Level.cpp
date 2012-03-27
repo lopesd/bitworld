@@ -120,17 +120,16 @@ void Level::handleInput (sf::Key::Code keyPressed)
 
 void Level::run ()
 {
-  //commit all movements, doing collision detection and stuff
-  //cycle a certain number of times
-
+  //Move units and animate CPU cycle
   for (int i = 0; i < cyclesPerPeriod; i++)
   {
+    //Move units
     for (int j = 0; j < units.size(); ++j)
       units.at(j)->upCycle ();
-
     updateGrid();
     display();
 
+    //Animate CPU cycle
     for(int offset = 0; offset < 20; offset++)
     {
       drawCycle(offset);
