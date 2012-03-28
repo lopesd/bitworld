@@ -2,7 +2,11 @@
 
 Pulser::Pulser () {}
 
-Pulser::Pulser (vector<Cell> cells) : CellGroup(cells) {}
+Pulser::Pulser (vector<Cell> cells) : CellGroup(cells) {
+  for (int i = 0; i < cells.size(); ++i) {
+    cells[i].setImage( "pulser_bit.png" );
+  }
+}
 
 Pulser::Pulser (Cell cell) : CellGroup(cell) {}
 

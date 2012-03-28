@@ -12,6 +12,7 @@
 #include "classes/ControlGroup.h"
 #include "classes/UserControlGroup.h"
 #include "classes/LevelParser.h"
+#include "classes/ImageCache.h"
 
 int main (void) {
 
@@ -23,6 +24,7 @@ int main (void) {
   Location   Lorder; // Input interpreted as location
   Direction  Dorder; // Input interperted as direction
 
+  /*
   // INITIALIZE IMAGES AND LEVELS
   Cell cell  ( 5, 6 );
   Cell cell2 ( 7, 7 );
@@ -53,6 +55,7 @@ int main (void) {
   UserControlGroup usg (groupVector);
   vector<ControlGroup*> cgv;
   cgv.push_back (&usg);
+  */
 
   sf::RenderWindow window;
   sf::VideoMode nativeResolution = sf::VideoMode::GetDesktopMode();
@@ -64,10 +67,8 @@ int main (void) {
     window.Create(sf::VideoMode(1280, 720), "BitWorld", sf::Style::Close,
                   sf::WindowSettings(24, 8, 4));
 
-  LevelParser parser;
-  //Level level (window);
-  Level level = parser.parse ("levels/level_T1.bit", window);
-
+  ImageCache::LoadFromDirectory( "./images/" );
+  Level level = LevelParser::parse ("levels/level_T1.bit", window);
   
   //Level level (window, cgv, groupVector);
 
@@ -112,7 +113,7 @@ int main (void) {
   }
 */
 
-  //Load the Background
+  // Load the Background
   sf::Image background;
   if(!background.LoadFromFile("images/background.png"))
   {
@@ -172,7 +173,10 @@ int main (void) {
 
       if(Event.Type == sf::Event::MouseButtonReleased)
         if(Event.MouseButton.Button == sf::Mouse::Left)
-          level.prepareInput(Event.MouseButton.X, Event.MouseButton.Y);
+          level.prepareInput(Event.MouseButton.X, Event.MouseButton.Y, 0);
+	else if (Event.MouseButton.Button == sf::Mouse::Right) {
+	  level.prepareInput(Event.MouseButton.X, Event.MouseButton.Y, 1);
+	}
     }
     level.display ();
     window.Display();

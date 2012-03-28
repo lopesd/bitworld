@@ -4,11 +4,12 @@
 #include "Cell.h"
 #include "ControlGroup.h"
 
+#include <SFML/Graphics.hpp>
+
 #include <vector>
 #include <deque>
 
 using namespace std;
-
 
 class ControlGroup; //Forward declaration
 
@@ -20,8 +21,7 @@ class CellGroup {
   CellGroup ();
   ~CellGroup ();
 
-  virtual void drawMe ();
-  virtual char getImage (); // TEMPORARY
+  virtual void draw ( sf::RenderWindow& screen );
   virtual void move (Direction dir);
   virtual void handleNeighbors (vector<CellGroup*> neighbors);
   virtual void queueStandardMovementOrders (int cycles);
@@ -29,19 +29,27 @@ class CellGroup {
   virtual void removeLastMoveOrder();
   virtual void upCycle   ();
   virtual void downCycle ();
-  virtual vector<Location> getLocations (); //returns location or locations in a vector
-  virtual Direction getMovement(int num);
-  virtual int numOfMovements();
 
+  virtual vector<Location> getLocations (); //returns location or locations in a vector
+  virtual FloatPair        getMiddle ();
+  virtual Direction        getMovement(int num);
+  virtual int              numOfMovements ();
+  virtual FloatPair        getPathHead ();
+
+  virtual void setGridData (int, int, int, int);
+  
   ControlGroup* controlGroup;
 
- private:
+ protected:
   vector<Cell> cells;
-
   vector<Location> locations;
   vector<Direction> standardMovementOrders;
   deque<Direction> movementQueue;
   int SMOCounter;
+
+  // Tracks the current projected destination, starts at the middle of the unit
+  FloatPair pathHead;
+
 };
 
 #endif

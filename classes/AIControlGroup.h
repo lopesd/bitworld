@@ -7,7 +7,7 @@
 class AIControlGroup : public ControlGroup {
 
  public:
-  AIControlGroup (vector<CellGroup*>);
+  AIControlGroup (std::vector<CellGroup*>);
   void handleInput (CellGroup* clickedUnit) {}
   void handleInput (Direction dir) {}
 

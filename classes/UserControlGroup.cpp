@@ -29,12 +29,9 @@ void UserControlGroup::handleInput (CellGroup* clickedUnit)
     }
 }
 
-void UserControlGroup::handleInput (Direction dir)
-{
-  if (selectedUnit)
-  {
+void UserControlGroup::handleInput (Direction dir) {
+  if (selectedUnit) {
     selectedUnit->issueMovementOrder (dir);
-    cout << "issuing movement order" << endl;
   }
 }
 

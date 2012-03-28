@@ -1,8 +1,16 @@
+/** Level.h
+ *  The level object contains all the information about the grid for a certain level.
+ *  It receives and interprets input from the user and controls ControlGroups.
+ *  It is also responsible for drawing the grid portion of the screen.
+ *  Written for Bitworld by: David Lopes, Casey O'Meilia, Catherine Carothers, Mark Riehm
+*/
+
 #ifndef LEVEL_H
 #define LEVEL_H
 
 #include "ControlGroup.h"
 #include "CellGroup.h"
+#include "ImageCache.h"
 #include "structures.h"
 
 #include <SFML/System.hpp>
@@ -10,7 +18,6 @@
 
 #include <vector>
 #include <map>
-
 
 class Level {
 
@@ -23,7 +30,7 @@ class Level {
   void init (vector<ControlGroup*>, vector<CellGroup*> units, int width=13, int height=9, int cpp=3);
 
   void display     ();
-  void prepareInput(int x, int y);
+  void prepareInput(int x, int y, int isRightClick);
   void handleInput (Location  loc);
   void handleInput (Direction dir);
   void handleInput (sf::Key::Code);
@@ -35,10 +42,6 @@ class Level {
 
   void drawArrows  ();
   void drawBackground();
-  void drawUpArrow(int);
-  void drawDownArrow(int);
-  void drawLeftArrow(int);
-  void drawRightArrow(int);
 
  private:
   ControlGroup*                activeGroup;
@@ -48,8 +51,9 @@ class Level {
   int width, height;
   int cyclesPerPeriod;
 
-  int gridRowHeight;
-  int gridColWidth;
+  int top_offset, left_offset, right_offset, bottom_offset;
+  float gridRowHeight;
+  float gridColWidth;
 
   void updateGrid();
 

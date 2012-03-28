@@ -1,27 +1,30 @@
+/** LevelParser.h
+ *  LevelParser is a static class. It reads texts files and returns constructed Level objects.
+ *  Written for Bitworld by: David Lopes, Casey O'Meilia, Catherine Carothers, Mark Riehm
+*/
+
 #ifndef LEVELPARSER_H
 #define LEVELPARSER_H
 
 #include <fstream>
-#include <string>
-#include <vector>
-#include <map>
 
 #include "Cell.h"
 #include "Level.h"
 
-using namespace std;
-
 class LevelParser {
 
  public: 
-  LevelParser ();
-  ~LevelParser ();
-
-  Level parse (const char* filename, sf::RenderWindow& window);
+  // Parse text file into level object
+  static Level parse (const char* filename, sf::RenderWindow& window);
 
  private:
-  ifstream file;
-  char commentChar;
+  // Private constructor ensures class is not instantiated
+  LevelParser ();
+
+  // File stream
+  static ifstream file;
+  // Character that indicates the line is commented
+  static char commentChar;
 
 };
 

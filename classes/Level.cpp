@@ -1,3 +1,10 @@
+/** Level.cpp
+ *  The level object contains all the information about the grid for a certain level.
+ *  It receives and interprets input from the user and controls ControlGroups.
+ *  It is also responsible for drawing the grid portion of the screen.
+ *  Written for Bitworld by: David Lopes, Casey O'Meilia, Catherine Carothers, Mark Riehm
+*/
+
 #include "Level.h"
 
 #include <SFML/Graphics.hpp>
@@ -12,6 +19,7 @@
 #define ARROW_HEIGHT 50
 #define ARROW_LENGTH 50
 #define PI 3.14159265358979
+
 Level::Level (sf::RenderWindow &newWindow, vector<ControlGroup*> c, vector<CellGroup*> u,
               int w, int h, int cpp)
 : window(newWindow)
@@ -27,6 +35,15 @@ Level::Level (sf::RenderWindow &newWindow, vector<ControlGroup*> c, vector<CellG
   
   gridRowHeight = (window.GetHeight() - TOP_OFFSET - BOTTOM_OFFSET) / height;
   gridColWidth = (window.GetWidth() - LEFT_OFFSET - RIGHT_OFFSET) / width;
+  top_offset = 50;
+  bottom_offset = 200;
+  right_offset = 300;
+  left_offset = 300;
+
+  for (int i = 0; i < units.size(); ++i) {
+    units[i]->setGridData( gridColWidth, gridRowHeight, TOP_OFFSET, LEFT_OFFSET );
+  }
+
 }
 
 /*
@@ -47,6 +64,11 @@ void Level::init (vector<ControlGroup*> c, vector<CellGroup*> u, int w, int h, i
   
   gridRowHeight = (window.GetHeight() - TOP_OFFSET - BOTTOM_OFFSET) / height;
   gridColWidth = (window.GetWidth() - LEFT_OFFSET - RIGHT_OFFSET) / width;
+
+  for (int i = 0; i < units.size(); ++i) {
+    units[i]->setGridData( gridColWidth, gridRowHeight, TOP_OFFSET, BOTTOM_OFFSET );
+  }
+
 }
 
 Level::Level (const Level& L) : window(L.window) {
@@ -107,8 +129,7 @@ void Level::handleInput (Location loc)
   }
 }
 
-void Level::handleInput (Direction dir)
-{
+void Level::handleInput (Direction dir) {
   activeGroup->handleInput (dir);
 }
 
@@ -181,42 +202,40 @@ void Level::drawGrid()
   }
 }
 
-void Level::drawUnits()
-{
-  Location loc;
-
-  sf::Image bit;
-
-  bit.LoadFromFile("images/simple_bit.png");
-  sf::Sprite sBit(bit);
-  sBit.Resize(gridColWidth, gridRowHeight);
-
-  for (int i = 0; i < width; ++i)
-    for (int j = 0; j < height; ++j)
-    {
-      loc.x = i;
-      loc.y = j;
-
-      if ( grid.find( loc ) != grid.end() )
-      {
-        sBit.SetPosition(LEFT_OFFSET + gridColWidth * i, TOP_OFFSET + gridRowHeight * j);
-        window.Draw(sBit);
-      }
-    }
+void Level::drawUnits() {
+  for (int i = 0; i < units.size(); ++i)
+    units[i]->draw( window );
 }
 
-void Level::prepareInput(int x, int y)
-{
+void Level::prepareInput(int x, int y, int isRightClick) {
   Location Lorder;
 
   if(y > TOP_OFFSET && y < window.GetHeight() - BOTTOM_OFFSET &&
-     x > LEFT_OFFSET && x < window.GetWidth() - RIGHT_OFFSET)
-  {
+			   x > LEFT_OFFSET && x < window.GetWidth() - RIGHT_OFFSET) {
     Lorder.x = (x - LEFT_OFFSET) / gridColWidth;
-    Lorder.y = (y - TOP_OFFSET) / gridRowHeight;
+    Lorder.y = (y - TOP_OFFSET)  / gridRowHeight;
   }
 
-  handleInput(Lorder);
+  if (!isRightClick)
+    handleInput(Lorder);
+  else {
+    CellGroup* unit = activeGroup->getSelectedUnit();
+    if (unit) {
+      Direction Dorder;
+      FloatPair middle = unit->getPathHead();
+      
+      cout << middle.x - Lorder.x << ", " << middle.y - Lorder.y << endl;
+      int xdir = middle.x - Lorder.x;
+      int ydir = middle.y - Lorder.y;
+
+      if ( ((xdir == 1 || xdir == -1) && ydir == 0) || ((ydir == 1 || ydir == -1) && xdir == 0) ) {
+	Dorder.x = Lorder.x - middle.x;
+	Dorder.y = Lorder.y - middle.y;
+	handleInput(Dorder);
+      }
+    }
+    
+  }
 }
 
 void Level::highlightSelect()
@@ -280,14 +299,14 @@ void Level::drawArrows()
 
     sf::Shape Triangle;
 
-    Triangle.SetPosition((LEFT_OFFSET + ARROW_LENGTH * (count + 0.5)),
+    Triangle.SetPosition( (LEFT_OFFSET + ARROW_LENGTH * (count + 0.5)),
                          (window.GetHeight() - BOTTOM_OFFSET + ARROW_HEIGHT * 0.5));
 
     Triangle.AddPoint(x1, y1, darkBlue);
     Triangle.AddPoint(x2, y1, darkBlue);
     Triangle.AddPoint((x1 + x2) / 2, y2, darkBlue);
 
-    switch(unit->getMovement(count).x)
+    switch((int)(unit->getMovement(count).x))
     {
       case 0:
         if(unit->getMovement(count).y == 1)
@@ -303,6 +322,49 @@ void Level::drawArrows()
 
     window.Draw(Triangle);
   }
+
+  // DRAW ON GRID ARROWS
+  // Create and position arrow sprite
+  FloatPair arrowLocation = unit->getMiddle();
+  sf::Sprite arrowSprite;
+  arrowSprite.SetImage( ImageCache::GetImage( "arrow2.png" ) );
+  arrowSprite.Resize( gridColWidth, gridRowHeight );
+  arrowSprite.SetPosition( left_offset + gridColWidth*arrowLocation.x + gridColWidth/2,
+                           top_offset + gridRowHeight*arrowLocation.y + gridRowHeight/2);
+  arrowSprite.SetCenter( arrowSprite.GetSize() / 2.f );
+
+  for (int i = 0; i < unit->numOfMovements(); ++i) { // For each queued movement in selected unit...
+    // Rotate sprite and draw a(n)...
+    // Upward arrow
+    if ( unit->getMovement(i).x == 0 && unit->getMovement(i).y == -1 ) {
+      arrowSprite.Move( 0, -gridRowHeight/2 );
+      arrowSprite.SetRotation(270);
+      window.Draw( arrowSprite );
+      arrowSprite.Move( 0, -gridRowHeight/2 );
+    }
+    // Downward arrow
+    else if ( unit->getMovement(i).x == 0 && unit->getMovement(i).y == 1 ) {
+      arrowSprite.Move( 0, gridRowHeight/2 );
+      arrowSprite.SetRotation(90);
+      window.Draw( arrowSprite );
+      arrowSprite.Move( 0, gridRowHeight/2 );
+    }
+    // Left arrow
+    else if ( unit->getMovement(i).x == -1 && unit->getMovement(i).y == 0 ) {
+      arrowSprite.Move( -gridColWidth/2, 0 );
+      arrowSprite.SetRotation(0);
+      window.Draw( arrowSprite );
+      arrowSprite.Move( -gridColWidth/2, 0 );
+    }   
+    // Right arrow
+    else if ( unit->getMovement(i).x == 1 && unit->getMovement(i).y == 0 ) {
+      arrowSprite.Move( gridColWidth/2, 0 );
+      arrowSprite.SetRotation(180);
+      window.Draw( arrowSprite );
+      arrowSprite.Move( gridColWidth/2, 0 );
+    }
+  }
+  
 }
 
 /*

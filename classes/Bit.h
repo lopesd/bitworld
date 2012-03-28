@@ -6,9 +6,10 @@
 class Bit : public CellGroup {
 
  public:
-  Bit (vector<Cell> cells);
+  Bit (std::vector<Cell> cells);
   Bit (Cell cell);
   Bit ();
+  ~Bit();
 
  private:
 

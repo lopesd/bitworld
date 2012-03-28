@@ -1,3 +1,8 @@
+/** LevelParser.cpp
+ *  LevelParser is a static class. It reads texts files and returns constructed Level objects.
+ *  Written for Bitworld by: David Lopes, Casey O'Meilia, Catherine Carothers, Mark Riehm
+*/
+
 #include "LevelParser.h"
 #include "Bit.h"
 #include "Pulser.h"
@@ -5,16 +10,17 @@
 #include "AIControlGroup.h"
 #include "Level.h"
 
+#include <vector>
+#include <map>
+
 using namespace std;
 
-LevelParser::LevelParser () {
-  commentChar = '#';
-}
+// Initialize static variables
+ifstream LevelParser::file;
+char LevelParser::commentChar = '#';
 
-LevelParser::~LevelParser () {
-  
-}
 
+// Parse text file into level object
 Level LevelParser::parse (const char* filename, sf::RenderWindow& window) {
   enum Macro {METADATA, GRID, EVENT};
   enum Macro macro = GRID;
@@ -41,7 +47,7 @@ Level LevelParser::parse (const char* filename, sf::RenderWindow& window) {
       
       // Check and set the macro if it is being changed
       if (token[0] == '~') { 
-	cout << endl << "Setting macro" << endl;
+	//cout << endl << "Setting macro" << endl;
 	if (token == "~METADATA")    macro = METADATA;
 	else if (token == "~GRID")   macro = GRID;
 	else if (token == "~EVENT")  macro = EVENT; 
@@ -56,14 +62,14 @@ Level LevelParser::parse (const char* filename, sf::RenderWindow& window) {
 	  // CHECK TO SEE WHICH TYPE IT NEEDS TO BE, THEN CREATE AND GET POINTER
 	  if ( token[0] == 'B' || token[0] == 'G' ) { // Have different if statements for different kinds of cells, if needed
 	    Cell cell (gridX, gridY);
-	    cout << "Creating new " << token[0] << " cell at " << gridX << " " << gridY << endl;
+	    //cout << "Creating new " << token[0] << " cell at " << gridX << " " << gridY << endl;
 	    cellsMap[ token.substr(0,token.length()-1) ][ token[token.length()-1] ] = cell; //inserts a cell in the map
-	    cout << "Cell mapped to " << token.substr(0,token.length()-1) << ", piece " << token[token.length()-1] << endl;
+	    //cout << "Cell mapped to " << token.substr(0,token.length()-1) << ", piece " << token[token.length()-1] << endl;
 	  }
 	  
 	  // INVALID UNIT TYPE, SKIP TOKEN
 	  else {
-	    cout << "Skipping token " << token << endl;
+	    //cout << "Skipping token " << token << endl;
 	  }
 
 	  ++gridX;
@@ -86,25 +92,25 @@ Level LevelParser::parse (const char* filename, sf::RenderWindow& window) {
 	
 	vector<Cell> cellVector;
 	map<char,Cell> tempMap = cellsMap[ token.substr(0,token.length()-1) ];
-	cout << "tempMap size is " << tempMap.size() << endl;
+	//cout << "tempMap size is " << tempMap.size() << endl;
 	for ( map<char, Cell>::iterator it = tempMap.begin(); it != tempMap.end(); ++it ) {
-	  cout << "adding a cell to the cellGroup..." << endl;
+	  //cout << "adding a cell to the cellGroup..." << endl;
 	  cellVector.push_back( it->second );
 	}
 
 	// CHECK TO SEE WHICH TYPE IT NEEDS TO BE, THEN CREATE AND GET POINTER
 	if ( token[0] == 'B' ) {  // BIT
-	  cout << "Creating new Bit" << endl;
+	  //cout << "Creating new Bit" << endl;
 	  unit = new Bit (cellVector);
 	} 
 	else if ( token[0] == 'G' ) { // GATE, PULSER FOR NOW
-	  cout << "Creating new pulser (from token G)" << endl;
+	  //cout << "Creating new pulser (from token G)" << endl;
 	  unit = new Pulser (cellVector);
 	}
 	
 	// INVALID UNIT TYPE, SKIP LINE
 	else {
-	  cout << "Warning -- invalid unit type " << token << "; killing line" << endl;
+	  //cout << "Warning -- invalid unit type " << token << "; killing line" << endl;
 	  getline (file, token);
 	  continue;
 	}
@@ -140,6 +146,6 @@ Level LevelParser::parse (const char* filename, sf::RenderWindow& window) {
   controlGroups.push_back( user );
 
   Level level (window, controlGroups, unitsVector, gridX, gridY);
-  cout << "width: " << gridX << ", height: " << gridY << endl;
+  //cout << "width: " << gridX << ", height: " << gridY << endl;
   return level;
 }

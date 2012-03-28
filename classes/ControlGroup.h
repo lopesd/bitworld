@@ -7,13 +7,12 @@
 #include "structures.h"
 #include <vector>
 
-
 class CellGroup; //Forward declaration
 
 class ControlGroup {
 
  public:
-  ControlGroup (vector<CellGroup*>);
+  ControlGroup (std::vector<CellGroup*>);
 
   virtual void handleInput (Direction dir) = 0;
   virtual void handleInput (CellGroup* unit) = 0;
@@ -21,7 +20,7 @@ class ControlGroup {
   CellGroup* getSelectedUnit();
 
  protected:
-  vector<CellGroup*> units;
+  std::vector<CellGroup*> units;
 
   CellGroup* selectedUnit;
 };
