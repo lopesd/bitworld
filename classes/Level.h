@@ -26,7 +26,7 @@ class Level {
          int width=13, int height=9, int cpp=3);
   Level (sf::RenderWindow &window);
   Level (const Level&);
-  
+
   void init (vector<ControlGroup*>, vector<CellGroup*> units, int width=13, int height=9, int cpp=3);
 
   void display     ();
@@ -42,6 +42,14 @@ class Level {
 
   void drawArrows  ();
   void drawBackground();
+<<<<<<< HEAD
+=======
+  void drawUpArrow(int);
+  void drawDownArrow(int);
+  void drawLeftArrow(int);
+  void drawRightArrow(int);
+  void drawCycle(int offset);
+>>>>>>> 8dae6c22305a7548349f93f8959a4961173aee9e
 
  private:
   ControlGroup*                activeGroup;

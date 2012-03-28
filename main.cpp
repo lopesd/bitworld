@@ -17,7 +17,7 @@
 int main (void) {
 
   sf::Clock clock;
-  
+
   // SET PARAMETERS, INITIALIZE VARIABLES
   char       cinp;   // The raw character input in the terminal version
   int        inp;    // The raw integer input in the terminal version
@@ -67,6 +67,7 @@ int main (void) {
     window.Create(sf::VideoMode(1280, 720), "BitWorld", sf::Style::Close,
                   sf::WindowSettings(24, 8, 4));
 
+<<<<<<< HEAD
   ImageCache::LoadFromDirectory( "./images/" );
   Level level = LevelParser::parse ("levels/level_T1.bit", window);
   
@@ -114,6 +115,12 @@ int main (void) {
 */
 
   // Load the Background
+=======
+  LevelParser parser;
+  Level level = parser.parse ("levels/level_T1.bit", window);
+
+  //Load the Background
+>>>>>>> 8dae6c22305a7548349f93f8959a4961173aee9e
   sf::Image background;
   if(!background.LoadFromFile("images/background.png"))
   {
@@ -124,9 +131,6 @@ int main (void) {
   sBackground.Resize(window.GetWidth(), window.GetHeight());
 
   // MAIN LOOP
-
-  window.Clear();
-
   while (window.IsOpened())
   {
     // EVENT HANDLING LOOP

@@ -30,9 +30,9 @@ Level::Level (sf::RenderWindow &newWindow, vector<ControlGroup*> c, vector<CellG
   width = w;
   height = h;
   cyclesPerPeriod = cpp;
-  
+
   updateGrid();
-  
+
   gridRowHeight = (window.GetHeight() - TOP_OFFSET - BOTTOM_OFFSET) / height;
   gridColWidth = (window.GetWidth() - LEFT_OFFSET - RIGHT_OFFSET) / width;
   top_offset = 50;
@@ -59,9 +59,9 @@ void Level::init (vector<ControlGroup*> c, vector<CellGroup*> u, int w, int h, i
   width = w;
   height = h;
   cyclesPerPeriod = cpp;
-  
+
   updateGrid();
-  
+
   gridRowHeight = (window.GetHeight() - TOP_OFFSET - BOTTOM_OFFSET) / height;
   gridColWidth = (window.GetWidth() - LEFT_OFFSET - RIGHT_OFFSET) / width;
 
@@ -113,7 +113,7 @@ void Level::display ()
 
   drawArrows();
 
-//  drawCycle();
+  drawCycle(0);
 }
 
 void Level::handleInput (Location loc)
@@ -140,18 +140,22 @@ void Level::handleInput (sf::Key::Code keyPressed)
 
 void Level::run ()
 {
-  //commit all movements, doing collision detection and stuff
-  //cycle a certain number of times
-
-  for (int i = 0; i < cyclesPerPeriod; ++i)
+  //Move units and animate CPU cycle
+  for (int i = 0; i < cyclesPerPeriod; i++)
   {
+    //Move units
     for (int j = 0; j < units.size(); ++j)
       units.at(j)->upCycle ();
-
     updateGrid();
     display();
-    window.Display();
-    usleep(100000);
+
+    //Animate CPU cycle
+    for(int offset = 0; offset < 20; offset++)
+    {
+      drawCycle(offset);
+      usleep(40000);
+      window.Display();
+    }
   }
 }
 
@@ -254,7 +258,7 @@ void Level::highlightSelect()
   int vertexXRight;
   int vertexYUp;
   int vertexYDown;
-  
+
   for(vector<Location>::iterator it = groupLocations.begin(); it != groupLocations.end(); it++)
   {
     vertexXLeft = LEFT_OFFSET + it->x * gridColWidth + 3;
@@ -266,7 +270,6 @@ void Level::highlightSelect()
              sf::Color(0, 0, 0, 0), 3, highlightColor);
     window.Draw(square);
   }
-
 }
 
 void Level::drawArrows()
@@ -367,15 +370,115 @@ void Level::drawArrows()
   
 }
 
-/*
-void Level::drawCycle()
-{
-  int lowOffset = BOTTOM_OFFSET / 5;
-  int highOffset = BOTTOM_OFFSET / 5;
 
-  int height = BOTTOM_OFFSET - lowOffset - highOffset;
+void Level::drawCycle(int offset)
+{
+  //Edges of the cycle box
+  int lowEdge = window.GetHeight() - BOTTOM_OFFSET / 5;
+  int highEdge = window.GetHeight() - BOTTOM_OFFSET + BOTTOM_OFFSET / 5;
+
+  //Edges of the cycle
+  int highCycleEdge = highEdge + 20;
+  int lowCycleEdge = lowEdge - 20;
+  int leftCycleEdge = LEFT_OFFSET + 20;
+  int rightCycleEdge = window.GetWidth() - RIGHT_OFFSET - 20;
+
+  //Width and height of one cycle pulse
+  int cycleWidth = lowCycleEdge - highCycleEdge;
+
+  //Number of cycles in the box
+  int numOfCycles = (rightCycleEdge - leftCycleEdge) / cycleWidth / 2 * 2;
+
+  //Whether currently in an upcycle or downcycle
+  bool upCycle = 1;
+
+  if(offset > 9)
+    upCycle = 0;
+
+  sf::Color backgroundColor = sf::Color(0, 0, 0);
+  sf::Color cycleColor = sf::Color(255, 0, 0);
+  sf::Color arrowColor = sf::Color(0, 0, 205, 190);
+
+  window.Draw(sf::Shape::Rectangle(LEFT_OFFSET,
+                                   lowEdge,
+                                   window.GetWidth() - RIGHT_OFFSET,
+                                   highEdge,
+                                   backgroundColor));
+
+  if(upCycle)
+  {
+    //High cycle on the left is disappearing
+    window.Draw(sf::Shape::Line(leftCycleEdge,
+                                highCycleEdge,
+                                leftCycleEdge + cycleWidth - offset * cycleWidth / 10,
+                                highCycleEdge,
+                                4, cycleColor));
+    //High cycle on the right is appearing
+    window.Draw(sf::Shape::Line(leftCycleEdge + cycleWidth * numOfCycles - offset * cycleWidth / 10,
+                                highCycleEdge,
+                                leftCycleEdge + cycleWidth * numOfCycles,
+                                highCycleEdge,
+                                4, cycleColor));
+  }
+  else
+  {
+    //Low cycle on the left is disappearing
+    window.Draw(sf::Shape::Line(leftCycleEdge,
+                                lowCycleEdge,
+                                leftCycleEdge + cycleWidth - (offset - 10) * cycleWidth / 10,
+                                lowCycleEdge,
+                                4, cycleColor));
+    //Low cycle on the right is appearing
+    window.Draw(sf::Shape::Line(leftCycleEdge + cycleWidth * numOfCycles - (offset - 10) * cycleWidth / 10,
+                                lowCycleEdge,
+                                leftCycleEdge + cycleWidth * numOfCycles,
+                                lowCycleEdge,
+                                4, cycleColor));
+  }
+
+  //Draw the up cycles, conditioned for the appearing upper right line
+  for(int count = 2; count < numOfCycles || (!upCycle && count < numOfCycles + 1); count += 2)
+    window.Draw(sf::Shape::Line(leftCycleEdge + cycleWidth * count - offset * cycleWidth / 10,
+                                highCycleEdge,
+                                leftCycleEdge + cycleWidth * (count + 1) - offset * cycleWidth / 10,
+                                highCycleEdge,
+                                4, cycleColor));
+
+  //Draw the down cycles, conditioned for the disappearing lower left line
+  for(int count = numOfCycles - 1; count > 1 || (count > 0 && upCycle); count -= 2)
+    window.Draw(sf::Shape::Line(leftCycleEdge + cycleWidth * count - offset * cycleWidth / 10,
+                                lowCycleEdge,
+                                leftCycleEdge + cycleWidth * (count + 1) - offset * cycleWidth / 10,
+                                lowCycleEdge,
+                                4, cycleColor));
+
+  //Draw the vertical lines, conditioned for the disappearing and appearing lines
+  for(int count = 1; count < numOfCycles + 2; count++)
+    if((upCycle && count < numOfCycles + 1) || (!upCycle && count > 1))
+      window.Draw(sf::Shape::Line(leftCycleEdge + cycleWidth * count - offset * cycleWidth / 10,
+                                  highCycleEdge,
+                                  leftCycleEdge + cycleWidth * count - offset * cycleWidth / 10,
+                                  lowCycleEdge,
+                                  4, cycleColor));
+
+  //Defines a triangle shape in SFML
+  int x1 = ARROW_LENGTH * -0.4;
+  int x2 = ARROW_LENGTH * 0.4;
+  int y1 = -ARROW_HEIGHT * 0.2;
+  int y2 = -ARROW_HEIGHT * 0.5;
+
+  sf::Shape Triangle;
+
+  //The position of the center of the arrow
+  Triangle.SetPosition((leftCycleEdge + rightCycleEdge) / 2, lowEdge + 20);
+
+  //The vertices of the arrow
+  Triangle.AddPoint(x1, y1, arrowColor);
+  Triangle.AddPoint(x2, y1, arrowColor);
+  Triangle.AddPoint((x1 + x2) / 2, y2, arrowColor);
+
+  window.Draw(Triangle);
 }
-*/
 
 void Level::drawBackground()
 {
