@@ -1,5 +1,16 @@
 main=main
-dep=classes/Cell.cpp classes/Bit.cpp classes/Pulser.cpp classes/CellGroup.cpp classes/ControlGroup.cpp classes/UserControlGroup.cpp classes/AIControlGroup.cpp classes/Level.cpp classes/LevelParser.cpp classes/ImageCache.cpp
+dep=    classes/Cell.cpp \
+	classes/CellGroup.cpp \
+	classes/Bit.cpp  \
+	classes/Pulser.cpp \
+	classes/ViralBit.cpp \
+	classes/WhiteBit.cpp \
+	classes/ControlGroup.cpp \
+	classes/UserControlGroup.cpp \
+	classes/AIControlGroup.cpp \
+	classes/Level.cpp \
+	classes/LevelParser.cpp \
+	classes/ImageCache.cpp
 objects=$(dep:.cpp=.o)
 compile=g++ -c
 link=g++

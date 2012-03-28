@@ -1,8 +1,10 @@
 #include "Pulser.h"
 
+using namespace std;
+
 Pulser::Pulser () {}
 
-Pulser::Pulser (vector<Cell> cells) : CellGroup(cells) {
+Pulser::Pulser (vector<Cell> c) : CellGroup(c) {
   for (int i = 0; i < cells.size(); ++i) {
     cells[i].setImage( "pulser_bit.png" );
   }

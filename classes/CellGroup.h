@@ -9,28 +9,26 @@
 #include <vector>
 #include <deque>
 
-using namespace std;
-
 class ControlGroup; //Forward declaration
 
 class CellGroup {
 
  public:
-  CellGroup (vector<Cell> cells);
+  CellGroup (std::vector<Cell> cells);
   CellGroup (Cell cells);
   CellGroup ();
   ~CellGroup ();
 
   virtual void draw ( sf::RenderWindow& screen );
   virtual void move (Direction dir);
-  virtual void handleNeighbors (vector<CellGroup*> neighbors);
+  virtual void handleNeighbors (std::vector<CellGroup*> neighbors);
   virtual void queueStandardMovementOrders (int cycles);
   virtual void issueMovementOrder (Direction dir);
   virtual void removeLastMoveOrder();
   virtual void upCycle   ();
   virtual void downCycle ();
 
-  virtual vector<Location> getLocations (); //returns location or locations in a vector
+  virtual std::vector<Location> getLocations (); //returns location or locations in a vector
   virtual FloatPair        getMiddle ();
   virtual Direction        getMovement(int num);
   virtual int              numOfMovements ();
@@ -41,10 +39,10 @@ class CellGroup {
   ControlGroup* controlGroup;
 
  protected:
-  vector<Cell> cells;
-  vector<Location> locations;
-  vector<Direction> standardMovementOrders;
-  deque<Direction> movementQueue;
+  std::vector<Cell> cells;
+  std::vector<Location> locations;
+  std::vector<Direction> standardMovementOrders;
+  std::deque<Direction> movementQueue;
   int SMOCounter;
 
   // Tracks the current projected destination, starts at the middle of the unit

@@ -6,7 +6,7 @@
 class Pulser : public CellGroup {
   
  public:
-  Pulser (vector<Cell> cells);
+  Pulser (std::vector<Cell> cells);
   Pulser (Cell cell);
   Pulser ();
 
@@ -14,8 +14,8 @@ class Pulser : public CellGroup {
   void queueStandardActionOrders (int cycles);
 
  private:
-  vector<int> standardActionOrders; //1 for pulse, 0 for hold
-  vector<int> actionQueue;
+  std::vector<int> standardActionOrders; //1 for pulse, 0 for hold
+  std::vector<int> actionQueue;
   int SAOCounter;
 
 };

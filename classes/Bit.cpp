@@ -1,6 +1,5 @@
 #include "Bit.h"
 
-#include <iostream>
 using namespace std;
 
 Bit::Bit (vector<Cell> c) : CellGroup (c) { 

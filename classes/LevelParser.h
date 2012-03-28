@@ -22,7 +22,7 @@ class LevelParser {
   LevelParser ();
 
   // File stream
-  static ifstream file;
+  static std::ifstream file;
   // Character that indicates the line is commented
   static char commentChar;
 

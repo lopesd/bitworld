@@ -22,12 +22,12 @@
 class Level {
 
  public:
-  Level (sf::RenderWindow &window, std::vector<ControlGroup*>, std::vector<CellGroup*> units,
+  Level (sf::RenderWindow &window, vector<ControlGroup*>, vector<CellGroup*> units,
          int width=13, int height=9, int cpp=3);
   Level (sf::RenderWindow &window);
   Level (const Level&);
 
-  void init (std::vector<ControlGroup*>, std::vector<CellGroup*> units, int width=13, int height=9, int cpp=3);
+  void init (vector<ControlGroup*>, vector<CellGroup*> units, int width=13, int height=9, int cpp=3);
 
   void display     ();
   void prepareInput(int x, int y, int isRightClick);
@@ -35,21 +35,27 @@ class Level {
   void handleInput (Direction dir);
   void handleInput (sf::Key::Code);
   void run         ();
-  std::vector<CellGroup*> findNeighbors (CellGroup*);
+  vector<CellGroup*> findNeighbors (CellGroup*);
   void drawGrid    ();
   void drawUnits   ();
   void highlightSelect();
 
   void drawArrows  ();
   void drawBackground();
-
-  void drawCycle( int offset );
+<<<<<<< HEAD
+=======
+  void drawUpArrow(int);
+  void drawDownArrow(int);
+  void drawLeftArrow(int);
+  void drawRightArrow(int);
+  void drawCycle(int offset);
+>>>>>>> 8dae6c22305a7548349f93f8959a4961173aee9e
 
  private:
   ControlGroup*                activeGroup;
-  std::vector<ControlGroup*>        controlGroups;
-  std::vector<CellGroup*>           units;
-  std::map<Location, CellGroup*>    grid;
+  vector<ControlGroup*>        controlGroups;
+  vector<CellGroup*>           units;
+  map<Location, CellGroup*>    grid;
   int width, height;
   int cyclesPerPeriod;
 
@@ -60,7 +66,6 @@ class Level {
   void updateGrid();
 
   sf::RenderWindow& window;
-  sf::Sprite backgroundSprite;
 };
 
 #endif

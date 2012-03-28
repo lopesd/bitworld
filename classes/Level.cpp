@@ -10,7 +10,9 @@
 #include <SFML/Graphics.hpp>
 
 #include <iostream> //Remove later
-#include <unistd.h> //For terminal version
+#include <unistd.h> //For usleep function
+
+using namespace std;
 
 #define TOP_OFFSET 50
 #define BOTTOM_OFFSET 200
@@ -43,6 +45,9 @@ Level::Level (sf::RenderWindow &newWindow, vector<ControlGroup*> c, vector<CellG
   for (int i = 0; i < units.size(); ++i) {
     units[i]->setGridData( gridColWidth, gridRowHeight, TOP_OFFSET, LEFT_OFFSET );
   }
+
+  backgroundSprite.SetImage( ImageCache::GetImage("Dark.jpg") );
+  backgroundSprite.Resize(window.GetWidth(), window.GetHeight());
 
 }
 
@@ -101,21 +106,6 @@ void Level::updateGrid () { // Clears and remakes the entire grid
   }
 }
 
-void Level::display ()
-{
-  drawBackground();
-
-  drawGrid();
-
-  drawUnits();
-
-  highlightSelect();
-
-  drawArrows();
-
-  drawCycle(0);
-}
-
 void Level::handleInput (Location loc)
 {
   map<Location, CellGroup*>::iterator clickedUnit = grid.find( loc );
@@ -157,6 +147,20 @@ void Level::run ()
       window.Display();
     }
   }
+}
+
+void Level::display ()
+{
+  window.Clear();
+  drawBackground();
+
+  drawArrows();
+  drawGrid();
+  drawUnits();
+
+  highlightSelect();
+
+  drawCycle(0);
 }
 
 void Level::drawGrid()
@@ -239,36 +243,6 @@ void Level::prepareInput(int x, int y, int isRightClick) {
       }
     }
     
-  }
-}
-
-void Level::highlightSelect()
-{
-  CellGroup* unit = activeGroup->getSelectedUnit();
-  if(unit == 0)
-    return;
-
-  vector<Location> groupLocations = unit->getLocations();
-
-  sf::Color highlightColor = sf::Color(255, 140, 0);
-
-  sf::Shape square;
-
-  int vertexXLeft;
-  int vertexXRight;
-  int vertexYUp;
-  int vertexYDown;
-
-  for(vector<Location>::iterator it = groupLocations.begin(); it != groupLocations.end(); it++)
-  {
-    vertexXLeft = LEFT_OFFSET + it->x * gridColWidth + 3;
-    vertexXRight = LEFT_OFFSET + (it->x + 1) * gridColWidth - 3;
-    vertexYUp = TOP_OFFSET + it->y * gridRowHeight + 3;
-    vertexYDown = TOP_OFFSET + (it->y + 1) * gridRowHeight - 3;
-
-    square = sf::Shape::Rectangle(vertexXLeft, vertexYUp, vertexXRight, vertexYDown,
-             sf::Color(0, 0, 0, 0), 3, highlightColor);
-    window.Draw(square);
   }
 }
 
@@ -480,16 +454,36 @@ void Level::drawCycle(int offset)
   window.Draw(Triangle);
 }
 
-void Level::drawBackground()
+void Level::drawBackground() {
+  window.Draw(backgroundSprite);
+}
+
+void Level::highlightSelect()
 {
-  sf::Image background;
-  if(!background.LoadFromFile("images/background.png"))
+  CellGroup* unit = activeGroup->getSelectedUnit();
+  if(unit == 0)
+    return;
+
+  vector<Location> groupLocations = unit->getLocations();
+
+  sf::Color highlightColor = sf::Color(255, 140, 0);
+
+  sf::Shape square;
+
+  int vertexXLeft;
+  int vertexXRight;
+  int vertexYUp;
+  int vertexYDown;
+
+  for(vector<Location>::iterator it = groupLocations.begin(); it != groupLocations.end(); it++)
   {
-    cout << "Can't load the background." << endl;
+    vertexXLeft = LEFT_OFFSET + it->x * gridColWidth + 3;
+    vertexXRight = LEFT_OFFSET + (it->x + 1) * gridColWidth - 3;
+    vertexYUp = TOP_OFFSET + it->y * gridRowHeight + 3;
+    vertexYDown = TOP_OFFSET + (it->y + 1) * gridRowHeight - 3;
+
+    square = sf::Shape::Rectangle(vertexXLeft, vertexYUp, vertexXRight, vertexYDown,
+             sf::Color(0, 0, 0, 0), 3, highlightColor);
+    window.Draw(square);
   }
-
-  sf::Sprite sBackground(background);
-  sBackground.Resize(window.GetWidth(), window.GetHeight());
-
-  window.Draw(sBackground);
 }

@@ -9,7 +9,7 @@
 class UserControlGroup : public ControlGroup {
 
  public:
-  UserControlGroup (vector<CellGroup*>);
+  UserControlGroup (std::vector<CellGroup*>);
   void handleInput (CellGroup* clickedUnit);
   void handleInput (Direction dir);
   void handleInput (sf::Key::Code);

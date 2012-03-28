@@ -14,7 +14,7 @@ using namespace std;
 map<string, sf::Image> ImageCache::images;
 
 
-// Load all images in the given directory (recursively)
+// Load all images in the given directory (not recursive)
 int ImageCache::LoadFromDirectory ( const char* folder ) {
   
   char filename [256];
@@ -31,7 +31,8 @@ int ImageCache::LoadFromDirectory ( const char* folder ) {
 	strcpy( filename, folder );
 	strcat( filename, ent->d_name ); //get full filename relative to game folder
 	
-	if ( images[ string(ent->d_name) ].LoadFromFile( filename ) ) {
+	if ( images[string(ent->d_name)].LoadFromFile( filename ) ) {
+	  images[string(ent->d_name)].SetSmooth(false);
 	  cout << "IMAGE CACHE: Loaded image " << ent->d_name << endl;
 	} else {
 	  cout << "IMAGE CACHE ERROR: Failed to load image " << ent->d_name << endl;

@@ -140,7 +140,7 @@ Level LevelParser::parse (const char* filename, sf::RenderWindow& window) {
   vector<CellGroup*> unitsVector;
   for ( map<string, CellGroup*>::iterator it = unitsMap.begin(); it != unitsMap.end(); ++it )
     unitsVector.push_back( it->second );
-    
+
   //For now, all units are being placed under user control
   UserControlGroup* user = new UserControlGroup (unitsVector);
   //initialize other groups

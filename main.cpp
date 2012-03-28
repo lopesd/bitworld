@@ -16,14 +16,7 @@
 
 int main (void) {
 
-  sf::Clock clock;
-
-  // SET PARAMETERS, INITIALIZE VARIABLES
-  char       cinp;   // The raw character input in the terminal version
-  int        inp;    // The raw integer input in the terminal version
-  Location   Lorder; // Input interpreted as location
-  Direction  Dorder; // Input interperted as direction
-
+  // DEPRECATED TERMINAL VERSION CODE
   /*
   // INITIALIZE IMAGES AND LEVELS
   Cell cell  ( 5, 6 );
@@ -57,6 +50,9 @@ int main (void) {
   cgv.push_back (&usg);
   */
 
+  sf::Clock clock; //The whole thing crashes if I don't initialize a clock for some reason...
+
+  // INITIALIZE LIBRARIES AND OBJECTS
   sf::RenderWindow window;
   sf::VideoMode nativeResolution = sf::VideoMode::GetDesktopMode();
 
@@ -67,68 +63,12 @@ int main (void) {
     window.Create(sf::VideoMode(1280, 720), "BitWorld", sf::Style::Close,
                   sf::WindowSettings(24, 8, 4));
 
-<<<<<<< HEAD
-  ImageCache::LoadFromDirectory( "./images/" );
+  ImageCache::LoadFromDirectory( "./images/" ); // Initialize image cache
   Level level = LevelParser::parse ("levels/level_T1.bit", window);
-  
-  //Level level (window, cgv, groupVector);
 
-  // INITIAL DRAWING
-/*
-  // MAIN LOOP
-  while (1) {
-
-    // POLL FOR EVENT
-    cout << "Click or direction? [c/d]";
-    cin  >> cinp;
-
-    if (cinp == 'c') {
-      cout << "X: ";
-      cin >> inp;
-      Lorder.x = inp;
-      cout << "Y: ";
-      cin >> inp;
-      Lorder.y = inp;
-      level.handleInput (Lorder);
-    }
-
-    if (cinp == 'd') {
-      cout << "X: ";
-      cin >> inp;
-      Dorder.x = inp;
-      cout << "Y: ";
-      cin >> inp;
-      Dorder.y = inp;
-      level.handleInput (Dorder);
-    }
-
-    if (cinp == 'r') {
-      level.run ();
-    }
-
-    // HANDLE EVENT
-
-    // CYCLE LEVEL EVENTS
-
-    // DISPLAY LEVEL
-  }
-*/
-
-  // Load the Background
-=======
-  LevelParser parser;
-  Level level = parser.parse ("levels/level_T1.bit", window);
-
-  //Load the Background
->>>>>>> 8dae6c22305a7548349f93f8959a4961173aee9e
-  sf::Image background;
-  if(!background.LoadFromFile("images/background.png"))
-  {
-    cout << "Can't load the background." << endl;
-  }
-
-  sf::Sprite sBackground(background);
-  sBackground.Resize(window.GetWidth(), window.GetHeight());
+  // INITIALIZE INPUT VARIABLES
+  Location   Lorder; // Input interpreted as location
+  Direction  Dorder; // Input interperted as direction
 
   // MAIN LOOP
   while (window.IsOpened())
@@ -141,49 +81,48 @@ int main (void) {
       if (Event.Type == sf::Event::Closed)
         window.Close();
 
-      // Escape key pressed
       if (Event.Type == sf::Event::KeyPressed)
-        switch(Event.Key.Code)
-        {
-          case sf::Key::Escape:
-            window.Close();
-            break;
-          case sf::Key::Left:
-            Dorder.x = -1;
-            Dorder.y = 0;
-            level.handleInput(Dorder);
-            break;
-          case sf::Key::Right:
-            Dorder.x = 1;
-            Dorder.y = 0;
-            level.handleInput(Dorder);
-            break;
-          case sf::Key::Up:
-            Dorder.x = 0;
-            Dorder.y = -1;
-            level.handleInput(Dorder);
-            break;
-          case sf::Key::Down:
-            Dorder.x = 0;
-            Dorder.y = 1;
-            level.handleInput(Dorder);
-            break;
-          case sf::Key::Back:
-            level.handleInput(sf::Key::Back);
-            break;
-          case sf::Key::R:
-            level.run();
+        switch(Event.Key.Code) {
+	case sf::Key::Escape:       // Escape key pressed
+	  window.Close();
+	  break;
+	case sf::Key::Left:
+	  Dorder.x = -1;
+	  Dorder.y = 0;
+	  level.handleInput(Dorder);
+	  break;
+	case sf::Key::Right:
+	  Dorder.x = 1;
+	  Dorder.y = 0;
+	  level.handleInput(Dorder);
+	  break;
+	case sf::Key::Up:
+	  Dorder.x = 0;
+	  Dorder.y = -1;
+	  level.handleInput(Dorder);
+	  break;
+	case sf::Key::Down:
+	  Dorder.x = 0;
+	  Dorder.y = 1;
+	  level.handleInput(Dorder);
+	  break;
+	case sf::Key::Back:
+	  level.handleInput(sf::Key::Back);
+	  break;
+	case sf::Key::R:
+	  level.run();
         }
-
+      
       if(Event.Type == sf::Event::MouseButtonReleased)
-        if(Event.MouseButton.Button == sf::Mouse::Left)
-          level.prepareInput(Event.MouseButton.X, Event.MouseButton.Y, 0);
-	else if (Event.MouseButton.Button == sf::Mouse::Right) {
-	  level.prepareInput(Event.MouseButton.X, Event.MouseButton.Y, 1);
+        if(Event.MouseButton.Button == sf::Mouse::Left) //left mouse click
+          level.prepareInput(Event.MouseButton.X, Event.MouseButton.Y, 0); //the 0 flag indicates a left mouse click
+	else if (Event.MouseButton.Button == sf::Mouse::Right) { //right mouse click
+	  level.prepareInput(Event.MouseButton.X, Event.MouseButton.Y, 1); //the 1 flag indicates a right mouse click
 	}
     }
-    level.display ();
-    window.Display();
+
+    level.display (); //Draw level on window
+    window.Display(); //Display window
   }
 
   return 0;

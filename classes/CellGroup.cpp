@@ -2,6 +2,8 @@
 
 #include <iostream> // FOR TESTING
 
+using namespace std;
+
 CellGroup::CellGroup ( vector<Cell> c ) {
   SMOCounter = 0;
   cells = c;

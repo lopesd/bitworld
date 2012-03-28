@@ -3,14 +3,16 @@
 #In this area, three cycles define a period. Visit the gate to open it.
 
 ~GRID
-B2b --- --- --- --- --- --- ;
---- --- --- --- --- --- B4a ;
---- B1a B1c --- --- --- B4b ;
---- B1b --- --- --- --- B4c ;
---- --- --- --- --- --- --- ;
+--- --- --- --- --- K1a --- ;
+--- --- --- --- --- --- G1a ;
+V1a --- --- P1a --- --- G1b ;
+--- --- --- --- --- --- G1c ;
+--- --- B1a --- --- --- --- ;
 
 ~METADATA
 MAP: name:Step_One tag:1 links(2) -tutorial -first;
-B1: -cg-user ;
-B2: ;
-B4: ; tag:1 dest(map:2,gate:1) weight:1 priorities(b);
+V1: ;
+B1: ;
+K1: ;
+P1: -cg-user ;
+G1: ; tag:1 dest(map:2,gate:1) weight:1 priorities(b);

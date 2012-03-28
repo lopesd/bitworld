@@ -1,5 +1,7 @@
 #include "ControlGroup.h"
 
+using namespace std;
+
 ControlGroup::ControlGroup (vector<CellGroup*> u) {
   units = u;
   selectedUnit = 0;
@@ -9,8 +11,7 @@ ControlGroup::ControlGroup (vector<CellGroup*> u) {
   }
 }
 
-CellGroup* ControlGroup::getSelectedUnit()
-{
+CellGroup* ControlGroup::getSelectedUnit() {
   return selectedUnit;
 }
 
