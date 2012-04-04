@@ -19,48 +19,65 @@
 #include <vector>
 #include <map>
 
+class ControlGroup;
+class CellGroup;
+
 class Level {
 
  public:
+  /** CONSTRUCTORS **/
   Level (sf::RenderWindow &window, std::vector<ControlGroup*>, std::vector<CellGroup*> units,
          int width=13, int height=9, int cpp=3);
-  Level (sf::RenderWindow &window);
-  Level (const Level&);
+  Level (const Level& L);
 
-  void init (std::vector<ControlGroup*>, std::vector<CellGroup*> units, int width=13, int height=9, int cpp=3);
+  /** UTITLITY FUNCTIONS **/
+  /* USER INPUT */
+  void prepareInput (int x, int y, int isRightClick);
+  void handleInput  (Location  loc);
+  void handleInput  (Direction dir);
+  void handleInput  (sf::Key::Code);
 
-  void display     ();
-  void prepareInput(int x, int y, int isRightClick);
-  void handleInput (Location  loc);
-  void handleInput (Direction dir);
-  void handleInput (sf::Key::Code);
-  void run         ();
+  /* DRAWING */
+  void display          ();
+  void drawGrid         ();
+  void drawUnits        ();
+  void drawArrows       ();
+  void drawCycle        ( int offset );
+  void drawBackground   ();
+  void highlightSelect  ();
+
+  /* RUNNING */
+  void controlGroupDone ();
+  void runPeriod    ();
+  void runCycle     ();
+  int  willMove    (Location myLoc);
   std::vector<CellGroup*> findNeighbors (CellGroup*);
-  void drawGrid    ();
-  void drawUnits   ();
-  void highlightSelect();
-
-  void drawArrows  ();
-  void drawBackground();
-
-  void drawCycle( int offset );
 
  private:
-  ControlGroup*                activeGroup;
+  /** UNITS, CONTROLGROUPS, GRIDS **/
+  ControlGroup*                     activeGroup;
+  int                               activeGroupIndex;
   std::vector<ControlGroup*>        controlGroups;
   std::vector<CellGroup*>           units;
-  std::map<Location, CellGroup*>    grid;
-  int width, height;
+  std::map<Location, CellGroup*>    doubleBufferGrid [2];  //Double buffered grid
+  std::map<Location, CellGroup*>*   grid;                 //Pointer to reference current grid
+  int future;                                  //Indicates which grid contains info on future positions
+  void resetGrid (); //Reads in data from the units vector and places it in the grid
+
+  /** GRID INFO **/
+  int width, height;   //Size of grid in terms of cells
   int cyclesPerPeriod;
 
-  int top_offset, left_offset, right_offset, bottom_offset;
-  float gridRowHeight;
+  int top_offset, left_offset, right_offset, bottom_offset; //Offset used to draw the grid on the window
+  float gridRowHeight; 
   float gridColWidth;
 
-  void updateGrid();
-
+  /** SFML OBJECTS **/
   sf::RenderWindow& window;
   sf::Sprite backgroundSprite;
+  sf::Sprite highlightSprite;
+  sf::Sprite arrowSprite;
+  sf::Sprite stopSprite;
 };
 
 #endif

@@ -10,6 +10,8 @@ class Pulser : public CellGroup {
   Pulser (Cell cell);
   Pulser ();
 
+  std::string type () {return std::string("Pulser");}
+
   //Pulsers don't handle neighbors, so use default empty neighbor handler
   void queueStandardActionOrders (int cycles);
 

@@ -11,6 +11,8 @@ class Bit : public CellGroup {
   Bit ();
   ~Bit();
 
+  std::string type ();
+
  private:
 
 };

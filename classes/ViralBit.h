@@ -11,6 +11,8 @@ class ViralBit : public CellGroup {
   ViralBit  ();
   ~ViralBit ();
 
+  std::string type () {return std::string("ViralBit");}
+
  private:
 
 };

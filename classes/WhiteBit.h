@@ -11,6 +11,8 @@ class WhiteBit : public CellGroup {
   WhiteBit ();
   ~WhiteBit();
 
+  std::string type () {return std::string("WhiteBit");}
+
  private:
 
 };

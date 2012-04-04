@@ -81,8 +81,8 @@ Location Cell::getGridLocation () {
 }
 
 // Return location on the screen (pixels)
-Location Cell::getScreenLocation () {
-  Location temp = {x, y};
+FloatPair Cell::getScreenLocation () {
+  FloatPair temp = {x, y};
   return temp;
 }
 

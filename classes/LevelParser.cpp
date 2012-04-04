@@ -14,6 +14,7 @@
 
 #include <vector>
 #include <map>
+#include <cstring>
 
 using namespace std;
 
@@ -26,6 +27,7 @@ char LevelParser::commentChar = '#';
 Level LevelParser::parse (const char* filename, sf::RenderWindow& window) {
   enum Macro {METADATA, GRID, EVENT};
   enum Macro macro = GRID;
+  string defaultCg = "AI";
   string token;
 
   map <string, map<char, Cell> > cellsMap;
@@ -116,12 +118,56 @@ Level LevelParser::parse (const char* filename, sf::RenderWindow& window) {
 	  continue;
 	}
 	
-	unitsMap.insert ( pair<string, CellGroup*> ( token.substr(0,token.length()-1), unit ) ); // may be unnecessary for now, but will probably be necessary for events
+	unitsMap[token.substr(0,token.length()-1)] = unit; // may be unnecessary for now, but will probably be necessary for events
 	
 	// MODIFY ATTRIBUTES OF CELL WITH NEXT LINES
 	do {
 	  file >> token;
-	  //do stuff here, do not assume line does not end in ';'
+
+	  // HANDLE FLAGS
+	  if( token[0] == '-' ) { 
+	    if( strcmp(token.c_str(), "-cg") == 0 ) { //-cg sets the next token to the CG name
+	      file >> token;
+	      unit->CGGroupName = token;
+	    }
+
+	    
+	    else if( strcmp(token.c_str(), "-move") == 0 ) { //-move sets the following string of chars to the movement orders
+	      file >> token;
+	      vector<Direction> directions;
+	      Direction temp;
+	      cout << "Token size is " << token.size() << endl;
+	      for( int i = 0; i < token.size(); ++i ) {
+		switch (token[i]) {
+		  case 'u':
+		    temp.x = 0; temp.y = -1;
+		    break;
+		  case 'd':
+		    temp.x = 0; temp.y = 1;
+		    break;
+		  case 'l':
+		    temp.x = -1; temp.y = 0;
+		    break;
+		  case 'r':
+		    temp.x = 1; temp.y = 0;
+		    break;
+		  case 's':
+		    temp.x = 0; temp.y = 0;
+		    break;
+		  }
+		directions.push_back( temp );
+	      }
+	      unit->setSMO( directions );
+	      }
+
+	    
+	  } 
+	  
+	  // NON-FLAGS
+	  else {
+	    //do stuff here, do not assume line does not end in ';'	  
+	  }
+
 	}
 	while ( token[token.length()-1] != ';' ); //while the line is not over
       }
@@ -137,15 +183,22 @@ Level LevelParser::parse (const char* filename, sf::RenderWindow& window) {
   
   // PUT IT ALL TOGETHER
   // This vector contains pointers to all the units
+  vector<CellGroup*> userUnitsVector;
+  vector<CellGroup*> AIUnitsVector;
   vector<CellGroup*> unitsVector;
-  for ( map<string, CellGroup*>::iterator it = unitsMap.begin(); it != unitsMap.end(); ++it )
+  for( map<string, CellGroup*>::iterator it = unitsMap.begin(); it != unitsMap.end(); ++it ) {
     unitsVector.push_back( it->second );
-    
-  //For now, all units are being placed under user control
-  UserControlGroup* user = new UserControlGroup (unitsVector);
-  //initialize other groups
+    if( strcmp(it->second->CGGroupName.c_str(), "user") == 0 )
+      userUnitsVector.push_back( it->second );
+    else
+      AIUnitsVector.push_back( it->second );
+  }
+
+  UserControlGroup* user = new UserControlGroup (userUnitsVector);
+  AIControlGroup*   AI   = new AIControlGroup   (AIUnitsVector);
   
   vector<ControlGroup*> controlGroups;
+  controlGroups.push_back( AI );
   controlGroups.push_back( user );
 
   Level level (window, controlGroups, unitsVector, gridX, gridY);

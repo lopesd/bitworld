@@ -17,10 +17,10 @@ link=g++
 libs=-lsfml-graphics -lsfml-window -lsfml-system
 
 $(main): $(objects) main.cpp
-	$(link) main.cpp $(objects) $(libs) -o $@
+	$(link) -g main.cpp $(objects) $(libs) -o $@
 
 classes/*.o: %.o: %.cpp %.h
-	$(compile) $< -o  $@
+	$(compile) -g $<  -o  $@
 
 clean:
 	rm -rf classes/*~ $(main) $(main).o $(objects)

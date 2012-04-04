@@ -14,6 +14,8 @@
 #include "classes/LevelParser.h"
 #include "classes/ImageCache.h"
 
+using namespace std;
+
 int main (void) {
 
   // DEPRECATED TERMINAL VERSION CODE
@@ -106,11 +108,17 @@ int main (void) {
 	  Dorder.y = 1;
 	  level.handleInput(Dorder);
 	  break;
+	case sf::Key::S:
+	  Dorder.x = 0;
+	  Dorder.y = 0;
+	  level.handleInput(Dorder);
+	  break;
 	case sf::Key::Back:
 	  level.handleInput(sf::Key::Back);
 	  break;
-	case sf::Key::R:
-	  level.run();
+	case sf::Key::Space:
+	  level.handleInput(sf::Key::Space);
+	  break;
         }
       
       if(Event.Type == sf::Event::MouseButtonReleased)

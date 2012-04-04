@@ -34,7 +34,7 @@ class Cell {
 
   // Return location on the grid or location on the screen (pixels)y
   Location getGridLocation ();
-  Location getScreenLocation ();
+  FloatPair getScreenLocation ();
 
  private:
   // Location information

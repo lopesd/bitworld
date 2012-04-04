@@ -15,3 +15,10 @@ CellGroup* ControlGroup::getSelectedUnit() {
   return selectedUnit;
 }
 
+void ControlGroup::setLevel (Level* l) {
+  level = l;
+}
+
+void ControlGroup::clearSelection () {
+  selectedUnit = 0;
+}

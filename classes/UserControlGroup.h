@@ -10,6 +10,8 @@ class UserControlGroup : public ControlGroup {
 
  public:
   UserControlGroup (std::vector<CellGroup*>);
+
+  void startTurn   ();
   void handleInput (CellGroup* clickedUnit);
   void handleInput (Direction dir);
   void handleInput (sf::Key::Code);

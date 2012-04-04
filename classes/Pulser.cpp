@@ -5,6 +5,7 @@ using namespace std;
 Pulser::Pulser () {}
 
 Pulser::Pulser (vector<Cell> c) : CellGroup(c) {
+  weight = 3;
   for (int i = 0; i < cells.size(); ++i) {
     cells[i].setImage( "pulser_bit.png" );
   }
