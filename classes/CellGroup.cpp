@@ -1,3 +1,9 @@
+/** CellGroup.cpp
+ *  A CellGroup is a group of cells (usually one) that defines a single unit.
+ *  It is responsible for drawing and moving its cells. It is the base class for specific kinds of units.
+ *  Written for Bitworld by: David Lopes, Casey O'Meilia, Catherine Carothers, Mark Riehm
+*/
+
 #include "CellGroup.h"
 
 #include <iostream> // FOR TESTING
@@ -26,10 +32,6 @@ CellGroup::CellGroup () {
   SMOCounter = 0;
 }
 
-CellGroup::~CellGroup () {
-
-}
-
 void CellGroup::draw ( sf::RenderWindow& screen ) {
   for (vector<Cell>::iterator i = cells.begin(); i != cells.end(); ++i)
     i->draw( screen );
@@ -49,16 +51,16 @@ void CellGroup::removeLastMoveOrder()
 void CellGroup::handleNeighbors (vector<CellGroup*> neighbors) {}
 
 void CellGroup::move (Direction dir) {
-  for( int i = 0; i < cells.size(); ++i )
-    cells.at(i).move( dir );
+  for( int i = 0; i < cells.size(); ++i ) {
+    cells[i].move( dir );
+    controlGroup->level->requestDeafFrames( cells[i].getMoveCount() );
+  }
 }
 
 void CellGroup::queueStandardMovementOrders () {
   Direction dir;
-  cout << "SMO size " << standardMovementOrders.size() << endl;
   for( int i = 0; i < standardMovementOrders.size(); ++i ) {
     dir = standardMovementOrders[i];
-    cout << "Queueing movement " << dir.x << ", " << dir.y << endl;
     movementQueue.push_back( dir );
     pathHead.x += dir.x;
     pathHead.y += dir.y;
@@ -79,9 +81,9 @@ void CellGroup::upCycle () {
     else
       return; // Do not move if there are no movement orders and the unit is not AI
 
-  if ( freeToMove )
-    for (int i = 0; i < cells.size(); ++i)
-      cells.at( i ).move( movementQueue.front() );
+  if ( freeToMove ) {
+    move( movementQueue.front() );
+  }
   else {
     pathHead.x -= movementQueue.front().x;
     pathHead.y -= movementQueue.front().y;

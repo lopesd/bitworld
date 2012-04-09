@@ -3,6 +3,9 @@
 
 #include <iostream>
 
+enum AnimType {NORMAL, PULSER};
+enum EventType {OPEN, EMPTY};
+
 typedef struct Direction {
   int x, y;
   bool isZero () {return x == 0 && y == 0;}

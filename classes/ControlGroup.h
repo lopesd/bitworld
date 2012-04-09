@@ -30,11 +30,12 @@ class ControlGroup {
   void setLevel (Level* level);
   void clearSelection ();
 
+  Level* level;
+
  protected:
   std::vector<CellGroup*> units;
   CellGroup* selectedUnit;
 
-  Level* level;
 };
 
 #endif

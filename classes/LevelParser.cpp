@@ -8,6 +8,7 @@
 #include "Pulser.h"
 #include "ViralBit.h"
 #include "WhiteBit.h"
+#include "Gate.h"
 #include "UserControlGroup.h"
 #include "AIControlGroup.h"
 #include "Level.h"
@@ -22,17 +23,18 @@ using namespace std;
 ifstream LevelParser::file;
 char LevelParser::commentChar = '#';
 
-
 // Parse text file into level object
-Level LevelParser::parse (const char* filename, sf::RenderWindow& window) {
+Level LevelParser::Parse ( const char* filename, sf::RenderWindow& window ) {
   enum Macro {METADATA, GRID, EVENT};
   enum Macro macro = GRID;
   string defaultCg = "AI";
   string token;
 
   map <string, map<char, Cell> > cellsMap;
-  map <string, CellGroup*> unitsMap;
+  map <string, CellGroup*>       unitsMap;
+  map <string, Gate*>            gatesMap;
   CellGroup* unit;
+  Gate*      gate;
   
   int gridX = 0, gridY = 0; // Keep track of the location on the grid
 
@@ -102,14 +104,26 @@ Level LevelParser::parse (const char* filename, sf::RenderWindow& window) {
 	}
 
 	// CHECK TO SEE WHICH TYPE IT NEEDS TO BE, THEN CREATE AND GET POINTER
-	if      ( token[0] == 'B' || token[0] == 'G' )  // BIT, OR GATE
+	if      ( token[0] == 'B' ) { // BIT, OR GATE
 	  unit = new Bit (cellVector);
-	else if ( token[0] == 'P' ) // PULSER
+	  unitsMap[token.substr(0,token.length()-1)] = unit; // may be unnecessary for now, but will probably be necessary for events
+	}
+	else if ( token[0] == 'P' ) {// PULSER
 	  unit = new Pulser (cellVector);
-	else if ( token[0] == 'V' ) // VIRAL BIT
+	  unitsMap[token.substr(0,token.length()-1)] = unit; // may be unnecessary for now, but will probably be necessary for events
+	}
+	else if ( token[0] == 'V' ) { // VIRAL BIT
 	  unit = new ViralBit (cellVector);
-	else if ( token[0] == 'K' ) // VIRAL BIT
-	  unit = new WhiteBit (cellVector);
+	  unitsMap[token.substr(0,token.length()-1)] = unit; // may be unnecessary for now, but will probably be necessary for events
+	}
+	else if ( token[0] == 'K' ) { // VIRAL BIT
+	  unit = new WhiteBit (cellVector);	  
+	  unitsMap[token.substr(0,token.length()-1)] = unit; // may be unnecessary for now, but will probably be necessary for events
+	}
+	else if ( token[0] == 'G' ) {
+	  gate = new Gate (cellVector);
+	  gatesMap[token.substr(0,token.length()-1)] = gate; // may be unnecessary for now, but will probably be necessary for events
+	}
 	
 	// INVALID UNIT TYPE, SKIP LINE
 	else {
@@ -118,21 +132,21 @@ Level LevelParser::parse (const char* filename, sf::RenderWindow& window) {
 	  continue;
 	}
 	
-	unitsMap[token.substr(0,token.length()-1)] = unit; // may be unnecessary for now, but will probably be necessary for events
-	
 	// MODIFY ATTRIBUTES OF CELL WITH NEXT LINES
 	do {
 	  file >> token;
 
 	  // HANDLE FLAGS
 	  if( token[0] == '-' ) { 
-	    if( strcmp(token.c_str(), "-cg") == 0 ) { //-cg sets the next token to the CG name
+	    
+	    //-cg sets the next token to the CG name
+	    if( strcmp(token.c_str(), "-cg") == 0 ) { 
 	      file >> token;
 	      unit->CGGroupName = token;
 	    }
-
 	    
-	    else if( strcmp(token.c_str(), "-move") == 0 ) { //-move sets the following string of chars to the movement orders
+	    //-move sets the following string of chars to the movement orders
+	    else if( strcmp(token.c_str(), "-move") == 0 ) { 
 	      file >> token;
 	      vector<Direction> directions;
 	      Direction temp;
@@ -158,8 +172,20 @@ Level LevelParser::parse (const char* filename, sf::RenderWindow& window) {
 		directions.push_back( temp );
 	      }
 	      unit->setSMO( directions );
-	      }
+	    }
 
+	    // -weight sets the weight of a gate
+	    else if( strcmp(token.c_str(), "-weight") == 0 ) {
+	      int newWeight;
+	      file >> newWeight;
+	      gate->setWeight( newWeight );
+	    }
+
+	    // -destination sets the destination of a gate
+	    else if( strcmp(token.c_str(), "-destination") == 0 ) {
+	      file >> token;
+	      gate->setDest( token );
+	    }
 	    
 	  } 
 	  
@@ -186,6 +212,7 @@ Level LevelParser::parse (const char* filename, sf::RenderWindow& window) {
   vector<CellGroup*> userUnitsVector;
   vector<CellGroup*> AIUnitsVector;
   vector<CellGroup*> unitsVector;
+  vector<Gate*>      gatesVector;
   for( map<string, CellGroup*>::iterator it = unitsMap.begin(); it != unitsMap.end(); ++it ) {
     unitsVector.push_back( it->second );
     if( strcmp(it->second->CGGroupName.c_str(), "user") == 0 )
@@ -193,7 +220,10 @@ Level LevelParser::parse (const char* filename, sf::RenderWindow& window) {
     else
       AIUnitsVector.push_back( it->second );
   }
-
+  for( map<string, Gate*>::iterator it = gatesMap.begin(); it != gatesMap.end(); ++it ) {
+    gatesVector.push_back( it->second );
+  }
+  
   UserControlGroup* user = new UserControlGroup (userUnitsVector);
   AIControlGroup*   AI   = new AIControlGroup   (AIUnitsVector);
   
@@ -201,7 +231,8 @@ Level LevelParser::parse (const char* filename, sf::RenderWindow& window) {
   controlGroups.push_back( AI );
   controlGroups.push_back( user );
 
-  Level level (window, controlGroups, unitsVector, gridX, gridY);
-  //cout << "width: " << gridX << ", height: " << gridY << endl;
+  Level level (window, controlGroups, unitsVector, gatesVector, gridX, gridY);
+
+  cout << "Returning level!" << endl;
   return level;
 }

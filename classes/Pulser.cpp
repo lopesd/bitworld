@@ -6,8 +6,11 @@ Pulser::Pulser () {}
 
 Pulser::Pulser (vector<Cell> c) : CellGroup(c) {
   weight = 3;
+  vector<string> imgs;
+  imgs.push_back( "pulser_bit2.png" );
+  imgs.push_back( "pulser_center.png" );
   for (int i = 0; i < cells.size(); ++i) {
-    cells[i].setImage( "pulser_bit.png" );
+    cells[i].setImages( imgs, PULSER );
   }
 }
 

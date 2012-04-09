@@ -18,18 +18,25 @@ using namespace std;
 #define ARROW_HEIGHT 50
 #define ARROW_LENGTH 50
 
+extern int FPS;
+
 /** CONSTRUCTORS **/
-Level::Level (sf::RenderWindow &newWindow, vector<ControlGroup*> c, vector<CellGroup*> u,
+Level::Level (sf::RenderWindow &newWindow, vector<ControlGroup*> c, vector<CellGroup*> u, vector<Gate*> g,
               int w, int h, int cpp)
 : window(newWindow)
 {
   controlGroups = c;
-  for( int i = 0; i < c.size(); ++i) // Tell controlGroups to recognize me as their level overlord
-    c[i]->setLevel( this );
+  for( int i = 0; i < controlGroups.size(); ++i ) // Tell controlGroups to recognize me as their level overlord
+    controlGroups[i]->setLevel( this );
   units = u;
+  gates = g;
+  for( int i = 0; i < gates.size(); ++i )
+    gates[i]->level = this;
   width = w;
   height = h;
   cyclesPerPeriod = cpp;
+  cyclesToRun = 0;
+  isDone = 0;
 
   grid = doubleBufferGrid;
   resetGrid();
@@ -46,19 +53,25 @@ Level::Level (sf::RenderWindow &newWindow, vector<ControlGroup*> c, vector<CellG
   top_offset  = center.y - (float)(height)/2*gridRowHeight;
   bottom_offset = window.GetHeight() - top_offset - gridRowHeight*height;
   right_offset = left_offset;
+  //FPS = fps;
+  deafFrames = 0;
 
   for (int i = 0; i < units.size(); ++i)
     units[i]->setGridData( gridColWidth, gridRowHeight, top_offset, left_offset );
+  for (int i = 0; i < gates.size(); ++i)
+    gates[i]->setGridData( gridColWidth, gridRowHeight, top_offset, left_offset );
 
   backgroundSprite.SetImage( ImageCache::GetImage("Dark.jpg") );
   backgroundSprite.Resize( window.GetWidth(), window.GetHeight() );
   highlightSprite.SetImage ( ImageCache::GetImage("blue_transparent.png") );
+  highlightSprite.SetCenter( highlightSprite.GetSize() / 2.f );
   highlightSprite.Resize ( gridColWidth, gridRowHeight );
   arrowSprite.SetImage( ImageCache::GetImage( "arrow2.png" ) );
+  arrowSprite.SetCenter( arrowSprite.GetSize() / 2.f );
   arrowSprite.Resize( gridColWidth, gridRowHeight );
-  arrowSprite.SetCenter( arrowSprite.GetSize() );
   stopSprite.SetImage( ImageCache::GetImage( "stop_diamond.png" ) );
   stopSprite.SetCenter( stopSprite.GetSize() / 2.f );
+  stopSprite.Resize( gridColWidth / 2, gridRowHeight / 2 );
   
   activeGroupIndex = 0;
   activeGroup = controlGroups[0]; // set active group to be the first in the list
@@ -69,6 +82,7 @@ Level::Level (const Level& L) : window(L.window) {
   activeGroupIndex = L.activeGroupIndex;
   controlGroups = L.controlGroups;
   units = L.units;
+  gates = L.gates;
   doubleBufferGrid[1] = L.doubleBufferGrid[1];
   doubleBufferGrid[0] = L.doubleBufferGrid[0];
   grid = doubleBufferGrid;
@@ -76,9 +90,13 @@ Level::Level (const Level& L) : window(L.window) {
   width = L.width; 
   height = L.height;
   cyclesPerPeriod = L.cyclesPerPeriod;
+  cyclesToRun = L.cyclesToRun;
+  isDone = 0;
 
   for( int i = 0; i < controlGroups.size(); ++i) // Tell controlGroups to recognize me as their level overlord
     controlGroups[i]->setLevel( this );
+  for( int i = 0; i < gates.size(); ++i )
+    gates[i]->level = this;
 
   top_offset = L.top_offset; 
   left_offset = L.left_offset;
@@ -86,15 +104,27 @@ Level::Level (const Level& L) : window(L.window) {
   bottom_offset = L.bottom_offset;
   gridRowHeight = L.gridRowHeight;
   gridColWidth = L.gridColWidth;
+  deafFrames = L.deafFrames;
 
   /** SFML OBJECTS **/
   backgroundSprite = L.backgroundSprite;
   highlightSprite = L.highlightSprite;
   arrowSprite = L.arrowSprite;
   stopSprite = L.stopSprite;
-  stopSprite.Resize( gridColWidth/2, gridRowHeight/2 );
 
   activeGroup = controlGroups[activeGroupIndex];
+}
+
+void Level::destroy () {
+  for( int i = 0; i < units.size(); ++i ) {
+    delete units[i];
+  }
+  for( int i = 0; i < controlGroups.size(); ++i ) {
+    delete controlGroups[i];
+  }
+  for( int i = 0; i < gates.size(); ++i ) {
+    delete gates[i];
+  }
 }
 
 void Level::resetGrid () { // Clears and remakes the entire grid
@@ -136,7 +166,7 @@ void Level::prepareInput(int x, int y, int isRightClick) {
 
       if ( ((xdir == 1 || xdir == -1) && ydir == 0) || 
 	   ((ydir == 1 || ydir == -1) && xdir == 0) ||
-	   (xdir == 0 || ydir == 0) ) {
+	    (xdir == 0 && ydir ==  0) ) {
 	Dorder.x = Lorder.x - middle.x;
 	Dorder.y = Lorder.y - middle.y;
 	handleInput(Dorder);
@@ -147,6 +177,9 @@ void Level::prepareInput(int x, int y, int isRightClick) {
 }
 
 void Level::handleInput (Location loc) {
+
+  if( deafFrames ) return;
+
   map<Location, CellGroup*>::iterator clickedUnit = grid[0].find( loc );
 
   if (clickedUnit != grid[0].end() ) {
@@ -159,10 +192,12 @@ void Level::handleInput (Location loc) {
 }
 
 void Level::handleInput (Direction dir) {
+  if( deafFrames ) return;
   activeGroup->handleInput (dir);
 }
 
 void Level::handleInput (sf::Key::Code keyPressed) {
+  if( deafFrames ) return;
   activeGroup->handleInput (keyPressed);
 }
 
@@ -181,31 +216,37 @@ void Level::controlGroupDone () {
 }
 
 void Level::runPeriod () {
+
+  cyclesToRun = cyclesPerPeriod;
+
+  /*
   //Move units and animate CPU cycle
   for (int i = 0; i < cyclesPerPeriod; i++) {
-      //Move units
+    //Move units
+    cout << "Cycles left: " << i << endl;
     runCycle();
     display();
-    
+
+    /*
     //Animate CPU cycle
     for(int offset = 0; offset < 20; offset++) {
-	drawCycle(offset);
-	usleep(40000);
-	window.Display();
-      }
-  }
+      drawCycle(offset);
+      usleep(40000);
+      window.Display();
+    }    
+    
+  }*/
 }
 
 void Level::runCycle () {  
-  cout << "RUNNING A CYCLE" << endl;
   Location fLoc;
   Direction tempDir;
   vector<Location> locs;
 
-  // UPDATE THE FUTURE GRID
+  // COLLISION DETECTION
   for( int i = 0; i < units.size(); ++i) { //For every unit
     locs =    units[i]->getLocations();
-    tempDir = units[i]->getMovement(0);     // Get my next desired movement
+    tempDir = units[i]->getMovement(0);     //Get my next desired movement
     
     for( int j = 0; j < locs.size(); ++j) {  //For every piece of that unit
       // IF THE CELL WISHES TO STAY PUT
@@ -274,11 +315,27 @@ void Level::runCycle () {
   grid[0].clear(); //Clear old grid
   grid = grid + future;
   future = -future;
+
+  // HIGH CYCLES
+  Event ev;
+  for( int i = 0; i < gates.size(); ++i ) {
+    ev = gates[i]->highCycle();
+    if( ev.type == OPEN ) {
+      isDone = 1;
+      cout << "Is done!" << endl;
+      Gate* temp = (Gate*)ev.sender;
+      destination = temp->destination();
+    }
+  }
+
+  // DOWN CYCLES (NEGATIVE EDGE OF CLOCK)
+  for( int i = 0; i < units.size(); ++i )
+    units[i]->downCycle();
 }
 
 //Recursive checking if the unit currently at myLoc will move (eg. no head-on collision)
 int Level::willMove ( Location myLoc ) {
-  if( grid[0].find( myLoc ) == grid[0].end() ) cout << "could not find myLoc" << endl;
+  if( grid[0].find( myLoc ) == grid[0].end() ) cout << "could not find myLoc. OH SHIT SEGFAULT" << endl;
   Direction myDir = grid[0][myLoc]->getMovement(0);
   Location fLoc = myLoc + myDir; //My desired future location
   if( (fLoc.x < 0) || (fLoc.y < 0) || (fLoc.x >= width) || (fLoc.y >= height) ) return 0; //Future position is off grid; do not move
@@ -293,11 +350,19 @@ int Level::willMove ( Location myLoc ) {
 
 /* DRAWING */
 void Level::display () {
-  window.Clear();
+
+  // deafFrames is how long the level will ignore user input. We decrease the count by 1 each frame.
+  if( deafFrames ) --deafFrames;
+  if( deafFrames == 0 && cyclesToRun != 0 && !isDone ) { // if no more deafFrames, we run a cycle if we must
+    --cyclesToRun;
+    runCycle();
+  }
+
   drawBackground();
 
   drawGrid();
   highlightSelect();
+  drawGates();
   drawArrows();
   drawUnits();
 
@@ -353,6 +418,11 @@ void Level::drawGrid() {
 void Level::drawUnits() {
   for (int i = 0; i < units.size(); ++i)
     units[i]->draw( window );
+}
+
+void Level::drawGates() {
+  for( int i = 0; i < gates.size(); ++i )
+    gates[i]->draw( window );
 }
 
 void Level::drawArrows()
@@ -445,9 +515,9 @@ void Level::drawArrows()
       window.Draw( arrowSprite );
       arrowSprite.Move( gridColWidth/2, 0 );
     }
+    // Stopped
     else if ( unit->getMovement(i).isZero() ) {
       stopSprite.SetPosition( arrowSprite.GetPosition() );
-      //stopSprite.Resize( gridColWidth/2, gridRowHeight/2 );
       window.Draw( stopSprite );
     }
   }
@@ -570,14 +640,39 @@ void Level::drawBackground() {
 
 void Level::highlightSelect() {
 
-  CellGroup* unit = activeGroup->getSelectedUnit();
-  if(unit == 0)
-    return;
-
-  vector<FloatPair> groupLocations = unit->getScreenLocations();
-
-  for (int i = 0; i < groupLocations.size(); ++i) {
-    highlightSprite.SetPosition( groupLocations[i].x, groupLocations[i].y );
-    window.Draw( highlightSprite );
+  if( !deafFrames ) {
+    CellGroup* unit = activeGroup->getSelectedUnit();
+    if(unit == 0)
+      return;
+    
+    vector<FloatPair> groupLocations = unit->getScreenLocations();
+    
+    for (int i = 0; i < groupLocations.size(); ++i) {
+      highlightSprite.SetPosition( groupLocations[i].x, groupLocations[i].y );
+      window.Draw( highlightSprite );
+    }
   }
+
+}
+
+void Level::requestDeafFrames( int requestedAmount ) {
+  if( deafFrames < requestedAmount)
+    deafFrames = requestedAmount;
+}
+
+/** ACCESSORS **/
+CellGroup* Level::unitAtLocation ( Location loc ) {
+  if( grid[0].find( loc) != grid[0].end() ) 
+    return grid[0][loc];
+  else
+    return 0;
+}
+
+string Level::nextLevel () {
+  return destination;
+}
+
+int Level::done () {
+  if( deafFrames ) return 0; // Level is not complete until animations finish
+  return isDone;
 }

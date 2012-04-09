@@ -1,5 +1,7 @@
 #define FULLSCREEN 0
 
+int FPS = 30;
+
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
@@ -56,6 +58,8 @@ int main (void) {
 
   // INITIALIZE LIBRARIES AND OBJECTS
   sf::RenderWindow window;
+  window.SetFramerateLimit( FPS );
+  window.UseVerticalSync( true );
   sf::VideoMode nativeResolution = sf::VideoMode::GetDesktopMode();
 
   if(FULLSCREEN)
@@ -66,11 +70,14 @@ int main (void) {
                   sf::WindowSettings(24, 8, 4));
 
   ImageCache::LoadFromDirectory( "./images/" ); // Initialize image cache
-  Level level = LevelParser::parse ("levels/level_T1.bit", window);
+  Level* level = new Level( LevelParser::Parse ("levels/level_T1.bit", window) );
 
   // INITIALIZE INPUT VARIABLES
   Location   Lorder; // Input interpreted as location
   Direction  Dorder; // Input interperted as direction
+
+  sf::Sprite test( ImageCache::GetImage("simple_bit.png") );
+  float rotation = 0;
 
   // MAIN LOOP
   while (window.IsOpened())
@@ -91,47 +98,57 @@ int main (void) {
 	case sf::Key::Left:
 	  Dorder.x = -1;
 	  Dorder.y = 0;
-	  level.handleInput(Dorder);
+	  level->handleInput(Dorder);
 	  break;
 	case sf::Key::Right:
 	  Dorder.x = 1;
 	  Dorder.y = 0;
-	  level.handleInput(Dorder);
+	  level->handleInput(Dorder);
 	  break;
 	case sf::Key::Up:
 	  Dorder.x = 0;
 	  Dorder.y = -1;
-	  level.handleInput(Dorder);
+	  level->handleInput(Dorder);
 	  break;
 	case sf::Key::Down:
 	  Dorder.x = 0;
 	  Dorder.y = 1;
-	  level.handleInput(Dorder);
+	  level->handleInput(Dorder);
 	  break;
 	case sf::Key::S:
 	  Dorder.x = 0;
 	  Dorder.y = 0;
-	  level.handleInput(Dorder);
+	  level->handleInput(Dorder);
 	  break;
 	case sf::Key::Back:
-	  level.handleInput(sf::Key::Back);
+	  level->handleInput(sf::Key::Back);
 	  break;
 	case sf::Key::Space:
-	  level.handleInput(sf::Key::Space);
+	  level->handleInput(sf::Key::Space);
 	  break;
         }
       
       if(Event.Type == sf::Event::MouseButtonReleased)
         if(Event.MouseButton.Button == sf::Mouse::Left) //left mouse click
-          level.prepareInput(Event.MouseButton.X, Event.MouseButton.Y, 0); //the 0 flag indicates a left mouse click
+          level->prepareInput(Event.MouseButton.X, Event.MouseButton.Y, 0); //the 0 flag indicates a left mouse click
 	else if (Event.MouseButton.Button == sf::Mouse::Right) { //right mouse click
-	  level.prepareInput(Event.MouseButton.X, Event.MouseButton.Y, 1); //the 1 flag indicates a right mouse click
+	  level->prepareInput(Event.MouseButton.X, Event.MouseButton.Y, 1); //the 1 flag indicates a right mouse click
 	}
     }
 
-    level.display (); //Draw level on window
+    if( level->done() ) {
+      cout << "Level is done and the new level should be " << level->nextLevel () << endl;
+      string newLevel = level->nextLevel();
+      Level* nextLevel = new Level( LevelParser::Parse( newLevel.c_str(), window) );
+      level->destroy();
+      level = nextLevel;
+    }
+
+    window.Clear();
+    
+    level->display(); //Draw level on window
     window.Display(); //Display window
   }
-
+    
   return 0;
 }

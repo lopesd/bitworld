@@ -29,12 +29,14 @@ class Cell {
   // Privately store the measurements of the grid. Should be called when Cell is passed to a Level object
   void setGridData ( int width, int height, int top_offset, int left_offset );
   // Update image. Image must be loaded in the ImageCache beforehand
-  void setImage ( std::string imageName );
-  void setImage ( const char* imageName );
+  void setImage  ( std::string imageName );
+  void setImage  ( const char* imageName );
+  void setImages ( std::vector<std::string>, AnimType = NORMAL );
 
   // Return location on the grid or location on the screen (pixels)y
   Location getGridLocation ();
   FloatPair getScreenLocation ();
+  int getMoveCount ();
 
  private:
   // Location information
@@ -44,9 +46,14 @@ class Cell {
   // Grid information, stored locally, used for drawing
   float width, height, top_offset, left_offset;
 
-  // Image name and SFML sprite object
-  std::string imageName;
+  // Image and animation stuff
+  FloatPair animIncrement;
+  int moveCount;
+  AnimType animType;
+  int stillAnimCount, imageIndex;
+  std::vector<std::string> imageNames;
   sf::Sprite sprite;
+  sf::Sprite sprite2;
 
 };
 

@@ -1,3 +1,10 @@
+/** CellGroup.h
+ *  A CellGroup is a group of cells (usually one) that defines a single unit.
+ *  It is responsible for drawing and moving its cells. It is the base class for specific kinds of units.
+ *  Written for Bitworld by: David Lopes, Casey O'Meilia, Catherine Carothers, Mark Riehm
+*/
+
+
 #ifndef CELLGROUP_H
 #define CELLGROUP_H
 
@@ -18,7 +25,6 @@ class CellGroup {
   CellGroup (std::vector<Cell> cells);
   CellGroup (Cell cells);
   CellGroup ();
-  ~CellGroup ();
 
   //CONTROL FUNCTIONS
   virtual void draw ( sf::RenderWindow& screen );
