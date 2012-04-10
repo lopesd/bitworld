@@ -7,11 +7,10 @@ class WhiteBit : public CellGroup {
 
  public:
   WhiteBit (std::vector<Cell> cells);
-  WhiteBit (Cell cell);
-  WhiteBit ();
-  ~WhiteBit();
 
   std::string type () {return std::string("WhiteBit");}
+  
+  void dropResistance ( int n ) {}; //Override the drop resistance function so the white bit cannot be corrupted
 
  private:
 

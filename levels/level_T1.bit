@@ -19,7 +19,8 @@ V1a --- --- P1a --- --- G1b --- ;
 ~METADATA
 MAP: name:Step_One tag:1 links(2) -tutorial -first ;
 V1: -cg user ;
-B1: -move rl ;
-K1: -move llr ;
-P1: -move sdu ;
-G1: ; tag:1 dest(map:2,gate:1) weight:1 priorities(b) ;
+B1: -move udu ;
+K1: -move lrl ;
+P1: -move usd ;
+G1: -weight 3 -destination levels/level_T2.bit ; 
+tag:1 dest(map:2,gate:1) weight:1 priorities(b) ;

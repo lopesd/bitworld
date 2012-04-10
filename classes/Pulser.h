@@ -7,8 +7,6 @@ class Pulser : public CellGroup {
   
  public:
   Pulser (std::vector<Cell> cells);
-  Pulser (Cell cell);
-  Pulser ();
 
   std::string type () {return std::string("Pulser");}
 

@@ -1,23 +1,34 @@
+#ifndef EVENT_H
+#define EVENT_H
+
 #include "structures.h"
 #include "CellGroup.h"
 #include "Level.h"
+#include "Gate.h"
 #include <vector>
 
 class Level;
 class CellGroup; //Forward declarations
+class Gate;
 
 class Event {
-  
+
  public:
-  static enum Type {PULSE, DIE, OPEN};
-
-  Event( std::vector<Location> locs, enum Type type, CellGroup* sender );
+  Event( EventType type = EMPTY, void* sender = 0 );
+  Event( EventType type, void* sender, std::vector<Location> locations );
+  Event( EventType type, void* sender, std::vector<CellGroup*> units );
   
-  void send( Level* receiver );
+  Event( const Event& );
 
- private:
+  EventType type;
+  void* sender;
   std::vector<Location> locations;
-  enum Type type;
-  CellGroup* sender;
+  std::vector<CellGroup*> units;
+  
+ private:
+  int ID; // for debugging. each event has a unique ID number
+  static int IDCount;
 
 };
+
+#endif

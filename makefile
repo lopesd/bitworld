@@ -1,10 +1,12 @@
 main=main
 dep=    classes/Cell.cpp \
 	classes/CellGroup.cpp \
+	classes/Event.cpp \
 	classes/Bit.cpp  \
 	classes/Pulser.cpp \
 	classes/ViralBit.cpp \
 	classes/WhiteBit.cpp \
+	classes/Gate.cpp \
 	classes/ControlGroup.cpp \
 	classes/UserControlGroup.cpp \
 	classes/AIControlGroup.cpp \

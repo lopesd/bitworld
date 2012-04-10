@@ -40,3 +40,9 @@ void UserControlGroup::toggleSelection (CellGroup* unit) {
   else
     selectedUnit = unit;
 }
+
+void UserControlGroup::take ( CellGroup* unitToTake ) {
+  ControlGroup::take( unitToTake );
+  unitToTake->setSMO( vector<Direction>() );
+  unitToTake->clearMovementQueue();
+}

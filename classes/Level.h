@@ -10,6 +10,8 @@
 
 #include "ControlGroup.h"
 #include "CellGroup.h"
+#include "Event.h"
+#include "Gate.h"
 #include "ImageCache.h"
 #include "structures.h"
 
@@ -21,37 +23,50 @@
 
 class ControlGroup;
 class CellGroup;
+class Gate;
 
 class Level {
 
  public:
   /** CONSTRUCTORS **/
-  Level (sf::RenderWindow &window, std::vector<ControlGroup*>, std::vector<CellGroup*> units,
+  Level (sf::RenderWindow &window, std::vector<ControlGroup*>, std::vector<CellGroup*>, std::vector<Gate*>,
          int width=13, int height=9, int cpp=3);
   Level (const Level& L);
 
-  /** UTITLITY FUNCTIONS **/
+  void destroy (); // A "custom destructor" -- deletes everything that the level points to
+
+  /** UTILITY FUNCTIONS **/
   /* USER INPUT */
   void prepareInput (int x, int y, int isRightClick);
   void handleInput  (Location  loc);
   void handleInput  (Direction dir);
   void handleInput  (sf::Key::Code);
 
+  /* RUNNING */
+  void controlGroupDone ();
+  void runPeriod    ();
+  void runCycle     ();
+  int  willMove     ( Location myLoc );
+  void handleMerge  ( CellGroup*, CellGroup*, Location );
+  void killUnit     ( CellGroup* unitToDie );
+  std::vector<CellGroup*> findNeighbors (CellGroup*);
+
   /* DRAWING */
-  void draw             (int cycleOffset);
+  void draw             ();
   void drawGrid         ();
   void drawUnits        ();
+  void drawGates        ();
   void drawArrows       ();
   void drawCycle        ( int offset );
   void drawBackground   ();
   void highlightSelect  ();
 
-  /* RUNNING */
-  void controlGroupDone ();
-  void runPeriod    ();
-  void runCycle     ();
-  int  willMove    (Location myLoc);
-  std::vector<CellGroup*> findNeighbors (CellGroup*);
+  void requestDeafFrames (int amount);
+
+  /* ACCESSORS */
+  CellGroup* unitAtLocation ( Location );
+  std::string nextLevel     ();
+  int done ();
 
   /* GET--SET */
   int getTopOffset();
@@ -66,6 +81,9 @@ class Level {
   int                               activeGroupIndex;
   std::vector<ControlGroup*>        controlGroups;
   std::vector<CellGroup*>           units;
+  std::vector<Gate*>                gates;
+  std::vector<Event>                events;
+  std::vector<CellGroup*>           unitsToDie;
   std::map<Location, CellGroup*>    doubleBufferGrid [2];  //Double buffered grid
   std::map<Location, CellGroup*>*   grid;                 //Pointer to reference current grid
   int future;                                  //Indicates which grid contains info on future positions
@@ -74,12 +92,19 @@ class Level {
   /** GRID INFO **/
   int width, height;   //Size of grid in terms of cells
   int cyclesPerPeriod;
+  int cyclesToRun;
 
   int top_offset, left_offset, right_offset, bottom_offset; //Offset used to draw the grid on the window
   float gridRowHeight;
   float gridColWidth;
 
-  /** SFML OBJECTS **/
+  /** COMPLETION INFO **/
+  int isDone;
+  std::string destination;
+
+  /** SFML OBJECTS AND ANIMATION STUFF **/
+  int deafFrames; //The amount of frames to ignore input
+  int cycleOffset; //The offset for the CPU cycle animation
   sf::RenderWindow& window;
   sf::Sprite backgroundSprite;
   sf::Sprite highlightSprite;

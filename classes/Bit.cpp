@@ -9,8 +9,4 @@ Bit::Bit (vector<Cell> c) : CellGroup (c) {
   }
 }
 
-Bit::Bit (Cell cell) : CellGroup (cell) {}
-
-Bit::~Bit () {}
-
 string Bit::type () {return string("Bit");}

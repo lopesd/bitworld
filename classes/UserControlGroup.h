@@ -16,6 +16,8 @@ class UserControlGroup : public ControlGroup {
   void handleInput (Direction dir);
   void handleInput (sf::Key::Code);
 
+  void take ( CellGroup* unitTotake );
+
  private:
   void toggleSelection (CellGroup* unit);
 };

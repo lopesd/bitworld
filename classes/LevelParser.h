@@ -7,6 +7,7 @@
 #define LEVELPARSER_H
 
 #include <fstream>
+#include <string>
 
 #include "Cell.h"
 #include "Level.h"
@@ -17,7 +18,7 @@ class LevelParser {
 
  public:
   // Parse text file into level object
-  static Level parse (const char* filename, sf::RenderWindow& window);
+  static Level Parse (const char* filename, sf::RenderWindow& window);
   static vector<string> getInfoText(string filename);
 
  private:

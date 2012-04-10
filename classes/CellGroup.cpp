@@ -1,35 +1,31 @@
+/** CellGroup.cpp
+ *  A CellGroup is a group of cells (usually one) that defines a single unit.
+ *  It is responsible for drawing and moving its cells. It is the base class for specific kinds of units.
+ *  Written for Bitworld by: David Lopes, Casey O'Meilia, Catherine Carothers, Mark Riehm
+*/
+
 #include "CellGroup.h"
 
 #include <iostream> // FOR TESTING
 
 using namespace std;
 
+/** CONSTRUCTORS **/
 CellGroup::CellGroup ( vector<Cell> c ) {
   freeToMove = 1;
   SMOCounter = 0;
   cells = c;
   controlGroup = 0;
+  maxResistance = 1;
+  resistance = maxResistance;
+  resistanceDropped = 0;
   pathHead = getMiddle();
   CGGroupName = "AI"; // Default ControlGroup, used for level parsing
+  for (int i = 0; i < cells.size(); i++)
+    locations.push_back( cells.at(i).getGridLocation() );
 }
 
-CellGroup::CellGroup ( Cell c ) {
-  freeToMove = 1;
-  SMOCounter = 0;
-  cells.push_back( c );
-  controlGroup = 0;
-  pathHead = getMiddle();
-  CGGroupName = "AI"; // Default ControlGroup, used for level parsing
-}
-
-CellGroup::CellGroup () {
-  SMOCounter = 0;
-}
-
-CellGroup::~CellGroup () {
-
-}
-
+/** UTILITY FUNCTIONS **/
 void CellGroup::draw ( sf::RenderWindow& screen ) {
   for (vector<Cell>::iterator i = cells.begin(); i != cells.end(); ++i)
     i->draw( screen );
@@ -49,19 +45,20 @@ void CellGroup::removeLastMoveOrder()
 void CellGroup::handleNeighbors (vector<CellGroup*> neighbors) {}
 
 void CellGroup::move (Direction dir) {
-  for( int i = 0; i < cells.size(); ++i )
-    cells.at(i).move( dir );
+  for( int i = 0; i < cells.size(); ++i ) {
+    cells[i].move( dir );
+    controlGroup->level->requestDeafFrames( cells[i].getMoveCount() );
+  }
+  locations.clear();
+  for (int i = 0; i < cells.size(); i++)
+    locations.push_back( cells.at(i).getGridLocation() );
 }
 
 void CellGroup::queueStandardMovementOrders () {
   Direction dir;
-  cout << "SMO size " << standardMovementOrders.size() << endl;
   for( int i = 0; i < standardMovementOrders.size(); ++i ) {
     dir = standardMovementOrders[i];
-    cout << "Queueing movement " << dir.x << ", " << dir.y << endl;
-    movementQueue.push_back( dir );
-    pathHead.x += dir.x;
-    pathHead.y += dir.y;
+    issueMovementOrder( dir );
   }
 }
 
@@ -73,15 +70,13 @@ void CellGroup::issueMovementOrder ( Direction dir ) {
 
 // MOVEMENT OCCURS ON THE UPCYCLE
 void CellGroup::upCycle () {
-  if( movementQueue.empty() ) //If there are no queued movements
-    if( standardMovementOrders.size() > 0 ) //If the unit has standard orders to follow (e.g. is AI)
-      queueStandardMovementOrders();        //queue them
-    else
-      return; // Do not move if there are no movement orders and the unit is not AI
+  // If no queued orders...
+  if( movementQueue.empty() )
+    return;
 
-  if ( freeToMove )
-    for (int i = 0; i < cells.size(); ++i)
-      cells.at( i ).move( movementQueue.front() );
+  if ( freeToMove ) {
+    move( movementQueue.front() );
+  }
   else {
     pathHead.x -= movementQueue.front().x;
     pathHead.y -= movementQueue.front().y;
@@ -89,18 +84,22 @@ void CellGroup::upCycle () {
   freeToMove = 1;
 
   movementQueue.pop_front();
-  if( movementQueue.empty() ) //If there are no queued movements
+  // Check to see if we have exhausted our movement orders...
+  if( movementQueue.empty() ) 
     if( standardMovementOrders.size() > 0 ) //If the unit has standard orders to follow (e.g. is AI)
       queueStandardMovementOrders();        //queue them  
+
+  resetResistance();
 }
 
-void CellGroup::downCycle () {}
+// events occur on the downcycle. should be overloaded for classes that have events.
+Event CellGroup::downCycle () {
+  Event e;
+  return e; //return empty event
+}
 
+/** ACCESSORS **/
 vector<Location> CellGroup::getLocations () {
-  locations.clear();
-  for (int i = 0; i < cells.size(); i++)
-    locations.push_back( cells.at(i).getGridLocation() );
-
   return locations;
 }
 
@@ -144,13 +143,23 @@ FloatPair CellGroup::getMiddle () {
   return middle;
 }
 
+int CellGroup::getResistance () {
+  return resistance;
+}
+
 int CellGroup::numOfMovements() {
   return movementQueue.size();
 }
 
+/** MUTATORS **/
 void CellGroup::setSMO ( vector<Direction> m ) {
   standardMovementOrders = m;
   queueStandardMovementOrders();
+}
+
+void CellGroup::clearMovementQueue () {
+  movementQueue.clear();
+  pathHead = getMiddle();
 }
 
 void CellGroup::setGridData (int w, int h, int t, int l) {
@@ -161,4 +170,18 @@ void CellGroup::setGridData (int w, int h, int t, int l) {
 
 void CellGroup::setFreeToMove (int f) {
   freeToMove = f;
+}
+
+void CellGroup::dropResistance ( int n ) {
+  resistance -= n;
+  resistanceDropped = 1;
+}
+
+void CellGroup::resetResistance () {
+  if( !resistanceDropped ) resistance = maxResistance;
+  resistanceDropped = 0;
+}
+
+void CellGroup::setMaxResistance (int n) {
+  maxResistance = resistance = n;
 }
