@@ -10,7 +10,8 @@ dep=    classes/Cell.cpp \
 	classes/AIControlGroup.cpp \
 	classes/Level.cpp \
 	classes/LevelParser.cpp \
-	classes/ImageCache.cpp
+	classes/ImageCache.cpp \
+        classes/InfoBox.cpp
 objects=$(dep:.cpp=.o)
 compile=g++ -c
 link=g++

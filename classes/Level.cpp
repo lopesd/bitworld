@@ -5,7 +5,7 @@
  *  Written for Bitworld by: David Lopes, Casey O'Meilia, Catherine Carothers, Mark Riehm
 */
 
-#include "Level.h"
+#include "InfoBox.h"
 
 #include <SFML/Graphics.hpp>
 
@@ -41,7 +41,7 @@ Level::Level (sf::RenderWindow &newWindow, vector<ControlGroup*> c, vector<CellG
   center.y = (float)(window.GetHeight())/3;
   gridRowHeight = 50;
   gridColWidth  = 50;
-  
+
   left_offset = center.x - (float)(width)/2*gridColWidth;
   top_offset  = center.y - (float)(height)/2*gridRowHeight;
   bottom_offset = window.GetHeight() - top_offset - gridRowHeight*height;
@@ -59,7 +59,7 @@ Level::Level (sf::RenderWindow &newWindow, vector<ControlGroup*> c, vector<CellG
   arrowSprite.SetCenter( arrowSprite.GetSize() );
   stopSprite.SetImage( ImageCache::GetImage( "stop_diamond.png" ) );
   stopSprite.SetCenter( stopSprite.GetSize() / 2.f );
-  
+
   activeGroupIndex = 0;
   activeGroup = controlGroups[0]; // set active group to be the first in the list
   activeGroup->startTurn();
@@ -73,14 +73,14 @@ Level::Level (const Level& L) : window(L.window) {
   doubleBufferGrid[0] = L.doubleBufferGrid[0];
   grid = doubleBufferGrid;
   future = L.future;
-  width = L.width; 
+  width = L.width;
   height = L.height;
   cyclesPerPeriod = L.cyclesPerPeriod;
 
   for( int i = 0; i < controlGroups.size(); ++i) // Tell controlGroups to recognize me as their level overlord
     controlGroups[i]->setLevel( this );
 
-  top_offset = L.top_offset; 
+  top_offset = L.top_offset;
   left_offset = L.left_offset;
   right_offset = L.right_offset;
   bottom_offset = L.bottom_offset;
@@ -130,11 +130,11 @@ void Level::prepareInput(int x, int y, int isRightClick) {
     if (unit) {
       Direction Dorder;
       FloatPair middle = unit->getPathHead();
-      
+
       int xdir = middle.x - Lorder.x;
       int ydir = middle.y - Lorder.y;
 
-      if ( ((xdir == 1 || xdir == -1) && ydir == 0) || 
+      if ( ((xdir == 1 || xdir == -1) && ydir == 0) ||
 	   ((ydir == 1 || ydir == -1) && xdir == 0) ||
 	   (xdir == 0 || ydir == 0) ) {
 	Dorder.x = Lorder.x - middle.x;
@@ -142,7 +142,6 @@ void Level::prepareInput(int x, int y, int isRightClick) {
 	handleInput(Dorder);
       }
     }
-    
   }
 }
 
@@ -182,21 +181,23 @@ void Level::controlGroupDone () {
 
 void Level::runPeriod () {
   //Move units and animate CPU cycle
-  for (int i = 0; i < cyclesPerPeriod; i++) {
-      //Move units
+  for (int i = 0; i < cyclesPerPeriod; i++)
+  {
+    //Move units
     runCycle();
-    display();
-    
+//    draw();
+
     //Animate CPU cycle
-    for(int offset = 0; offset < 20; offset++) {
+    for(int offset = 0; offset < 20; offset++)
+    {
 	drawCycle(offset);
 	usleep(40000);
 	window.Display();
-      }
+    }
   }
 }
 
-void Level::runCycle () {  
+void Level::runCycle () {
   cout << "RUNNING A CYCLE" << endl;
   Location fLoc;
   Direction tempDir;
@@ -206,7 +207,7 @@ void Level::runCycle () {
   for( int i = 0; i < units.size(); ++i) { //For every unit
     locs =    units[i]->getLocations();
     tempDir = units[i]->getMovement(0);     // Get my next desired movement
-    
+
     for( int j = 0; j < locs.size(); ++j) {  //For every piece of that unit
       // IF THE CELL WISHES TO STAY PUT
       if ( tempDir.isZero() ) {
@@ -215,7 +216,7 @@ void Level::runCycle () {
       }
 
       fLoc = locs[j]+tempDir; //My desired future location
-      
+
       if( willMove(locs[j]) ) {
 	if( grid[future].find(fLoc) == grid[future].end() ) {
 	  grid[future][fLoc] = units[i]; //I am allowed to move.
@@ -224,7 +225,7 @@ void Level::runCycle () {
 	    //Nothing, for now. The other unit moves, I don't
 	    grid[future][locs[j]] = units[i]; //Set my future position to be my present one
 	  }
-	  
+
 	  // SOMEONE MUST DIE
 	  else {
 	    CellGroup* unitToDie;
@@ -254,7 +255,7 @@ void Level::runCycle () {
 	  }
 	}
       }
-      
+
       else { //COLLISION IS HEAD-ON -- apply directly to the forehead
 	for( int k = 0; k < j; ++k ) //Clear all of my previous positions that have been placed
 	  grid[future].erase( grid[future].find( locs[k]+tempDir ) ); //Remove that pointer
@@ -265,11 +266,11 @@ void Level::runCycle () {
       }
     }
   }
-  
+
   //Move all units (only the ones that are free to move will move)
   for( int i = 0; i < units.size(); ++i )
-    units[i]->upCycle (); 
-  
+    units[i]->upCycle ();
+
   //DOUBLE BUFFERING -- Switch present grid with future grid
   grid[0].clear(); //Clear old grid
   grid = grid + future;
@@ -292,7 +293,7 @@ int Level::willMove ( Location myLoc ) {
 
 
 /* DRAWING */
-void Level::display () {
+void Level::draw(int cycleOffset) {
   window.Clear();
   drawBackground();
 
@@ -301,7 +302,7 @@ void Level::display () {
   drawArrows();
   drawUnits();
 
-  drawCycle(0);
+  drawCycle(cycleOffset);
 }
 
 void Level::drawGrid() {
@@ -324,21 +325,21 @@ void Level::drawGrid() {
                             1, gridOutlineColor);
 
     window.Draw(horLine);
-    
+
     for(int row = 0; row < height; row++)  //Draw horizontal lines
       {
       horLine.Move(0, gridRowHeight);
       window.Draw(horLine);
     }
-    
+
     horLine.Move(0, -1 * gridRowHeight * height);
-    
+
     addHeight = scale * (window.GetHeight() - top_offset - bottom_offset) - 10;
     vertLine = sf::Shape::Line(left_offset, top_offset - addHeight,
                                left_offset, window.GetHeight() - bottom_offset + addHeight,
                                2, gridColor,
                                1, gridOutlineColor);
-    
+
     window.Draw(vertLine);
     for(int col = 0; col < width; col++)  //Draw vertical lines
       {
@@ -346,7 +347,7 @@ void Level::drawGrid() {
 	window.Draw(vertLine);
       }
     vertLine.Move(0, -1 * gridColWidth * width);
-    
+
   }
 }
 
@@ -364,7 +365,7 @@ void Level::drawArrows()
   if(unit == 0)
     return;
 
-  sf::Color darkBlue = sf::Color(0, 0, 205, 190);
+  sf::Color darkBlue = sf::Color(0, 92, 9, 200);
 
   for(int count = 0; count < unit->numOfMovements(); count++)
   {
@@ -437,7 +438,7 @@ void Level::drawArrows()
       arrowSprite.SetRotation(0);
       window.Draw( arrowSprite );
       arrowSprite.Move( -gridColWidth/2, 0 );
-    }   
+    }
     // Right arrow
     else if ( unit->getMovement(i).x == 1 && unit->getMovement(i).y == 0 ) {
       arrowSprite.Move( gridColWidth/2, 0 );
@@ -451,7 +452,6 @@ void Level::drawArrows()
       window.Draw( stopSprite );
     }
   }
-  
 }
 
 
@@ -479,9 +479,9 @@ void Level::drawCycle(int offset)
   if(offset > 9)
     upCycle = 0;
 
-  sf::Color backgroundColor = sf::Color(0, 0, 0);
-  sf::Color cycleColor = sf::Color(255, 0, 0);
-  sf::Color arrowColor = sf::Color(0, 0, 205, 190);
+  sf::Color backgroundColor = sf::Color(0, 0, 0, 128);
+  sf::Color cycleColor = sf::Color(170, 0, 0);
+  sf::Color arrowColor = sf::Color(0, 92, 9, 200);
 
   window.Draw(sf::Shape::Rectangle(left_offset,
                                    lowEdge,
@@ -576,8 +576,34 @@ void Level::highlightSelect() {
 
   vector<FloatPair> groupLocations = unit->getScreenLocations();
 
-  for (int i = 0; i < groupLocations.size(); ++i) {
+  for (int i = 0; i < groupLocations.size(); ++i)
+  {
     highlightSprite.SetPosition( groupLocations[i].x, groupLocations[i].y );
     window.Draw( highlightSprite );
   }
+}
+
+int Level::getTopOffset()
+{
+  return top_offset;
+}
+
+int Level::getBottomOffset()
+{
+  return bottom_offset;
+}
+
+int Level::getRightOffset()
+{
+  return right_offset;
+}
+
+int Level::getLeftOffset()
+{
+  return left_offset;
+}
+
+int Level::getCyclesPerPeriod()
+{
+  return cyclesPerPeriod;
 }

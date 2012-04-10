@@ -38,7 +38,7 @@ class Level {
   void handleInput  (sf::Key::Code);
 
   /* DRAWING */
-  void display          ();
+  void draw             (int cycleOffset);
   void drawGrid         ();
   void drawUnits        ();
   void drawArrows       ();
@@ -52,6 +52,13 @@ class Level {
   void runCycle     ();
   int  willMove    (Location myLoc);
   std::vector<CellGroup*> findNeighbors (CellGroup*);
+
+  /* GET--SET */
+  int getTopOffset();
+  int getBottomOffset();
+  int getLeftOffset();
+  int getRightOffset();
+  int getCyclesPerPeriod();
 
  private:
   /** UNITS, CONTROLGROUPS, GRIDS **/
@@ -69,7 +76,7 @@ class Level {
   int cyclesPerPeriod;
 
   int top_offset, left_offset, right_offset, bottom_offset; //Offset used to draw the grid on the window
-  float gridRowHeight; 
+  float gridRowHeight;
   float gridColWidth;
 
   /** SFML OBJECTS **/

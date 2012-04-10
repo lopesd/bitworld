@@ -1,6 +1,13 @@
-#DESCRIPTION
-#This is a viral bit. You control it. It can move one square per cycle. 
-#In this area, three cycles define a period. Visit the gate to open it.
+~DESCRIPTION
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#Level 1T
+#This is a viral bit. You 
+#control it. It can move one
+#square per cycle. 
+#
+#In this area, three cycles
+#define a period. Visit the
+#gate to open it.
 
 ~GRID
 --- --- --- --- --- K1a --- --- ;

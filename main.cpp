@@ -1,4 +1,5 @@
 #define FULLSCREEN 0
+#define LEVELFILE "levels/level_T1.bit"
 
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
@@ -13,45 +14,11 @@
 #include "classes/UserControlGroup.h"
 #include "classes/LevelParser.h"
 #include "classes/ImageCache.h"
+#include "classes/InfoBox.h"
 
 using namespace std;
 
 int main (void) {
-
-  // DEPRECATED TERMINAL VERSION CODE
-  /*
-  // INITIALIZE IMAGES AND LEVELS
-  Cell cell  ( 5, 6 );
-  Cell cell2 ( 7, 7 );
-  Cell cell3 ( 2, 3 );
-  Cell cell4 ( 8, 2 );
-  CellGroup group1 (cell);
-  CellGroup group2 (cell2);
-  CellGroup group3 (cell3);
-  CellGroup group4 (cell4);
-
-  Cell cell5 ( 1, 1 );
-  Cell cell6 ( 1, 2 );
-  Cell cell7 ( 2, 1 );
-  Cell cell8 ( 2, 2 );
-  vector<Cell> cellVector;
-  cellVector.push_back( cell5 );
-  cellVector.push_back( cell6 );
-  cellVector.push_back( cell7 );
-  cellVector.push_back( cell8 );
-  CellGroup cellGroup ( cellVector );
-
-  vector<CellGroup*> groupVector;
-  groupVector.push_back (&cellGroup);
-  groupVector.push_back ( &group1 );
-  groupVector.push_back ( &group2 );
-  groupVector.push_back ( &group3 );
-  groupVector.push_back ( &group4 );
-  UserControlGroup usg (groupVector);
-  vector<ControlGroup*> cgv;
-  cgv.push_back (&usg);
-  */
-
   sf::Clock clock; //The whole thing crashes if I don't initialize a clock for some reason...
 
   // INITIALIZE LIBRARIES AND OBJECTS
@@ -66,7 +33,8 @@ int main (void) {
                   sf::WindowSettings(24, 8, 4));
 
   ImageCache::LoadFromDirectory( "./images/" ); // Initialize image cache
-  Level level = LevelParser::parse ("levels/level_T1.bit", window);
+  Level level = LevelParser::parse (LEVELFILE, window);
+  InfoBox infoBox(LEVELFILE, level, window);
 
   // INITIALIZE INPUT VARIABLES
   Location   Lorder; // Input interpreted as location
@@ -117,10 +85,25 @@ int main (void) {
 	  level.handleInput(sf::Key::Back);
 	  break;
 	case sf::Key::Space:
-	  level.handleInput(sf::Key::Space);
+          for (int i = 0; i < level.getCyclesPerPeriod(); i++)
+          {
+            //Move units
+            level.runCycle();
+
+            //Animate CPU cycle
+            for(int offset = 0; offset < 20; offset++)
+            {
+              level.draw(offset);
+              infoBox.draw();
+              usleep(40000);
+              window.Display();
+            }
+          }
+
+//	  level.handleInput(sf::Key::Space);
 	  break;
         }
-      
+
       if(Event.Type == sf::Event::MouseButtonReleased)
         if(Event.MouseButton.Button == sf::Mouse::Left) //left mouse click
           level.prepareInput(Event.MouseButton.X, Event.MouseButton.Y, 0); //the 0 flag indicates a left mouse click
@@ -128,8 +111,8 @@ int main (void) {
 	  level.prepareInput(Event.MouseButton.X, Event.MouseButton.Y, 1); //the 1 flag indicates a right mouse click
 	}
     }
-
-    level.display (); //Draw level on window
+    level.draw (0); //Draw level on window
+    infoBox.draw();
     window.Display(); //Display window
   }
 

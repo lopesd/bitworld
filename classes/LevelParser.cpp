@@ -33,7 +33,7 @@ Level LevelParser::parse (const char* filename, sf::RenderWindow& window) {
   map <string, map<char, Cell> > cellsMap;
   map <string, CellGroup*> unitsMap;
   CellGroup* unit;
-  
+
   int gridX = 0, gridY = 0; // Keep track of the location on the grid
 
   file.open (filename);
@@ -48,12 +48,12 @@ Level LevelParser::parse (const char* filename, sf::RenderWindow& window) {
 	getline(file,token); // kill the line
 	continue;
       }
-      
+
       // Check and set the macro if it is being changed
-      if (token[0] == '~') { 
+      if (token[0] == '~') {
 	if (token == "~METADATA")    macro = METADATA;
 	else if (token == "~GRID")   macro = GRID;
-	else if (token == "~EVENT")  macro = EVENT; 
+	else if (token == "~EVENT")  macro = EVENT;
 	continue;
       }
 
@@ -61,7 +61,7 @@ Level LevelParser::parse (const char* filename, sf::RenderWindow& window) {
       if (macro == GRID) {
 
 	gridX = 0;
-	do {	  
+	do {
 	  // CHECK TO SEE WHICH TYPE IT NEEDS TO BE, THEN CREATE AND GET POINTER
 	  // Have different if statements for different kinds of cells, if needed
 	  if ( token[0] == 'B' || token[0] == 'G' || token[0] == 'P' || token[0] == 'V' || token[0] == 'K' ) { 
@@ -69,7 +69,7 @@ Level LevelParser::parse (const char* filename, sf::RenderWindow& window) {
 	    //inserts a cell in the map
 	    cellsMap[ token.substr(0,token.length()-1) ][ token[token.length()-1] ] = cell; 
 	  }
-	  
+
 	  // INVALID UNIT TYPE, SKIP TOKEN
 	  else {
 	    //cout << "Skipping token " << token << endl;
@@ -82,17 +82,17 @@ Level LevelParser::parse (const char* filename, sf::RenderWindow& window) {
 
 	++gridY;   //increment the column counter
       }
-      
+
 
       //METADATA: create unit objects
       else if (macro == METADATA) {
-	
+
 	// IF THERE ARE NO CELLS ASSOCIATED WITH THAT UNIT, THROW ERROR MESSAGE
 	if ( cellsMap.find( token.substr(0,2) ) == cellsMap.end() ) {
 	  cout << "WARNING: Unit description in metadata does not match any units in grid. "
 	       << "\"" << token << "\" will be instantiated with an empty cell vector. " << endl;
 	}
-	
+
 	vector<Cell> cellVector;
 	map<char,Cell> tempMap = cellsMap[ token.substr(0,token.length()-1) ];
 	//cout << "tempMap size is " << tempMap.size() << endl;
@@ -110,28 +110,27 @@ Level LevelParser::parse (const char* filename, sf::RenderWindow& window) {
 	  unit = new ViralBit (cellVector);
 	else if ( token[0] == 'K' ) // VIRAL BIT
 	  unit = new WhiteBit (cellVector);
-	
+
 	// INVALID UNIT TYPE, SKIP LINE
 	else {
 	  //cout << "Warning -- invalid unit type " << token << "; killing line" << endl;
 	  getline (file, token);
 	  continue;
 	}
-	
+
 	unitsMap[token.substr(0,token.length()-1)] = unit; // may be unnecessary for now, but will probably be necessary for events
-	
+
 	// MODIFY ATTRIBUTES OF CELL WITH NEXT LINES
 	do {
 	  file >> token;
 
 	  // HANDLE FLAGS
-	  if( token[0] == '-' ) { 
+	  if( token[0] == '-' ) {
 	    if( strcmp(token.c_str(), "-cg") == 0 ) { //-cg sets the next token to the CG name
 	      file >> token;
 	      unit->CGGroupName = token;
 	    }
 
-	    
 	    else if( strcmp(token.c_str(), "-move") == 0 ) { //-move sets the following string of chars to the movement orders
 	      file >> token;
 	      vector<Direction> directions;
@@ -159,28 +158,25 @@ Level LevelParser::parse (const char* filename, sf::RenderWindow& window) {
 	      }
 	      unit->setSMO( directions );
 	      }
-
-	    
-	  } 
-	  
+	  }
 	  // NON-FLAGS
 	  else {
-	    //do stuff here, do not assume line does not end in ';'	  
+	    //do stuff here, do not assume line does not end in ';'
 	  }
 
 	}
 	while ( token[token.length()-1] != ';' ); //while the line is not over
       }
-      
+
       // EVENT: create event objects?
-      
+
     }
   }
 
   else
     cout << "Failure to open level file " << filename << endl;
   file.close();
-  
+
   // PUT IT ALL TOGETHER
   // This vector contains pointers to all the units
   vector<CellGroup*> userUnitsVector;
@@ -196,7 +192,7 @@ Level LevelParser::parse (const char* filename, sf::RenderWindow& window) {
 
   UserControlGroup* user = new UserControlGroup (userUnitsVector);
   AIControlGroup*   AI   = new AIControlGroup   (AIUnitsVector);
-  
+
   vector<ControlGroup*> controlGroups;
   controlGroups.push_back( AI );
   controlGroups.push_back( user );
@@ -204,4 +200,30 @@ Level LevelParser::parse (const char* filename, sf::RenderWindow& window) {
   Level level (window, controlGroups, unitsVector, gridX, gridY);
   //cout << "width: " << gridX << ", height: " << gridY << endl;
   return level;
+}
+
+vector<string> LevelParser::getInfoText(string filename)
+{
+  vector<string> infoBoxText;
+  string input;
+
+  fstream file;
+  file.open(filename.c_str());
+  if(!file.is_open())
+  {
+    cout << "Cannot open the level file for the infobox" << endl;
+    exit(0);
+  }
+
+  for(int count = 0; file.good(); count++)
+  {
+    getline(file, input);
+    if(input[0] != commentChar)
+      continue;
+
+    infoBoxText.push_back(input.substr(1));
+  }
+
+  file.close();
+  return infoBoxText;
 }

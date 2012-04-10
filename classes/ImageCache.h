@@ -11,7 +11,6 @@
 #include <map>
 
 class ImageCache {
-  
  public:
   // Load all images in the given directory (recursively)
   static int LoadFromDirectory( const char* folder );
@@ -27,7 +26,6 @@ class ImageCache {
 
   // The images, mapped to their names
   static std::map<std::string, sf::Image> images;
-  
 };
 
 #endif

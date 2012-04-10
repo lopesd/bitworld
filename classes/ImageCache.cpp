@@ -1,6 +1,6 @@
 /** ImageCache.cpp
  *  A simple static class that loads SFML images and returns references to them.
- *  Written for Bitworld by: David Lopes, Casey O'Meilia, Catherine Carothers, Mark Riehm    
+ *  Written for Bitworld by: David Lopes, Casey O'Meilia, Catherine Carothers, Mark Riehm
 */
 
 #include "ImageCache.h"
@@ -16,7 +16,7 @@ map<string, sf::Image> ImageCache::images;
 
 // Load all images in the given directory (not recursive)
 int ImageCache::LoadFromDirectory ( const char* folder ) {
-  
+
   char filename [256];
 
   DIR *dir;
@@ -25,12 +25,12 @@ int ImageCache::LoadFromDirectory ( const char* folder ) {
   if (dir != NULL) {
     while ((ent = readdir (dir)) != NULL) {
       // Skip the directories
-      if ( strcmp(ent->d_name, ".") != 0 && strcmp(ent->d_name, "..") != 0 
+      if ( strcmp(ent->d_name, ".") != 0 && strcmp(ent->d_name, "..") != 0
 	   && strcmp(ent->d_name, "jpegs") != 0) {
 
 	strcpy( filename, folder );
 	strcat( filename, ent->d_name ); //get full filename relative to game folder
-	
+
 	if ( images[string(ent->d_name)].LoadFromFile( filename ) ) {
 	  images[string(ent->d_name)].SetSmooth(false);
 	  cout << "IMAGE CACHE: Loaded image " << ent->d_name << endl;
@@ -44,13 +44,13 @@ int ImageCache::LoadFromDirectory ( const char* folder ) {
 
     // No error
     return 0;
-    
+
   } else {
     // Could not open directory, return error
     cout << "IMAGE CACHE ERROR: Could not open directory" << endl;
     return 1;
   }
-  
+
 }
 
 // Return image for given name (for example, simple_bit.png)
@@ -64,6 +64,6 @@ const sf::Image& ImageCache::GetImage (string name) {
 }
 
 // C-syle string overload of the previous function
-const sf::Image& ImageCache::GetImage (const char* name) { 
+const sf::Image& ImageCache::GetImage (const char* name) {
   return GetImage( string(name) );
 }

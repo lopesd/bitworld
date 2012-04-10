@@ -11,11 +11,14 @@
 #include "Cell.h"
 #include "Level.h"
 
+using namespace std;
+
 class LevelParser {
 
- public: 
+ public:
   // Parse text file into level object
   static Level parse (const char* filename, sf::RenderWindow& window);
+  static vector<string> getInfoText(string filename);
 
  private:
   // Private constructor ensures class is not instantiated
