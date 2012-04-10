@@ -8,10 +8,11 @@
 --- --- --- --- --- G2b ;
 V1a --- --- --- --- G2c ;
 --- --- --- --- --- --- ;
---- --- --- --- --- --- ;
+--- --- P1a --- --- --- ;
 --- --- --- --- --- --- ;
 
 ~METADATA
 MAP: name:Gates tag:2 links(1,3) -tutorial ;
 V1: -cg user ;
+P1: ;
 G2: -weight 3 -destination levels/level_T1.bit ;

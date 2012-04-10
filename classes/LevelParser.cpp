@@ -16,12 +16,20 @@
 #include <vector>
 #include <map>
 #include <cstring>
+#include <algorithm>
 
 using namespace std;
 
 // Initialize static variables
 ifstream LevelParser::file;
 char LevelParser::commentChar = '#';
+
+// Used to sort the units vector
+struct pointerCompare {
+  bool operator() (CellGroup* first, CellGroup* second) { 
+    return ( first->getWeight() < second->getWeight() );
+  }
+} pointerCompare;
 
 // Parse text file into level object
 Level LevelParser::Parse ( const char* filename, sf::RenderWindow& window ) {
@@ -223,6 +231,8 @@ Level LevelParser::Parse ( const char* filename, sf::RenderWindow& window ) {
   for( map<string, Gate*>::iterator it = gatesMap.begin(); it != gatesMap.end(); ++it ) {
     gatesVector.push_back( it->second );
   }
+
+  sort( unitsVector.begin(), unitsVector.end(), pointerCompare );
   
   UserControlGroup* user = new UserControlGroup (userUnitsVector);
   AIControlGroup*   AI   = new AIControlGroup   (AIUnitsVector);
@@ -233,6 +243,5 @@ Level LevelParser::Parse ( const char* filename, sf::RenderWindow& window ) {
 
   Level level (window, controlGroups, unitsVector, gatesVector, gridX, gridY);
 
-  cout << "Returning level!" << endl;
   return level;
 }

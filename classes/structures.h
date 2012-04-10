@@ -4,7 +4,7 @@
 #include <iostream>
 
 enum AnimType {NORMAL, PULSER};
-enum EventType {OPEN, EMPTY};
+enum EventType {EMPTY, OPEN, PULSE, CORRUPT};
 
 typedef struct Direction {
   int x, y;

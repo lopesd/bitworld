@@ -12,6 +12,7 @@
 #include <iostream> //Remove later
 #include <unistd.h> //For usleep function
 #include <algorithm> //For the find in vector function
+#include <cstring>
 
 using namespace std;
 
@@ -53,8 +54,8 @@ Level::Level (sf::RenderWindow &newWindow, vector<ControlGroup*> c, vector<CellG
   top_offset  = center.y - (float)(height)/2*gridRowHeight;
   bottom_offset = window.GetHeight() - top_offset - gridRowHeight*height;
   right_offset = left_offset;
-  //FPS = fps;
   deafFrames = 0;
+  cycleOffset = 20;
 
   for (int i = 0; i < units.size(); ++i)
     units[i]->setGridData( gridColWidth, gridRowHeight, top_offset, left_offset );
@@ -65,7 +66,7 @@ Level::Level (sf::RenderWindow &newWindow, vector<ControlGroup*> c, vector<CellG
   backgroundSprite.Resize( window.GetWidth(), window.GetHeight() );
   highlightSprite.SetImage ( ImageCache::GetImage("blue_transparent.png") );
   highlightSprite.SetCenter( highlightSprite.GetSize() / 2.f );
-  highlightSprite.Resize ( gridColWidth, gridRowHeight );
+  highlightSprite.Resize( gridColWidth, gridRowHeight );
   arrowSprite.SetImage( ImageCache::GetImage( "arrow2.png" ) );
   arrowSprite.SetCenter( arrowSprite.GetSize() / 2.f );
   arrowSprite.Resize( gridColWidth, gridRowHeight );
@@ -105,6 +106,7 @@ Level::Level (const Level& L) : window(L.window) {
   gridRowHeight = L.gridRowHeight;
   gridColWidth = L.gridColWidth;
   deafFrames = L.deafFrames;
+  cycleOffset = L.cycleOffset;
 
   /** SFML OBJECTS **/
   backgroundSprite = L.backgroundSprite;
@@ -140,7 +142,6 @@ void Level::resetGrid () { // Clears and remakes the entire grid
   }
 
 }
-
 
 /** UTILITY FUNCTIONS **/
 // USER INPUT
@@ -216,29 +217,14 @@ void Level::controlGroupDone () {
 }
 
 void Level::runPeriod () {
-
   cyclesToRun = cyclesPerPeriod;
-
-  /*
-  //Move units and animate CPU cycle
-  for (int i = 0; i < cyclesPerPeriod; i++) {
-    //Move units
-    cout << "Cycles left: " << i << endl;
-    runCycle();
-    display();
-
-    /*
-    //Animate CPU cycle
-    for(int offset = 0; offset < 20; offset++) {
-      drawCycle(offset);
-      usleep(40000);
-      window.Display();
-    }    
-    
-  }*/
 }
 
 void Level::runCycle () {  
+
+  cycleOffset = 19; //Set offset for the cycle animation
+  requestDeafFrames( 20 );
+
   Location fLoc;
   Direction tempDir;
   vector<Location> locs;
@@ -247,7 +233,7 @@ void Level::runCycle () {
   for( int i = 0; i < units.size(); ++i) { //For every unit
     locs =    units[i]->getLocations();
     tempDir = units[i]->getMovement(0);     //Get my next desired movement
-    
+
     for( int j = 0; j < locs.size(); ++j) {  //For every piece of that unit
       // IF THE CELL WISHES TO STAY PUT
       if ( tempDir.isZero() ) {
@@ -270,9 +256,7 @@ void Level::runCycle () {
 	  else {
 	    CellGroup* unitToDie;
 	    CellGroup* unitToLive;
-	    Direction deadDir;
-	    vector<Location> deadLocs;
-
+	    
 	    if( units[i]->getWeight() > grid[future][fLoc]->getWeight() ) { //If I have precedence
 	      unitToDie  = grid[future][fLoc];  // KILL THE OTHER UNIT
 	      unitToLive = units[i];
@@ -281,16 +265,8 @@ void Level::runCycle () {
 	      unitToDie = units[i];            // KILL ME
 	      unitToLive = grid[future][fLoc];
 	    }
-
-	    deadDir = unitToDie->getMovement(0);
-	    deadLocs = unitToDie->getLocations();
-	    for( int d = 0; d < deadLocs.size(); ++d ) {
-	      grid[future].erase( grid[future].find( deadLocs[d]+deadDir ) );  //Erase all future positions
-	      grid[0].erase     ( grid[0].find     ( deadLocs[d]         ) );  //Erase all current positions
-	    }
-	    units.erase( find( units.begin(), units.end(), unitToDie ) ); //Remove him from the units vector
-	    delete unitToDie;                 //Finally, deallocate him
-	    if( activeGroup->getSelectedUnit() == unitToDie ) activeGroup->clearSelection();
+	    
+	    unitsToDie.push_back( unitToDie );
 	    grid[future][fLoc] = unitToLive;    //Place me in the future grid
 	  }
 	}
@@ -322,15 +298,29 @@ void Level::runCycle () {
     ev = gates[i]->highCycle();
     if( ev.type == OPEN ) {
       isDone = 1;
-      cout << "Is done!" << endl;
       Gate* temp = (Gate*)ev.sender;
       destination = temp->destination();
     }
   }
 
   // DOWN CYCLES (NEGATIVE EDGE OF CLOCK)
-  for( int i = 0; i < units.size(); ++i )
-    units[i]->downCycle();
+  for( int i = 0; i < units.size(); ++i ) {
+    ev = units[i]->downCycle();
+
+    if( ev.type == CORRUPT ) {
+      for( int j = 0; j < ev.units.size(); ++j ) {
+	ev.units[j]->controlGroup->forfeit( ev.units[j] );
+	((CellGroup*)ev.sender)->controlGroup->take( ev.units[j] );
+      }
+      //events.push_back( ev );
+    }
+    else if( ev.type == PULSE ) {
+      //pulse shit
+      //event.push_back( ev );
+    }
+
+  }
+
 }
 
 //Recursive checking if the unit currently at myLoc will move (eg. no head-on collision)
@@ -347,15 +337,74 @@ int Level::willMove ( Location myLoc ) {
   }
 }
 
+// Handles a merge or absorption between two units who move to the same location
+void Level::handleMerge ( CellGroup* unit1, CellGroup* unit2, Location loc ) {
+
+  // If they are allowed to merge into one big unit...
+  if( 0 ) {
+    // Merge them
+  }
+
+  else { // Someone will die and someone will live
+    CellGroup* unitToDie;
+    CellGroup* unitToLive;
+
+    //Determine who must die
+    if( unit1->getWeight() == unit2->getWeight() ) { //Equal weights
+      if( strcmp(unit1->CGGroupName.c_str(), "user") == 0 ) { //If the unit belongs to user, give it precedence.
+	unitToDie = unit2;
+	unitToLive = unit1;
+      }      
+      else {
+	unitToDie = unit1;
+	unitToLive = unit2;
+      }
+    }
+    else if( unit1->getWeight() > unit2->getWeight() ) { //If I have precedence
+      unitToDie  = unit2;  // KILL THE OTHER UNIT
+      unitToLive = unit1;
+    }
+    else {
+      unitToDie = unit1;  // KILL ME
+      unitToLive = unit2;
+    }
+    
+    //And do the appropriate flagging.
+    unitsToDie.push_back( unitToDie );
+    grid[future][loc] = unitToLive;  
+  }
+}
+
+// Removes the unit completely
+void Level::killUnit ( CellGroup* unitToDie ) {
+  cout << "Killing unit of type " << unitToDie->type() << ", unitVector size: " << units.size() << endl;
+  vector<Location> deadLocs = unitToDie->getLocations();
+  for( int d = 0; d < deadLocs.size(); ++d ) {
+    if( grid[0].find(deadLocs[d])->second == unitToDie ) {
+      cout << "Erasing position " << deadLocs[d] << endl;
+      grid[0].erase( grid[0].find(deadLocs[d]) );  //Erase all current positions, if they belong to me
+    }
+  }
+  units.erase( find( units.begin(), units.end(), unitToDie ) ); //Remove him from the units vector
+  delete unitToDie;                 //Finally, deallocate him
+  if( activeGroup->getSelectedUnit() == unitToDie ) activeGroup->clearSelection();
+}
+
 
 /* DRAWING */
 void Level::display () {
 
   // deafFrames is how long the level will ignore user input. We decrease the count by 1 each frame.
   if( deafFrames ) --deafFrames;
-  if( deafFrames == 0 && cyclesToRun != 0 && !isDone ) { // if no more deafFrames, we run a cycle if we must
-    --cyclesToRun;
-    runCycle();
+  if( deafFrames == 0 ) {
+    for( int i = 0; i < unitsToDie.size(); ++i ) { //Kill any units that have been absorbed
+      killUnit( unitsToDie.back() );
+      unitsToDie.pop_back();
+    }
+    if( cyclesToRun != 0 && !isDone ) { // run cycles if we still need to
+      --cyclesToRun;
+      runCycle();
+    }
   }
 
   drawBackground();
@@ -366,7 +415,9 @@ void Level::display () {
   drawArrows();
   drawUnits();
 
-  drawCycle(0);
+  if     ( cycleOffset == 0 ) cycleOffset = 20;
+  else if( cycleOffset != 20 ) --cycleOffset;
+  drawCycle(20-cycleOffset);
 }
 
 void Level::drawGrid() {

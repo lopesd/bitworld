@@ -152,3 +152,9 @@ int main (void) {
     
   return 0;
 }
+
+struct compareCellGroup {
+  bool operator() ( CellGroup* first, CellGroup* second ) { 
+    return (first->getWeight() < second->getWeight());
+  }
+} compareCellGroup;

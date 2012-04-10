@@ -14,19 +14,18 @@ class Gate;
 class Event {
 
  public:
-  Event( std::vector<Location> locs, EventType type, void* sender );
-  Event( EventType t = EMPTY );
-  Event( EventType t, void* sender );
+  Event( EventType type = EMPTY, void* sender = 0 );
+  Event( EventType type, void* sender, std::vector<Location> locations );
+  Event( EventType type, void* sender, std::vector<CellGroup*> units );
+  
   Event( const Event& );
 
-  void send( Level* receiver );
-  
   EventType type;
   void* sender;
+  std::vector<Location> locations;
+  std::vector<CellGroup*> units;
   
  private:
-  std::vector<Location> locations;
-
   int ID; // for debugging. each event has a unique ID number
   static int IDCount;
 

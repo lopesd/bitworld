@@ -35,7 +35,7 @@ class Level {
 
   void destroy (); // A "custom destructor" -- deletes everything that the level points to
 
-  /** UTITLITY FUNCTIONS **/
+  /** UTILITY FUNCTIONS **/
   /* USER INPUT */
   void prepareInput (int x, int y, int isRightClick);
   void handleInput  (Location  loc);
@@ -46,7 +46,9 @@ class Level {
   void controlGroupDone ();
   void runPeriod    ();
   void runCycle     ();
-  int  willMove    (Location myLoc);
+  int  willMove     ( Location myLoc );
+  void handleMerge  ( CellGroup*, CellGroup*, Location );
+  void killUnit     ( CellGroup* unitToDie );
   std::vector<CellGroup*> findNeighbors (CellGroup*);
 
   /* DRAWING */
@@ -74,6 +76,7 @@ class Level {
   std::vector<CellGroup*>           units;
   std::vector<Gate*>                gates;
   std::vector<Event>                events;
+  std::vector<CellGroup*>           unitsToDie;
   std::map<Location, CellGroup*>    doubleBufferGrid [2];  //Double buffered grid
   std::map<Location, CellGroup*>*   grid;                 //Pointer to reference current grid
   int future;                                  //Indicates which grid contains info on future positions
@@ -94,6 +97,7 @@ class Level {
 
   /** SFML OBJECTS AND ANIMATION STUFF **/
   int deafFrames; //The amount of frames to ignore input
+  int cycleOffset; //The offset for the CPU cycle animation
   sf::RenderWindow& window;
   sf::Sprite backgroundSprite;
   sf::Sprite highlightSprite;

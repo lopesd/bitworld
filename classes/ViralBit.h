@@ -7,11 +7,10 @@ class ViralBit : public CellGroup {
 
  public:
   ViralBit  (std::vector<Cell> cells);
-  ViralBit  (Cell cell);
-  ViralBit  ();
-  ~ViralBit ();
 
-  std::string type () {return std::string("ViralBit");}
+  std::string type () {return std::string("ViralBit");} //for debugging
+
+  Event downCycle (); 
 
  private:
 
