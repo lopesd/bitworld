@@ -111,7 +111,7 @@ int main (void) {
       level->destroy();
       level = new Level( LevelParser::Parse( newLevel.c_str(), window) );
 cout << "TEST" << endl;
-//      infoBox = new InfoBox(newLevel.c_str(), *level, window);
+      infoBox = new InfoBox(newLevel.c_str(), *level, window);
     }
 
     window.Clear();
