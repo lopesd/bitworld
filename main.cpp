@@ -38,8 +38,8 @@ int main (void) {
 
   ImageCache::LoadFromDirectory( "./images/" ); // Initialize image cache
 //  Level level = LevelParser::parse (LEVELFILE, window);
-  Level* level = new Level( LevelParser::Parse ("levels/level_T1.bit", window) );
-  InfoBox infoBox(LEVELFILE, *level, window);
+  Level* level = new Level( LevelParser::Parse (LEVELFILE, window) );
+  InfoBox* infoBox = new InfoBox(LEVELFILE, *level, window);
 
   // INITIALIZE INPUT VARIABLES
   Location   Lorder; // Input interpreted as location
@@ -108,15 +108,16 @@ int main (void) {
     if( level->done() ) {
       cout << "Level is done and the new level should be " << level->nextLevel () << endl;
       string newLevel = level->nextLevel();
-      Level* nextLevel = new Level( LevelParser::Parse( newLevel.c_str(), window) );
       level->destroy();
-      level = nextLevel;
+      level = new Level( LevelParser::Parse( newLevel.c_str(), window) );
+cout << "TEST" << endl;
+//      infoBox = new InfoBox(newLevel.c_str(), *level, window);
     }
 
     window.Clear();
 
     level->draw(); //Draw level on window
-    infoBox.draw();
+    infoBox->draw();
     window.Display(); //Display window
   }
 

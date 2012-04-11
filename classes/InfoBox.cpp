@@ -32,11 +32,8 @@ InfoBox::InfoBox(const char* filename, Level& newLevel, sf::RenderWindow& newWin
   titleCharsPerLine = (rightBorder - leftBorder) / titleCharacterWidth;
 
   //Add necessary spaces to the beginning of the title to center it
-  title = "";
-  for(int count = 0; count < (titleCharsPerLine - infoText[0].size()) / 2; count++)
-    title.push_back(' ');
-
   title += infoText[0];
+
   renderTitle = sf::String(title.c_str(), infoTextFont, 50);
 }
 
@@ -63,7 +60,8 @@ void InfoBox::drawBoxes()
 
 void InfoBox::drawHeader()
 {
-  renderTitle.SetPosition(leftBorder, topBorder);
+  int titleOffset = ((rightBorder - leftBorder) - titleCharacterWidth * title.size()) / 2;
+  renderTitle.SetPosition(leftBorder + titleOffset, topBorder);
   window.Draw(renderTitle);
 }
 

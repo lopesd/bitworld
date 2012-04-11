@@ -1,16 +1,13 @@
-DESCRIPTION
-There are times when detection is unavoidable, and sacrifices must be made.
-Godspeed, little bit.
+~DESCRIPTION
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#Level 4
+#There are times when detection
+#is unavoidable, and sacrifices
+#must be made.
+#
+#Godspeed, little bit.
 
-METADATA
-MAP: name:It_Must_Be_Done tag:4 links(3,5)
-D1: tag:1 dest(map:3,gate:2) weight:1
-D2: tag:2 dest(map:5,gate:1) weight:3
-P1: radius:2 pattern(p,w,w) 
-P2: radius:3 pattern(p,w)
-K1: -phase speed:6
-
-GRID
+~GRID
 --- --- --- --- XXX XXX XXX XXX XXX XXX
 D1a --- --- P1a XXX XXX XXX XXX XXX XXX
 D1b --- --- --- XXX XXX XXX XXX XXX XXX
@@ -22,3 +19,11 @@ D1c --- --- --- XXX XXX XXX XXX XXX XXX
 --- --- --- --- --- K1a P2a --- --- D2b
 --- --- --- --- --- --- --- --- --- D2c
 --- --- --- --- --- --- --- --- --- ---
+
+~METADATA
+MAP: name:It_Must_Be_Done tag:4 links(3,5)
+D1: tag:1 dest(map:3,gate:2) weight:1
+D2: tag:2 dest(map:5,gate:1) weight:3
+P1: radius:2 pattern(p,w,w) 
+P2: radius:3 pattern(p,w)
+K1: -phase speed:6

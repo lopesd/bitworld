@@ -1,15 +1,23 @@
-DESCRIPTION
-A viral bit, such as yours, can corrupt a simple bit by standing next to it for a cycle.
-This gate's weight is 9. You will need three bits on it for all three period cycles.
+~DESCRIPTION
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#Level T4
+#A viral bit, such as yours,
+#can corrupt a simple bit by
+#standing next to it for
+#a cycle.
+#
+#This gate's weight is 9.
+#You will need three bits on it
+#for all three period cycles.
 
-METADATA
-MAP: name:Corruption tag:4 links(3,5) -tutorial
-G1: tag:1 dest(map:3,gate:2) weight:1 priorities(b)
-G2: tag:2 dest(map:5,gate:1) weight:9 priorities(b)
-
-GRID
+~GRID
 --- --- --- --- --- --- --- 
 G1a --- --- --- --- --- G2a
 G1b --- --- B1a --- --- G2b
 G1c --- --- --- --- --- G2c
 --- --- --- --- B2a --- ---
+
+~METADATA
+MAP: name:Corruption tag:4 links(3,5) -tutorial
+G1: tag:1 dest(map:3,gate:2) weight:1 priorities(b)
+G2: tag:2 dest(map:5,gate:1) weight:9 priorities(b)
