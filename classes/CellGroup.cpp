@@ -93,9 +93,9 @@ void CellGroup::upCycle () {
 }
 
 // events occur on the downcycle. should be overloaded for classes that have events.
-Event CellGroup::downCycle () {
-  Event e;
-  return e; //return empty event
+vector<Event> CellGroup::downCycle () {
+  vector<Event> e;
+  return e; //return empty events
 }
 
 /** ACCESSORS **/

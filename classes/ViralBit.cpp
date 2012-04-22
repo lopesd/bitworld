@@ -12,10 +12,12 @@ ViralBit::ViralBit (vector<Cell> c) : CellGroup (c) {
   }
 }
 
-Event ViralBit::downCycle () {
+vector<Event> ViralBit::downCycle () {
   vector<Location> myLocs = getLocations();
   vector<CellGroup*> unitsToCorrupt; //vector of units that have been corrupted
 
+  vector<Event> eventsToReturn;
+  
   for( int i = 0; i < myLocs.size(); ++i ) { //For every cell
     
     //All adjacent locations
@@ -28,7 +30,7 @@ Event ViralBit::downCycle () {
     
     for( int j = 0; j < 4; ++j ) {
       if( CellGroup* unit = controlGroup->level->unitAtLocation(temp[j]) )
-	if( unit->CGGroupName != CGGroupName ) {
+	if( unit->controlGroup != controlGroup ) {
 	  unit->dropResistance();
 	  if( unit->getResistance() <= 0 ) {
 	    unitsToCorrupt.push_back( unit );
@@ -39,9 +41,8 @@ Event ViralBit::downCycle () {
 
   if( !unitsToCorrupt.empty() ) {
     EventType t = CORRUPT;
-    return Event( t, this, unitsToCorrupt );
+    eventsToReturn.push_back( Event( t, this, unitsToCorrupt ) );
   }
 
-  Event e;
-  return e;
+  return eventsToReturn;
 }

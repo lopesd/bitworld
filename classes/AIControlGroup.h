@@ -14,6 +14,8 @@ class AIControlGroup : public ControlGroup {
   void handleInput (Direction dir) {}
   void handleInput (sf::Key::Code) {}
 
+  void take ( CellGroup* unitToTake );
+  
  private:
   //void toggleSelection (CellGroup* unit);
 };

@@ -45,4 +45,5 @@ void UserControlGroup::take ( CellGroup* unitToTake ) {
   ControlGroup::take( unitToTake );
   unitToTake->setSMO( vector<Direction>() );
   unitToTake->clearMovementQueue();
+  unitToTake->CGGroupName = "user";
 }

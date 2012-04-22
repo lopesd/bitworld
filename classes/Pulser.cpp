@@ -11,6 +11,7 @@ Pulser::Pulser (vector<Cell> c) : CellGroup(c) {
   for (int i = 0; i < cells.size(); ++i) {
     cells[i].setImages( imgs, PULSER );
   }
+  pulseRadius = 2;
 }
 
 void Pulser::queueStandardActionOrders (int cycles) {
@@ -19,4 +20,41 @@ void Pulser::queueStandardActionOrders (int cycles) {
     if (SAOCounter >= standardActionOrders.size())
       SAOCounter = 0;
   }
+}
+
+void Pulser::setRadius(int radius) {
+	pulseRadius = radius;
+}
+
+
+int Pulser::getRadius()
+{
+	return pulseRadius;
+}
+
+vector<Event> Pulser::downCycle () {
+  
+  EventType t = PULSE;	
+  vector<Location> temp;
+  vector<Location> myLocs = getLocations();
+  Location tempLoc;
+  for(int i = -pulseRadius; i <= pulseRadius; ++i)
+    {
+      for(int j = 0; j <= pulseRadius - abs(i); ++j)
+	{
+	  tempLoc.x = myLocs[0].x + i;
+	  tempLoc.y = myLocs[0].y +j;
+	  temp.push_back(tempLoc);
+	  if(j)
+	    {
+	      tempLoc.x = myLocs[0].x + i;
+	      tempLoc.y = myLocs[0].y - j;
+	      temp.push_back(tempLoc);
+	    }
+	}
+    } 
+  
+  vector<Event> evs;
+  evs.push_back( Event(t, this, temp) );
+  return evs;
 }

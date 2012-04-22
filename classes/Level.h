@@ -8,11 +8,6 @@
 #ifndef LEVEL_H
 #define LEVEL_H
 
-#include "ControlGroup.h"
-#include "CellGroup.h"
-#include "Event.h"
-#include "Gate.h"
-#include "ImageCache.h"
 #include "structures.h"
 
 #include <SFML/System.hpp>
@@ -24,6 +19,7 @@
 class ControlGroup;
 class CellGroup;
 class Gate;
+class Event;
 
 class Level {
 
@@ -48,6 +44,7 @@ class Level {
   void runCycle     ();
   int  willMove     ( Location myLoc );
   void handleMerge  ( CellGroup*, CellGroup*, Location );
+  void handleEvent  ( Event ev );
   void killUnit     ( CellGroup* unitToDie );
   std::vector<CellGroup*> findNeighbors (CellGroup*);
 

@@ -10,7 +10,7 @@ class ViralBit : public CellGroup {
 
   std::string type () {return std::string("ViralBit");} //for debugging
 
-  Event downCycle (); 
+  std::vector<Event> downCycle (); 
 
  private:
 

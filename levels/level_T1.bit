@@ -10,17 +10,17 @@
 #gate to open it.
 
 ~GRID
---- --- --- --- --- K1a --- --- ;
---- --- --- --- --- --- G1a --- ;
-V1a --- --- P1a --- --- G1b --- ;
---- --- --- --- --- --- G1c --- ;
---- --- B1a --- --- --- --- --- ;
+--- --- --- --- --- --- --- P2a ;
+--- --- --- --- --- --- --- --- ;
+V1a --- --- P1a --- --- --- --- ;
+--- --- --- --- --- --- --- G1c ;
+--- --- --- --- --- --- --- --- ;
 
 ~METADATA
 MAP: name:Step_One tag:1 links(2) -tutorial -first ;
 V1: -cg user ;
 B1: -move udu ;
-K1: -move lrl ;
-P1: -move usd ;
+P1: -radius 2 ;
+P2: -radius 3 ;
 G1: -weight 3 -destination levels/level_T2.bit ; 
 tag:1 dest(map:2,gate:1) weight:1 priorities(b) ;

@@ -9,6 +9,12 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "ControlGroup.h"
+#include "CellGroup.h"
+#include "Event.h"
+#include "Gate.h"
+#include "WhiteBit.h"
+
 #include <iostream> //Remove later
 #include <unistd.h> //For usleep function
 #include <algorithm> //For the find in vector function
@@ -292,6 +298,7 @@ void Level::runCycle () {
   future = -future;
 
   // HIGH CYCLES
+  vector<Event> tempEvs;
   Event ev;
   for( int i = 0; i < gates.size(); ++i ) {
     ev = gates[i]->highCycle();
@@ -304,21 +311,17 @@ void Level::runCycle () {
 
   // DOWN CYCLES (NEGATIVE EDGE OF CLOCK)
   for( int i = 0; i < units.size(); ++i ) {
-    ev = units[i]->downCycle();
+    tempEvs = units[i]->downCycle();
 
-    if( ev.type == CORRUPT ) {
-      for( int j = 0; j < ev.units.size(); ++j ) {
-	ev.units[j]->controlGroup->forfeit( ev.units[j] );
-	((CellGroup*)ev.sender)->controlGroup->take( ev.units[j] );
+    for( int j = 0; j < tempEvs.size(); ++j ) {
+      if( tempEvs[j].type != EMPTY ) {
+	handleEvent( tempEvs[j] );
+	events.push_back( tempEvs[j] );
       }
-      //events.push_back( ev );
-    }
-    else if( ev.type == PULSE ) {
-      //pulse shit
-      //event.push_back( ev );
-    }
 
-  }
+    } //End events of unit loop
+    
+  } //End units loop
 
 }
 
@@ -334,6 +337,37 @@ int Level::willMove ( Location myLoc ) {
     if( grid[0][fLoc]->getMovement(0).isZero() )           return 0; //unit wants to remain where it is; head-on
     return( willMove(fLoc) );                                        //I am free to move only if my future position clears up.
   }
+}
+
+void Level::handleEvent( Event ev ) {
+
+  switch( ev.type ) {
+    
+  case PULSE : //loops through grid pulseRadius distance away and if a user bit is detected, add that cellGroup to the white bit's flagged vector
+    for(int j = 0; j < ev.locations.size(); j++){
+      if(grid[0].find(ev.locations[j]) != grid[0].end() ) { //If there is a unit at that location
+	
+	CellGroup* pulsedUnit = grid[0][ev.locations[j]];
+	if( ((CellGroup*)ev.sender)->controlGroup != pulsedUnit->controlGroup ) {
+	  cout << "Found a unit pulsed at " << ev.locations[j] << endl;
+	  for( int l = 0; l < units.size(); ++l ){
+	    if( strcmp(units[l]->type().c_str(), "WhiteBit") == 0 )
+	      ((WhiteBit*)units[l])->addFlagged( pulsedUnit );
+	  }	
+	}
+      }
+    }
+    break;
+    
+  case CORRUPT:
+    for( int k = 0; k < ev.units.size(); ++k ) {
+      ev.units[k]->controlGroup->forfeit( ev.units[k] );
+      ((CellGroup*)ev.sender)->controlGroup->take( ev.units[k] );
+    }
+    break;
+    
+  }
+
 }
 
 // Handles a merge or absorption between two units who move to the same location
@@ -397,10 +431,14 @@ void Level::draw() {
   // deafFrames is how long the level will ignore user input. We decrease the count by 1 each frame.
   if( deafFrames ) --deafFrames;
   if( deafFrames == 0 ) {
-    for( int i = 0; i < unitsToDie.size(); ++i ) { //Kill any units that have been absorbed
-      killUnit( unitsToDie.back() );
-      unitsToDie.pop_back();
+
+    if( !unitsToDie.empty() ) {
+      for( int i = 0; i < unitsToDie.size(); ++i ) { //Kill any units that have been absorbed
+	killUnit( unitsToDie[i] );
+      }
+      unitsToDie.clear();
     }
+
     if( cyclesToRun != 0 && !isDone ) { // run cycles if we still need to
       --cyclesToRun;
       runCycle();

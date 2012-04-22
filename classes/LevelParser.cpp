@@ -192,6 +192,12 @@ Level LevelParser::Parse ( const char* filename, sf::RenderWindow& window ) {
 	      file >> token;
 	      gate->setDest( token );
 	    }
+
+	    else if( strcmp(token.c_str(), "-radius") == 0 ) { 
+	      int radius;
+	      file >> radius;
+	      ((Pulser*)unit)->setRadius( radius );
+	    }
 	    
 	  } 
 	  

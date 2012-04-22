@@ -17,3 +17,8 @@ void AIControlGroup::startTurn () {
   cout << "Ending turn." << endl;
   level->controlGroupDone();
 }
+
+void AIControlGroup::take ( CellGroup* unitToTake ) {
+  ControlGroup::take( unitToTake );
+  unitToTake->CGGroupName = "AI";
+}
