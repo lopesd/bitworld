@@ -22,7 +22,18 @@ void UserControlGroup::handleInput (CellGroup* clickedUnit)
 }
 
 void UserControlGroup::handleInput (Direction dir) {
-  if( selectedUnit ) selectedUnit->issueMovementOrder (dir);
+  if( selectedUnit ) {
+
+    vector<Location> flocs = selectedUnit->getLocationPathHeads();
+    for( int i = 0; i < flocs.size(); ++i ) { //Check to see if the movement will be off-screen
+      Location floc = flocs[i] + dir;
+      if( (floc.x < 0) || (floc.y < 0) || 
+	  (floc.x >= level->getWidth()) || (floc.y >= level->getHeight()) )
+	return; //Do not issue an off-screen movement.
+    }
+
+    selectedUnit->issueMovementOrder (dir); //issue the order
+  }
 }
 
 void UserControlGroup::handleInput (sf::Key::Code keyPressed) {

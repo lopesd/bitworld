@@ -22,8 +22,9 @@ Cell::Cell (int c, int r) {
   y = 0;
   animIncrement.x = 0; animIncrement.y = 0;
   moveCount = 0;
+  framesToMove = FPS/2;
   stillAnimCount = imageIndex = 0;
-  animType = NORMAL;
+  stillAnimType = NORMAL;
 }
 
 // Copy constructor is defined to make sure the sprite information is copied
@@ -32,9 +33,10 @@ Cell::Cell ( const Cell& c ) {
   row = c.row;
   stillAnimCount = c.stillAnimCount;
   imageIndex = c.imageIndex;
-  animType = c.animType;
+  stillAnimType = c.stillAnimType;
   animIncrement = c.animIncrement;
   moveCount = c.moveCount;
+  framesToMove = c.framesToMove;
   
   setGridData( c.width, c.height, c.top_offset, c.left_offset );
   // If Cell being copied had an image
@@ -46,11 +48,20 @@ Cell::Cell ( const Cell& c ) {
 void Cell::move ( Direction dir ) {
   col += dir.x;
   row += dir.y;
-  moveCount = FPS/2; // A larger number means slower movement
-  animIncrement.x = ((left_offset+col*width + 0.5*width)  - x ) / moveCount;
-  animIncrement.y = ((top_offset+row*height + 0.5*height) - y ) / moveCount;
-  if( abs(animIncrement.x) < 0.01) animIncrement.x = 0;
-  if( abs(animIncrement.y) < 0.01) animIncrement.y = 0;
+
+  if( movementAnimType == WHITEBIT ) {
+    moveCount = framesToMove;
+    fadeIncrement = (float)255/moveCount/2;
+    cout << "White Bit. Set fadeIncrement to " << fadeIncrement << endl;
+  } else {
+    moveCount = framesToMove; // A larger number means slower movement
+    animIncrement.x = ((left_offset+col*width + 0.5*width)  - x ) / moveCount;
+    animIncrement.y = ((top_offset+row*height + 0.5*height) - y ) / moveCount;
+    if( abs(animIncrement.x) < 0.01 ) animIncrement.x = 0;
+    if( abs(animIncrement.y) < 0.01 ) animIncrement.y = 0;
+    cout << "set moveCount to " << moveCount << " and animIncrement is " << animIncrement.x << ", " << animIncrement.y << endl;
+  }
+
 }
 
 // Privately store the measurements of the grid. Should be called when Cell is passed to a Level object
@@ -86,17 +97,22 @@ void Cell::setImage ( const char* name ) {
 // Set images for the cell's animation
 void Cell::setImages ( vector<string> imgs, enum AnimType aType ) {
   imageNames = imgs;
-  animType = aType;
-  if( animType == PULSER ) stillAnimCount = 1;
+  stillAnimType = aType;
+  if( stillAnimType == PULSER ) stillAnimCount = 1;
   else                     stillAnimCount = 0;
 
   if( !imgs.empty() ) {
     sprite.SetImage( ImageCache::GetImage(imageNames[0]) );
-    if( animType == PULSER ) {
+    if( stillAnimType == PULSER ) {
       sprite2.SetImage( ImageCache::GetImage(imageNames[1]) );
     }
   }
   else cout << "ERROR >> Image vector passed is empty." << endl;
+}
+
+// Set the movement animation type
+void Cell::setMovementAnimation( AnimType type ) {
+  movementAnimType = type;
 }
 
 // Draw Cell on the given SFML screen object
@@ -105,21 +121,29 @@ void Cell::draw ( sf::RenderWindow& screen ) {
   //MOVEMENT ANIMATION
   if( moveCount != 0 ) {
     --moveCount;
-    x += animIncrement.x;
-    y += animIncrement.y;
-    sprite.Move( animIncrement.x, animIncrement.y );
-    sprite2.Move( animIncrement.x, animIncrement.y );
-    if( moveCount == 0 ) {
+    
+    if( movementAnimType == WHITEBIT ) {
+      //sprite.setColor
       x = (left_offset+col*width + 0.5*width);
       y = (top_offset+row*height + 0.5*height);
-      animIncrement.x = 0;
-      animIncrement.y = 0;
+      sprite.SetPosition( x, y );
+    } else {
+      x += animIncrement.x;
+      y += animIncrement.y;
+      sprite.Move( animIncrement.x, animIncrement.y );
+      sprite2.Move( animIncrement.x, animIncrement.y );
+      if( moveCount == 0 ) {
+	x = (left_offset+col*width + 0.5*width);
+	y = (top_offset+row*height + 0.5*height);
+	animIncrement.x = 0;
+	animIncrement.y = 0;
+      }
     }
     
   }
   
   // IN PLACE ANIMATION
-  if( animType == NORMAL ) {
+  if( stillAnimType == NORMAL ) {
 
     if( ++stillAnimCount > 15 ) {
       stillAnimCount = 0;
@@ -131,7 +155,7 @@ void Cell::draw ( sf::RenderWindow& screen ) {
     
   }
 
-  else if( animType == PULSER ) {
+  else if( stillAnimType == PULSER ) {
     static float rotation = 0;
     screen.Draw( sprite );
     sprite2.SetRotation( rotation++ );

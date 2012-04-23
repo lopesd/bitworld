@@ -14,6 +14,7 @@
 #include <SFML/Graphics.hpp>
 
 #include <vector>
+#include <set>
 #include <map>
 
 class ControlGroup;
@@ -63,14 +64,15 @@ class Level {
   /* ACCESSORS */
   CellGroup* unitAtLocation ( Location );
   std::string nextLevel     ();
+  std::set<CellGroup*> getFlaggedUnits ();
   int done ();
-
-  /* GET--SET */
   int getTopOffset();
   int getBottomOffset();
   int getLeftOffset();
   int getRightOffset();
   int getCyclesPerPeriod();
+  int getWidth();
+  int getHeight();
 
  private:
   /** UNITS, CONTROLGROUPS, GRIDS **/
@@ -80,7 +82,8 @@ class Level {
   std::vector<CellGroup*>           units;
   std::vector<Gate*>                gates;
   std::vector<Event>                events;
-  std::vector<CellGroup*>           unitsToDie;
+  std::set<CellGroup*>              unitsToDie;
+  std::set<CellGroup*>              flaggedUnits;
   std::map<Location, CellGroup*>    doubleBufferGrid [2];  //Double buffered grid
   std::map<Location, CellGroup*>*   grid;                 //Pointer to reference current grid
   int future;                                  //Indicates which grid contains info on future positions

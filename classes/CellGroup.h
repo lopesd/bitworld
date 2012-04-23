@@ -43,6 +43,7 @@ class CellGroup {
   virtual Direction              getMovement(int num);
   virtual int                    numOfMovements ();
   virtual FloatPair              getPathHead ();
+  virtual std::vector<Location>  getLocationPathHeads ();
   virtual int                    getWeight ();
   virtual int                    getResistance ();
   virtual std::string            type () = 0; //return the type of the unit

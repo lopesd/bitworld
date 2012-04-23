@@ -241,7 +241,7 @@ void Level::runCycle () {
 
     for( int j = 0; j < locs.size(); ++j) {  //For every piece of that unit
       // IF THE CELL WISHES TO STAY PUT
-      if ( tempDir.isZero() ) {
+      if( tempDir.isZero() ) {
 	grid[future][locs[j]] = units[i]; //It gets to stay put.
 	continue;
       }
@@ -249,34 +249,14 @@ void Level::runCycle () {
       fLoc = locs[j]+tempDir; //My desired future location
 
       if( willMove(locs[j]) ) {
+
 	if( grid[future].find(fLoc) == grid[future].end() ) {
 	  grid[future][fLoc] = units[i]; //I am allowed to move.
-	} else { //ABSORPTION
-	  if( units[i]->getWeight() == grid[future][fLoc]->getWeight() ) { //Equal weights
-	    //Nothing, for now. The other unit moves, I don't
-	    grid[future][locs[j]] = units[i]; //Set my future position to be my present one
-	  }
-
-	  // SOMEONE MUST DIE
-	  else {
-	    CellGroup* unitToDie;
-	    CellGroup* unitToLive;
-
-	    if( units[i]->getWeight() > grid[future][fLoc]->getWeight() ) { //If I have precedence
-	      unitToDie  = grid[future][fLoc];  // KILL THE OTHER UNIT
-	      unitToLive = units[i];
-	    }
-	    else {
-	      unitToDie = units[i];            // KILL ME
-	      unitToLive = grid[future][fLoc];
-	    }
-
-	    unitsToDie.push_back( unitToDie );
-	    grid[future][fLoc] = unitToLive;    //Place me in the future grid
-	  }
+	} else { //ABSORPTION	  
+	  handleMerge( units[i], grid[future][fLoc], fLoc );
 	}
       }
-
+      
       else { //COLLISION IS HEAD-ON -- apply directly to the forehead
 	for( int k = 0; k < j; ++k ) //Clear all of my previous positions that have been placed
 	  grid[future].erase( grid[future].find( locs[k]+tempDir ) ); //Remove that pointer
@@ -310,9 +290,30 @@ void Level::runCycle () {
   }
 
   // DOWN CYCLES (NEGATIVE EDGE OF CLOCK)
+  // Detect bit death first
+  for( int i = 0; i < units.size(); ++i ) {
+    int dontDie = 0;
+    vector<Location> locs = units[i]->getLocations();
+    for( int j = 0; j < locs.size(); ++j ) { //for each cell of each unit,
+      Location temp[4] = {  //check all neighboring locations
+	{locs[j].x + 1, locs[j].y},
+	{locs[j].x - 1, locs[j].y},
+	{locs[j].x, locs[j].y + 1},
+	{locs[j].x, locs[j].y - 1}
+      };
+
+      for( int k = 0; k < 4; ++k )
+	if( grid[0].find(temp[k]) == grid[0].end() ) //if an adjacent square is empty
+	  dontDie = 1;
+    }
+
+    if( !dontDie )
+      unitsToDie.insert( units[i] );
+  }
+  
   for( int i = 0; i < units.size(); ++i ) {
     tempEvs = units[i]->downCycle();
-
+    
     for( int j = 0; j < tempEvs.size(); ++j ) {
       if( tempEvs[j].type != EMPTY ) {
 	handleEvent( tempEvs[j] );
@@ -349,11 +350,7 @@ void Level::handleEvent( Event ev ) {
 	
 	CellGroup* pulsedUnit = grid[0][ev.locations[j]];
 	if( ((CellGroup*)ev.sender)->controlGroup != pulsedUnit->controlGroup ) {
-	  cout << "Found a unit pulsed at " << ev.locations[j] << endl;
-	  for( int l = 0; l < units.size(); ++l ){
-	    if( strcmp(units[l]->type().c_str(), "WhiteBit") == 0 )
-	      ((WhiteBit*)units[l])->addFlagged( pulsedUnit );
-	  }	
+	  flaggedUnits.insert( pulsedUnit );
 	}
       }
     }
@@ -403,47 +400,51 @@ void Level::handleMerge ( CellGroup* unit1, CellGroup* unit2, Location loc ) {
     }
 
     //And do the appropriate flagging.
-    unitsToDie.push_back( unitToDie );
+    unitsToDie.insert( unitToDie );
     grid[future][loc] = unitToLive;
   }
 }
 
 // Removes the unit completely
 void Level::killUnit ( CellGroup* unitToDie ) {
-  cout << "Killing unit of type " << unitToDie->type() << ", unitVector size: " << units.size() << endl;
   vector<Location> deadLocs = unitToDie->getLocations();
   for( int d = 0; d < deadLocs.size(); ++d ) {
     if( grid[0].find(deadLocs[d])->second == unitToDie ) {
-      cout << "Erasing position " << deadLocs[d] << endl;
       grid[0].erase( grid[0].find(deadLocs[d]) );  //Erase all current positions, if they belong to me
     }
   }
   units.erase( find( units.begin(), units.end(), unitToDie ) ); //Remove him from the units vector
   delete unitToDie;                 //Finally, deallocate him
   if( activeGroup->getSelectedUnit() == unitToDie ) activeGroup->clearSelection();
+  if( flaggedUnits.find( unitToDie ) != flaggedUnits.end() ) flaggedUnits.erase( flaggedUnits.find(unitToDie) );
 }
 
 
 /* DRAWING */
 void Level::draw() {
-  window.Clear();
-
   // deafFrames is how long the level will ignore user input. We decrease the count by 1 each frame.
   if( deafFrames ) --deafFrames;
   if( deafFrames == 0 ) {
 
+    //Kill any units that must die
     if( !unitsToDie.empty() ) {
-      for( int i = 0; i < unitsToDie.size(); ++i ) { //Kill any units that have been absorbed
-	killUnit( unitsToDie[i] );
-      }
+      for( set<CellGroup*>::iterator i = unitsToDie.begin(); i != unitsToDie.end(); ++i )
+	killUnit( *i );
       unitsToDie.clear();
     }
-
+    
     if( cyclesToRun != 0 && !isDone ) { // run cycles if we still need to
       --cyclesToRun;
       runCycle();
     }
+    else { //if there are no deaf frames and no cycles to run, then gates must be reset
+      for( int i = 0; i < gates.size(); ++i )
+	gates[i]->resetOpenCounter();
+    }
+
   }
+
+  window.Clear();
 
   drawBackground();
 
@@ -754,6 +755,10 @@ CellGroup* Level::unitAtLocation ( Location loc ) {
     return 0;
 }
 
+set<CellGroup*> Level::getFlaggedUnits () {
+  return flaggedUnits;
+}
+
 string Level::nextLevel () {
   return destination;
 }
@@ -786,4 +791,12 @@ int Level::getLeftOffset()
 int Level::getCyclesPerPeriod()
 {
   return cyclesPerPeriod;
+}
+
+int Level::getWidth () {
+  return width;
+}
+
+int Level::getHeight () {
+  return height;
 }

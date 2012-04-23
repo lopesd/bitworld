@@ -21,8 +21,10 @@ CellGroup::CellGroup ( vector<Cell> c ) {
   resistanceDropped = 0;
   pathHead = getMiddle();
   CGGroupName = "AI"; // Default ControlGroup, used for level parsing
-  for (int i = 0; i < cells.size(); i++)
+  for (int i = 0; i < cells.size(); i++) {
     locations.push_back( cells.at(i).getGridLocation() );
+    cells.at(i).setMovementAnimation( NORMAL );
+  }
 }
 
 /** UTILITY FUNCTIONS **/
@@ -108,6 +110,14 @@ vector<FloatPair> CellGroup::getScreenLocations () {
   for (int i = 0; i < cells.size(); ++i) {
     locs.push_back( cells[i].getScreenLocation() );
   }
+  return locs;
+}
+
+vector<Location> CellGroup::getLocationPathHeads () {
+  vector<Location> locs = getLocations();
+  for( int i = 0; i < movementQueue.size(); ++i ) 
+    for( int j = 0; j < locs.size(); ++j )
+      locs[j] = locs[j] + movementQueue[i];
   return locs;
 }
 

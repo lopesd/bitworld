@@ -1,23 +1,25 @@
 ~DESCRIPTION
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#Level T4
-#A viral bit, such as yours,
-#can corrupt a simple bit by
-#standing next to it for
-#a cycle.
+#Tutorial 4
+#The pulser periodically
+#detects all anomalies within
+#its range and flags them
+#for destruction.
 #
-#This gate's weight is 9.
-#You will need three bits on it
-#for all three period cycles.
+#The white bit is in charge of
+#consuming flagged bits. Apart
+#from the pulser's help, it is
+#blind to system anomalies.
 
 ~GRID
---- --- --- --- --- --- --- 
-G1a --- --- --- --- --- G2a
-G1b --- --- B1a --- --- G2b
-G1c --- --- --- --- --- G2c
---- --- --- --- B2a --- ---
+--- --- --- --- --- --- --- --- --- --- ;
+G1a --- --- --- --- --- --- --- --- G2a ;
+G1b --- --- --- --- P1a --- K1a --- G2b ;
+G1c --- --- --- --- --- --- --- --- G2c ;
+--- --- --- --- --- --- --- --- --- --- ;
 
 ~METADATA
-MAP: name:Corruption tag:4 links(3,5) -tutorial
-G1: tag:1 dest(map:3,gate:2) weight:1 priorities(b)
-G2: tag:2 dest(map:5,gate:1) weight:9 priorities(b)
+K1: -speed 3 ;
+G1: -weight 1 -destination levels/level_T5.bit
+G2: tag:2 dest(map:4,gate:1) weight:3 priorities(b) -destination levels/level_T4.bit
+P1: radius:2 pattern(p,w,p)

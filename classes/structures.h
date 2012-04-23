@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-enum AnimType {NORMAL, PULSER};
+enum AnimType {NORMAL, PULSER, WHITEBIT};
 enum EventType {EMPTY, OPEN, PULSE, CORRUPT};
 
 typedef struct Direction {
@@ -14,16 +14,16 @@ typedef struct Direction {
 typedef struct Location {
   int x, y;
   bool operator< (const Location& loc) const {
-    if (this->y < loc.y) return true;
-    else if (this->y > loc.y) return false;
-    else return this->x < loc.x;
+    if (y < loc.y) return true;
+    else if (y > loc.y) return false;
+    else return x < loc.x;
   }
   Location operator+ (const Direction& loc) {
-    Location temp = {this->x + loc.x, this->y + loc.y};
+    Location temp = {x + loc.x, y + loc.y};
     return temp;
   }
   Location operator+ (const Location& loc) {
-    Location temp = {this->x + loc.x, this->y + loc.y};
+    Location temp = {x + loc.x, y + loc.y};
     return temp;
   }
   bool operator== (const Location& loc) {

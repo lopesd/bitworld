@@ -1,26 +1,24 @@
 ~DESCRIPTION
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#Level T3
-#The pulser periodically
-#detects all anomalies within
-#its range and flags them
-#for destruction.
+#Tutorial 3
+#A gate's weight determines how
+#many bit-cycles within a
+#period are needed to open it.
 #
-#The white bit is in charge of
-#consuming flagged bits. Apart
-#from the pulser's help, it is
-#blind to system anomalies.
+#This gate's weight is 3.
+#If you visit it for all 3
+#cycles of a period, it
+#will open.
 
 ~GRID
---- --- --- --- --- --- --- --- --- --- ;
-G1a --- --- --- --- --- --- --- --- G2a ;
-G1b --- --- --- --- P1a --- K1a --- G2b ;
-G1c --- --- --- --- --- --- --- --- G2c ;
---- --- --- --- --- --- --- --- --- --- ;
+--- --- --- --- --- --- ;
+--- --- --- --- --- G2a ;
+--- --- --- --- --- G2b ;
+V1a --- --- --- --- G2c ;
+--- --- --- --- --- --- ;
+--- --- --- --- --- --- ;
+--- --- --- --- --- --- ;
 
 ~METADATA
-MAP: name:Pulsers tag:3 links(2,4) -tutorial
-K1: -phase speed:5 
-G1: tag:1 dest(map:2,gate:2) weight:1 priorities(b) -destination levels/level_T5.bit
-G2: tag:2 dest(map:4,gate:1) weight:3 priorities(b) -destination levels/level_T4.bit
-P1: radius:2 pattern(p,w,p)
+V1: -cg user ;
+G2: -weight 3 -destination levels/level_T1.bit ;

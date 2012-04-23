@@ -1,26 +1,17 @@
 ~DESCRIPTION
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#Level T2
-#A gate's weight determines how
-#many bit-cycles within a
-#period are needed to open it.
-#
-#This gate's weight is 3.
-#If you visit it for all 3
-#cycles of a period, it
-#will open.
+#Tutorial 2
+#In this area, three 'cycles'
+#define a 'period', and you can 
+#move one square per cycle.
 
 ~GRID
---- --- --- --- --- --- ;
---- --- --- --- --- G2a ;
---- --- --- --- --- G2b ;
-V1a --- --- --- --- G2c ;
---- --- --- --- --- --- ;
---- --- P1a --- --- --- ;
---- --- --- --- --- --- ;
+--- --- --- --- --- --- --- --- ;
+--- --- --- --- --- --- --- --- ;
+V1a --- --- --- --- --- --- G1a ;
+--- --- --- --- --- --- --- --- ;
+--- --- --- --- --- --- --- --- ;
 
 ~METADATA
-MAP: name:Gates tag:2 links(1,3) -tutorial ;
 V1: -cg user ;
-P1: ;
-G2: -weight 3 -destination levels/level_T1.bit ;
+G1: -weight 1 -destination levels/level_T3.bit ;

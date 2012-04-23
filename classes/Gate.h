@@ -34,8 +34,9 @@ class Gate {
   virtual Event highCycle ();
 
   /** MUTATORS **/
-  void setWeight ( int );
-  void setDest   ( std::string );
+  void setWeight        ( int );
+  void setDest          ( std::string );
+  void resetOpenCounter ();
 
   /** ACCESSORS **/
   std::string destination ();
