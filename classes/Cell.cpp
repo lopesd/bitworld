@@ -50,10 +50,9 @@ void Cell::move ( Direction dir ) {
   row += dir.y;
 
   if( movementAnimType == WHITEBIT ) {
+    if( dir.isZero() ) return;
     moveCount = framesToMove;
     fadeIncrement = (float)255/moveCount*2;
-    cout << "ORIGINAL: MoveCount = " << moveCount << ", fadeIncrement = " << fadeIncrement 
-	 << ", moveCount*fadeIncrement/2 = " << moveCount*fadeIncrement/2 << endl;
   } else {
     moveCount = framesToMove; // A larger number means slower movement
     animIncrement.x = ((left_offset+col*width + 0.5*width)  - x ) / moveCount;
@@ -133,8 +132,6 @@ void Cell::draw ( sf::RenderWindow& screen ) {
       
       float alpha = fadeIncrement*abs(moveCount-framesToMove/2);
       sprite.SetColor( sf::Color(255, 255, 255, alpha) );
-      cout << "MoveCount = " << moveCount << ", fadeIncrement = " << fadeIncrement << ", alpha = " 
-	   << alpha << endl;
 
     } else {
       x += animIncrement.x;
