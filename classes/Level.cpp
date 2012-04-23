@@ -268,10 +268,16 @@ void Level::runCycle () {
     }
   }
 
+  //Move white bits
+  for( int i = 0; i < units.size(); ++i ) 
+    if( strcmp( units[i]->type().c_str(), "WhiteBit" ) == 0 ) {
+      ((WhiteBit*)units[i])->findMove( grid[future] );
+    }
+  
   //Move all units (only the ones that are free to move will move)
   for( int i = 0; i < units.size(); ++i )
     units[i]->upCycle ();
-
+  
   //DOUBLE BUFFERING -- Switch present grid with future grid
   grid[0].clear(); //Clear old grid
   grid = grid + future;
@@ -329,7 +335,15 @@ void Level::runCycle () {
 //Recursive checking if the unit currently at myLoc will move (eg. no head-on collision)
 int Level::willMove ( Location myLoc ) {
   if( grid[0].find( myLoc ) == grid[0].end() ) cout << "could not find myLoc. OH SHIT SEGFAULT" << endl;
-  Direction myDir = grid[0][myLoc]->getMovement(0);
+  
+  CellGroup* unit = grid[0][myLoc]; //the unit that owns a cell at the given location
+
+  //always return 1 if the unit is a white bit and if there are flaggedUnits it should be chasing.
+  if( strcmp( unit->type().c_str(), "WhiteBit" ) == 0 && !flaggedUnits.empty() ) {
+    return 1;
+  }
+
+  Direction myDir = unit->getMovement(0);
   Location fLoc = myLoc + myDir; //My desired future location
   if( (fLoc.x < 0) || (fLoc.y < 0) || (fLoc.x >= width) || (fLoc.y >= height) ) return 0; //Future position is off grid; do not move
   if( (myDir.isZero()) || (grid[0].find(fLoc) == grid[0].end()) ) return 1;   //There is no one there (or I am stopped); I go (there may still be an absorption)
@@ -401,6 +415,8 @@ void Level::handleMerge ( CellGroup* unit1, CellGroup* unit2, Location loc ) {
 
     //And do the appropriate flagging.
     unitsToDie.insert( unitToDie );
+    if( flaggedUnits.find(unitToDie) != flaggedUnits.end() ) //if he was flagged, unflag him
+      flaggedUnits.erase( flaggedUnits.find(unitToDie) );
     grid[future][loc] = unitToLive;
   }
 }

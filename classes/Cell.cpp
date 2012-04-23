@@ -51,15 +51,15 @@ void Cell::move ( Direction dir ) {
 
   if( movementAnimType == WHITEBIT ) {
     moveCount = framesToMove;
-    fadeIncrement = (float)255/moveCount/2;
-    cout << "White Bit. Set fadeIncrement to " << fadeIncrement << endl;
+    fadeIncrement = (float)255/moveCount*2;
+    cout << "ORIGINAL: MoveCount = " << moveCount << ", fadeIncrement = " << fadeIncrement 
+	 << ", moveCount*fadeIncrement/2 = " << moveCount*fadeIncrement/2 << endl;
   } else {
     moveCount = framesToMove; // A larger number means slower movement
     animIncrement.x = ((left_offset+col*width + 0.5*width)  - x ) / moveCount;
     animIncrement.y = ((top_offset+row*height + 0.5*height) - y ) / moveCount;
     if( abs(animIncrement.x) < 0.01 ) animIncrement.x = 0;
     if( abs(animIncrement.y) < 0.01 ) animIncrement.y = 0;
-    cout << "set moveCount to " << moveCount << " and animIncrement is " << animIncrement.x << ", " << animIncrement.y << endl;
   }
 
 }
@@ -113,6 +113,7 @@ void Cell::setImages ( vector<string> imgs, enum AnimType aType ) {
 // Set the movement animation type
 void Cell::setMovementAnimation( AnimType type ) {
   movementAnimType = type;
+  if( type == WHITEBIT ) framesToMove = FPS;
 }
 
 // Draw Cell on the given SFML screen object
@@ -123,10 +124,18 @@ void Cell::draw ( sf::RenderWindow& screen ) {
     --moveCount;
     
     if( movementAnimType == WHITEBIT ) {
-      //sprite.setColor
-      x = (left_offset+col*width + 0.5*width);
-      y = (top_offset+row*height + 0.5*height);
-      sprite.SetPosition( x, y );
+
+      if( moveCount == framesToMove/2 ) { //move the sprite at the halfway point
+	x = (left_offset+col*width + 0.5*width);
+	y = (top_offset+row*height + 0.5*height);
+	sprite.SetPosition( x, y );
+      }
+      
+      float alpha = fadeIncrement*abs(moveCount-framesToMove/2);
+      sprite.SetColor( sf::Color(255, 255, 255, alpha) );
+      cout << "MoveCount = " << moveCount << ", fadeIncrement = " << fadeIncrement << ", alpha = " 
+	   << alpha << endl;
+
     } else {
       x += animIncrement.x;
       y += animIncrement.y;

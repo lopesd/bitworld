@@ -52,7 +52,7 @@ void CellGroup::move (Direction dir) {
     controlGroup->level->requestDeafFrames( cells[i].getMoveCount() );
   }
   locations.clear();
-  for (int i = 0; i < cells.size(); i++)
+  for (int i = 0; i < cells.size(); i++) //update the locations vector
     locations.push_back( cells.at(i).getGridLocation() );
 }
 

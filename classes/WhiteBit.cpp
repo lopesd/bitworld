@@ -1,5 +1,7 @@
 #include "WhiteBit.h"
 
+#include <set>
+
 using namespace std;
 
 WhiteBit::WhiteBit (vector<Cell> c) : CellGroup (c) { 
@@ -11,7 +13,27 @@ WhiteBit::WhiteBit (vector<Cell> c) : CellGroup (c) {
   }
 }
 
-void WhiteBit::addFlagged( CellGroup* newFlagged ){
-  flaggedBits.push_back(newFlagged);
-  cout << "Adding a flagged unit to my bits, bitch" << endl;
+void WhiteBit::findClosest () {};
+
+Direction WhiteBit::findMove( map<Location, CellGroup*> grid ) {
+  Direction dir = {0,0};
+  if( !controlGroup->level->getFlaggedUnits().empty() ) {
+    dir.x = 1;
+  }
+  return dir;
 }
+
+/*
+void WhiteBit::getMovement( int n ) {
+  Direction dir;
+
+  if( controlGroup->level->getFlaggedUnits.empty() ) {
+    dir.x = 0; dix.y = 0;
+  } else {
+    findClosest( controlGroup->level->getFlaggedUnits() );
+    dir = findMove();
+  }
+
+  return dir;
+}
+*/
