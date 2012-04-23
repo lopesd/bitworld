@@ -60,6 +60,10 @@ void Gate::setDest ( std::string s ) {
   dest = s;
 }
 
+void Gate::resetOpenCounter () {
+  openCounter = weight;
+}
+
 string Gate::destination () {
   return dest;
 }
