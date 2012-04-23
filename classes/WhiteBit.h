@@ -9,8 +9,7 @@ class WhiteBit : public CellGroup {
 
  public:
   WhiteBit (std::vector<Cell> cells);
-  void addFlagged( CellGroup* );
-  void findClosest(set<CellGroup*>& flaggedBits);
+  void findClosest(std::set<CellGroup*>& flaggedBits);
   Direction findMove();
   void upCycle ();
   std::string type () {return std::string("WhiteBit");}
