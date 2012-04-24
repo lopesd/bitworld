@@ -73,10 +73,10 @@ Level::Level (sf::RenderWindow &newWindow, vector<ControlGroup*> c, vector<CellG
   highlightSprite.SetImage ( ImageCache::GetImage("blue_transparent.png") );
   highlightSprite.SetCenter( highlightSprite.GetSize() / 2.f );
   highlightSprite.Resize( gridColWidth, gridRowHeight );
-  arrowSprite.SetImage( ImageCache::GetImage( "arrow2.png" ) );
+  arrowSprite.SetImage( ImageCache::GetImage( "arrow3.png" ) );
   arrowSprite.SetCenter( arrowSprite.GetSize() / 2.f );
   arrowSprite.Resize( gridColWidth, gridRowHeight );
-  stopSprite.SetImage( ImageCache::GetImage( "stop_diamond.png" ) );
+  stopSprite.SetImage( ImageCache::GetImage( "stop_diamond2.png" ) );
   stopSprite.SetCenter( stopSprite.GetSize() / 2.f );
   stopSprite.Resize( gridColWidth / 2, gridRowHeight / 2 );
 
@@ -487,8 +487,8 @@ void Level::draw() {
   drawGrid();
   highlightSelect();
   drawGates();
-  drawArrows();
   drawUnits();
+  drawArrows();
 
   if     ( cycleOffset == 0 ) cycleOffset = 20;
   else if( cycleOffset != 20 ) --cycleOffset;
@@ -560,6 +560,7 @@ void Level::drawArrows()
   if(unit == 0)
     return;
 
+  /*
   sf::Color darkBlue = sf::Color(0, 92, 9, 200);
 
   for(int count = 0; count < unit->numOfMovements(); count++)
@@ -604,6 +605,7 @@ void Level::drawArrows()
 
     window.Draw(Triangle);
   }
+  */
 
   // DRAW ON GRID ARROWS
   // Create and position arrow sprite

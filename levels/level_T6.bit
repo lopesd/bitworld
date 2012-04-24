@@ -1,0 +1,21 @@
+~DESCRIPTION
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#Tutorial 6
+#There are times when bits
+#must die.
+#
+#Any bit dies when its four
+#adjacent sides are visited
+#by other bits.
+
+~GRID
+--- --- --- --- --- --- --- ---
+G1a --- --- --- --- --- --- G2a
+G1b --- --- B2a B3a B1a --- G2b
+G1c --- --- --- B4a --- --- G2c
+--- --- --- --- --- --- --- ---
+
+~METADATA
+MAP: name:Death_Happens tag:5 links(4,6) -tutorial
+G1: tag:1 dest(map:4,gate:2) weight:1 priorities(b)
+G2: tag:2 dest(map:6,gate:1) weight:3 priorities(b)

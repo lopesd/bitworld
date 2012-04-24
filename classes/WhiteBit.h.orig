@@ -1,0 +1,35 @@
+#ifndef WHITE_BIT_H
+#define WHITE_BIT_H
+
+#include "CellGroup.h"
+#include <map>
+
+#include <set>
+
+class WhiteBit : public CellGroup {
+
+ public:
+  WhiteBit (std::vector<Cell> cells);
+  void findClosest(std::set<CellGroup*>& flaggedBits);
+  Direction findMove();
+  void upCycle ();
+  std::string type () {return std::string("WhiteBit");}
+  
+  void dropResistance ( int n ) {}; //Override the drop resistance function so the white bit cannot be corrupted
+<<<<<<< HEAD
+  Direction findMove ( std::map<Location, CellGroup*> grid );
+  void findClosest (); 
+  
+ private:
+  
+ 
+=======
+  
+
+ private:
+  CellGroup* chosen;
+  int movementDistance;
+>>>>>>> 816a9523281c70ed39f286dfa56b621c23059368
+};
+
+#endif
