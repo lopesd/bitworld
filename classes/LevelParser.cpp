@@ -199,6 +199,22 @@ Level LevelParser::Parse ( const char* filename, sf::RenderWindow& window ) {
 	      ((Pulser*)unit)->setRadius( radius );
 	    }
 	    
+	    else if( strcmp(token.c_str(), "-pulse") == 0 ) {
+	      vector<int> pulses;
+	      file >> token;
+	      for( int i = 0; i < token.size(); ++i ) {
+		if     ( token[i] == 'p' ) pulses.push_back( 1 );
+		else if( token[i] == 'w' ) pulses.push_back( 0 );
+	      }
+	      ((Pulser*)unit)->setStandardActionOrders( pulses );
+	    }
+
+	    else if( strcmp(token.c_str(), "-speed") == 0 ) {
+	      int newSpeed;
+	      file >> newSpeed;
+	      ((WhiteBit*)unit)->setSpeed( newSpeed );
+	    }
+	    
 	  } 
 	  
 	  // NON-FLAGS

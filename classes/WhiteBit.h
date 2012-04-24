@@ -10,17 +10,19 @@ class WhiteBit : public CellGroup {
 
  public:
   WhiteBit (std::vector<Cell> cells);
-  void upCycle ();
   
   void dropResistance ( int n ) {}; //Override the drop resistance function so the white bit cannot be corrupted
-  Direction findMove ( std::map<Location, CellGroup*> grid );
-  void findClosest ( std::set<CellGroup*> flaggedBits ); 
+  Direction findMove ( std::map<Location, CellGroup*> grid, std::set<CellGroup*> flaggedUnits );
+  void findClosest ( std::set<CellGroup*> flaggedBits, std::map<Location, CellGroup*> grid ); 
+
+  void setSpeed ( int );
 
   std::string type () {return std::string("WhiteBit");}
 
  private:
   CellGroup* chosen;
-  int movementDistance;
+  Location chosenLoc;
+  int speed;
 };
 
 #endif

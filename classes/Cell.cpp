@@ -50,7 +50,6 @@ void Cell::move ( Direction dir ) {
   row += dir.y;
 
   if( movementAnimType == WHITEBIT ) {
-    if( dir.isZero() ) return;
     moveCount = framesToMove;
     fadeIncrement = (float)255/moveCount*2;
   } else {

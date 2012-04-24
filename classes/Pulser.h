@@ -1,3 +1,8 @@
+/** Pulser.h
+ *  The pulser is a security bit that detects anomalies within its range.
+ *  It pulses in a set sequence.
+ */
+
 #ifndef PULSER_H
 #define PULSER_H
 
@@ -8,19 +13,25 @@
 class Pulser : public CellGroup {
   
  public:
+  /** CONSTRUCTORS **/
   Pulser (std::vector<Cell> cells);
-
-  std::string type () {return std::string("Pulser");}
-
-  //Pulsers don't handle neighbors, so use default empty neighbor handler
-  void queueStandardActionOrders (int cycles); 
-  int getRadius();
+  
+  /** UTILITY FUNCTIONS **/
+  void queueStandardActionOrders (); 
   std::vector<Event> downCycle ();
+
+  /** ACCESSORS **/
+  int getRadius();
+
+  /** MUTATORS **/
   void setRadius (int radius);
+  void setStandardActionOrders ( std::vector<int> );
+  
+  std::string type () {return std::string("Pulser");}
 
  private:
   std::vector<int> standardActionOrders; //1 for pulse, 0 for hold
-  std::vector<int> actionQueue;
+  std::deque<int> actionQueue;
   int pulseRadius;
   int SAOCounter;
 

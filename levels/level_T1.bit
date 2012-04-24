@@ -18,13 +18,12 @@
 #Visit the gate to open it.
 
 ~GRID
---- K1a --- --- --- --- ;
 --- --- --- --- --- --- ;
-V1a --- --- --- --- G1a ;
---- --- --- --- --- --- ;
+--- --- --- --- --- G1a ;
+V1a --- --- --- --- G1b ;
+--- --- --- --- --- G1c ;
 --- --- --- --- --- --- ;
 
 ~METADATA
 V1: -cg user ;
-K1: -move lrr ;
 G1: -weight 3 -destination levels/level_T2.bit ;

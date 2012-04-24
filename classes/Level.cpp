@@ -236,12 +236,14 @@ void Level::runCycle () {
 
   // COLLISION DETECTION
   for( int i = 0; i < units.size(); ++i) { //For every unit
+    if( strcmp( units[i]->type().c_str(), "WhiteBit" ) == 0 ) continue; //don't check white bits
+    
     locs =    units[i]->getLocations();
     tempDir = units[i]->getMovement(0);     //Get my next desired movement
 
     for( int j = 0; j < locs.size(); ++j) {  //For every piece of that unit
       // IF THE CELL WISHES TO STAY PUT
-      if( tempDir.isZero() ) {
+      if( tempDir.isZero() ) { //The unit must not be a whitebit
 	grid[future][locs[j]] = units[i]; //It gets to stay put.
 	continue;
       }
@@ -271,7 +273,20 @@ void Level::runCycle () {
   //Move white bits
   for( int i = 0; i < units.size(); ++i ) 
     if( strcmp( units[i]->type().c_str(), "WhiteBit" ) == 0 ) {
-      ((WhiteBit*)units[i])->findMove( grid[future] );
+      if( !flaggedUnits.empty() ) {
+	Direction dir = ((WhiteBit*)units[i])->findMove( grid[future], flaggedUnits ); //The white bit finds its desired move
+      
+	units[i]->issueMovementOrder( dir );
+	
+	vector<Location> myLocs = units[i]->getLocations();
+	for( int j = 0; j < myLocs.size(); ++j ) {
+	  Location floc = myLocs[j] + dir;
+	  if( grid[future].find( floc ) != grid[future].end() ) {
+	    if( grid[future][floc] == units[i] ) cout << "I'M EATING ME GAAAAH" << endl;
+	    handleMerge( units[i], grid[future][floc], floc );
+	  }
+	}
+      }
     }
   
   //Move all units (only the ones that are free to move will move)
@@ -339,9 +354,12 @@ int Level::willMove ( Location myLoc ) {
   CellGroup* unit = grid[0][myLoc]; //the unit that owns a cell at the given location
 
   //always return 1 if the unit is a white bit and if there are flaggedUnits it should be chasing.
+  cout << "Cheking if " << unit->type() << " will move... ";
   if( strcmp( unit->type().c_str(), "WhiteBit" ) == 0 && !flaggedUnits.empty() ) {
+    cout << "It is a moving whitebit!";
     return 1;
   }
+  cout << endl;
 
   Direction myDir = unit->getMovement(0);
   Location fLoc = myLoc + myDir; //My desired future location
@@ -383,6 +401,8 @@ void Level::handleEvent( Event ev ) {
 
 // Handles a merge or absorption between two units who move to the same location
 void Level::handleMerge ( CellGroup* unit1, CellGroup* unit2, Location loc ) {
+
+  cout << "Merge Detected at " << loc << " between a " << unit1->type() << " and a " << unit2->type() << endl;
 
   // If they are allowed to merge into one big unit...
   if( 0 ) {

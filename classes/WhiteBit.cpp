@@ -12,91 +12,120 @@ WhiteBit::WhiteBit (vector<Cell> c) : CellGroup (c) {
     cells[i].setImage( "white_bit.png" ); 
     cells[i].setMovementAnimation( WHITEBIT );
   }
-  movementDistance = 3;
+  speed = 3;
   chosen = 0;
 }
 
-/*
-void WhiteBit::getMovement( int n ) {
-  Direction dir;
-
-  if( controlGroup->level->getFlaggedUnits.empty() ) {
-    dir.x = 0; dix.y = 0;
-  } else {
-    findClosest( controlGroup->level->getFlaggedUnits() );
-    dir = findMove();
-  }
-
-  return dir;
-}
-*/
-
 //chooses the closest of the flaggedBits to move towards/kill
-void WhiteBit::findClosest( set<CellGroup*> flaggedBits ){
+void WhiteBit::findClosest( set<CellGroup*> flaggedBits, map<Location, CellGroup*> grid ){
   
   if( flaggedBits.empty() ) {
     chosen = 0;
     return;
   }
-  
+
+  cout << endl << "FINDING CLOSEST FLAGGED BIT " << endl;
   Location temp;
   Location white = getLocations()[0];
-  int distance = -1; //intitalize to -1 for checking purposes
-  for( set<CellGroup*>::iterator it = flaggedBits.begin(); it != flaggedBits.end(); ++it ){
-    temp = (*it)->getLocations()[0];
-    if(abs(temp.x - white.x + temp.y - white.y) > distance){ //if closer than the closest bit found so far, save that bit
-      distance = abs(temp.x - white.x + temp.y - white.y);
-      chosen = *it;
+  int distance = 100; //intitalize to a large value for checking purposes
+  for( set<CellGroup*>::iterator it = flaggedBits.begin(); it != flaggedBits.end(); ++it ) { //search the future grid
+    for( map<Location, CellGroup*>::iterator jt = grid.begin(); jt != grid.end(); ++jt ) {   //for the location of the chosen bit
+      if( jt->second == *it ) {
+	
+	temp = jt->first;
+	if( abs(temp.x - white.x + temp.y - white.y) < distance) { //if closer than the closest bit found so far, save that bit
+	  distance = abs(temp.x - white.x + temp.y - white.y);
+	  chosen = *it;
+	  chosenLoc = temp;
+	}
+
+      }
+	
     }
   }
+
+  cout << "Chose to chase " << chosen->type() << ", at location " << temp << endl << endl;
 
 }
 
 //attempts to take the shortest route to the closest flagged bit
-Direction WhiteBit::findMove ( map<Location, CellGroup*> grid ) {
+Direction WhiteBit::findMove ( map<Location, CellGroup*> grid, set<CellGroup*> flaggedUnits ) {
 
-  findClosest( controlGroup->level->getFlaggedUnits() );
+  findClosest( flaggedUnits, grid );
   if( !chosen ) {
     Direction dir = {0,0};
     return dir;
   }
 
-  srand ( time(NULL) ); //seeding rand for choosing between moving x or y when the distances from the flagged bit are the same
-  int odd = movementDistance % 2;
-  Direction newMove;
-  Location distanceAway;
-  int tempX  = 0;
-  int tempY = 0;
-  distanceAway.x = chosen->getMovement(0).x + chosen->getLocations()[0].x - getLocations()[0].x;
-  distanceAway.y = chosen->getMovement(0).y + chosen ->getLocations()[0].y - getLocations()[0].y;
-  for(int i = 0; i < movementDistance && abs(distanceAway.x)-tempX > 0 && abs(distanceAway.y)-tempY > 0; i++){
-    if(abs(distanceAway.y) - tempY < abs(distanceAway.x) - tempX)
-      tempX++;
-    else if(abs(distanceAway.y) - tempY > abs(distanceAway.x) - tempX)
-      tempY++;
-    else{
-      if(rand() % 2 + 1)
-	tempY++;
-      else
-	tempX++;
-    }
+  vector<Direction> possibles;
+  for( int i = -speed; i <= speed; ++i ) {
+    for( int j = 0; j <= speed-abs(i); ++j ) {
 
+      Direction dir = {i,j};
+      Location floc = getLocations()[0] + dir;
+
+      //bounds checking
+      if( floc.x < 0 || floc.y < 0 || floc.x >= controlGroup->level->getWidth() || floc.y >= controlGroup->level->getHeight() ) {
+	cout << floc << ", in direction " << dir << " is out of range." << endl;
+      } else {
+	
+	if( grid.find(floc) != grid.end() ) { //if someone is already there
+	  if( grid[floc] == chosen ) {
+	    return dir; //WE HAVE FOUND THE CHOSEN ONE
+	  } 
+	  else if( grid[floc] == this ) {  //in case of (0,0), the one there is myself.
+	    cout << "Adding " << floc << " to possibles, because I am there " << endl;
+	    possibles.push_back( dir );
+	  }
+	} else { //there is no one in the way, add to possibles
+	  possibles.push_back( dir );
+	}
+      }
+      
+      if( j ) {
+
+	Direction dir2 = {i,-j};
+	floc = getLocations()[0] + dir2;
+
+	if( floc.x < 0 || floc.y < 0 || floc.x >= controlGroup->level->getWidth() || floc.y >= controlGroup->level->getHeight() ) {
+	  cout << floc << ", in direction " << dir2 << " is out of range." << endl;
+	} else {
+	  
+	  cout << "Checking location " << floc << " in direction " << dir2 << endl;
+	  if( grid.find(floc) != grid.end() ) {
+	    if( grid[floc] == chosen ) {
+	      return dir2; //WE HAVE FOUND THE CHOSEN ONE
+	    } 
+	  } else { //there is no one in the way, add to possibles
+	    possibles.push_back( dir2 );
+	  }
+	}	
+      }
+
+    }
   }
-  if(distanceAway.y < 0)
-    newMove.y = -tempY;
-  else
-    newMove.y = tempY;
-  if(distanceAway.x < 0)
-    newMove.x = -tempX;
-  else
-    newMove.x = tempX;
-  //for(int j = 0; j < controlGroup->level->units.size(); j++){
-  //if(controlGroup->level->units[i]->getMovement(0)+controlGroup->level->
-  return newMove;
+  
+  Direction best = {0,0};
+  Direction smallestDist = {controlGroup->level->getWidth(),controlGroup->level->getHeight()};
+  vector<Location> myLocs = getLocations();
+  for( int j = 0; j < myLocs.size(); ++j )
+    for( int i = 0; i < possibles.size(); ++i ) {
+
+      Direction distance;
+      distance.x = abs(chosenLoc.x - (myLocs[j].x+possibles[i].x));
+      distance.y = abs(chosenLoc.y - (myLocs[j].y+possibles[i].y));
+
+      if( distance < smallestDist ) {
+	smallestDist = distance;
+	best = possibles[i];
+      }
+
+    }
+  
+  return best;
+
 }
 
-void WhiteBit::upCycle () {
-  
-
-  CellGroup::upCycle();
+void WhiteBit::setSpeed ( int s ) {
+  speed = s;
 }

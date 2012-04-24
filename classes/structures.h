@@ -6,9 +6,33 @@
 enum AnimType {NORMAL, PULSER, WHITEBIT};
 enum EventType {EMPTY, OPEN, PULSE, CORRUPT};
 
+struct Location;
+struct Direction;
+
 typedef struct Direction {
   int x, y;
+
   bool isZero () {return x == 0 && y == 0;}
+
+  int intabs(int n) const  {
+    if(n < 0) n = -n;
+    return n;
+  }
+
+  int abs() const {return intabs(x)+intabs(y);}
+
+  bool operator< (const Direction& dir)  {
+    return ( abs() < dir.abs() );
+  }
+
+  bool operator> (const Direction& dir)  {
+    return ( abs() > dir.abs() );
+  }
+
+  friend std::ostream& operator << (std::ostream& stream, Direction self) {
+    stream << "(" << self.x << ", " << self.y << ")";
+  }
+
 } Direction;
 
 typedef struct Location {
@@ -20,6 +44,10 @@ typedef struct Location {
   }
   Location operator+ (const Direction& loc) {
     Location temp = {x + loc.x, y + loc.y};
+    return temp;
+  }
+  Location operator- (const Direction& loc) {
+    Location temp = {x - loc.x, y - loc.y};
     return temp;
   }
   Location operator+ (const Location& loc) {
