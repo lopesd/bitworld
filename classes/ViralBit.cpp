@@ -1,4 +1,5 @@
 #include "ViralBit.h"
+#include "CorruptEvent.h"
 
 using namespace std;
 
@@ -12,11 +13,9 @@ ViralBit::ViralBit (vector<Cell> c) : CellGroup (c) {
   }
 }
 
-vector<Event> ViralBit::downCycle () {
+void ViralBit::downCycle () {
   vector<Location> myLocs = getLocations();
   vector<CellGroup*> unitsToCorrupt; //vector of units that have been corrupted
-
-  vector<Event> eventsToReturn;
   
   for( int i = 0; i < myLocs.size(); ++i ) { //For every cell
     
@@ -39,10 +38,9 @@ vector<Event> ViralBit::downCycle () {
     }
   }
 
+  //also create animation events
   if( !unitsToCorrupt.empty() ) {
-    EventType t = CORRUPT;
-    eventsToReturn.push_back( Event( t, this, unitsToCorrupt ) );
+    CorruptEvent ev( this, unitsToCorrupt );
+    ev.commit();
   }
-
-  return eventsToReturn;
 }

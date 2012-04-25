@@ -49,7 +49,7 @@ void Cell::move ( Direction dir ) {
   col += dir.x;
   row += dir.y;
 
-  if( movementAnimType == WHITEBIT ) {
+  if( movementAnimType == PHASE ) {
     moveCount = framesToMove;
     fadeIncrement = (float)255/moveCount*2;
   } else {
@@ -93,7 +93,7 @@ void Cell::setImage ( const char* name ) {
 }
 
 // Set images for the cell's animation
-void Cell::setImages ( vector<string> imgs, enum AnimType aType ) {
+void Cell::setImages ( vector<string> imgs, enum CellStillAnimType aType ) {
   imageNames = imgs;
   stillAnimType = aType;
   if( stillAnimType == PULSER ) stillAnimCount = 1;
@@ -109,9 +109,9 @@ void Cell::setImages ( vector<string> imgs, enum AnimType aType ) {
 }
 
 // Set the movement animation type
-void Cell::setMovementAnimation( AnimType type ) {
+void Cell::setMovementAnimation( CellMoveAnimType type ) {
   movementAnimType = type;
-  if( type == WHITEBIT ) framesToMove = FPS;
+  if( type == PHASE ) framesToMove = FPS;
 }
 
 // Draw Cell on the given SFML screen object
@@ -121,7 +121,7 @@ void Cell::draw ( sf::RenderWindow& screen ) {
   if( moveCount != 0 ) {
     --moveCount;
     
-    if( movementAnimType == WHITEBIT ) {
+    if( movementAnimType == PHASE ) {
 
       if( moveCount == framesToMove/2 ) { //move the sprite at the halfway point
 	x = (left_offset+col*width + 0.5*width);

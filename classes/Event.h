@@ -14,16 +14,11 @@ class Gate;
 class Event {
 
  public:
-  Event( EventType type = EMPTY, void* sender = 0 );
-  Event( EventType type, void* sender, std::vector<Location> locations );
-  Event( EventType type, void* sender, std::vector<CellGroup*> units );
-  
-  Event( const Event& );
+  Event( void* sender );
 
-  EventType type;
+  virtual void commit ( Level* level );
+
   void* sender;
-  std::vector<Location> locations;
-  std::vector<CellGroup*> units;
   
  private:
   int ID; // for debugging. each event has a unique ID number

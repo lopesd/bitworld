@@ -45,8 +45,9 @@ class Level {
   void runCycle     ();
   int  willMove     ( Location myLoc );
   void handleMerge  ( CellGroup*, CellGroup*, Location );
-  void handleEvent  ( Event ev );
   void killUnit     ( CellGroup* unitToDie );
+  void flagUnit     ( CellGroup* unitToFlag );
+  void openGate     ( Gate* gate );
   std::vector<CellGroup*> findNeighbors (CellGroup*);
 
   /* DRAWING */

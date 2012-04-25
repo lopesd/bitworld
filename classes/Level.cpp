@@ -52,7 +52,7 @@ Level::Level (sf::RenderWindow &newWindow, vector<ControlGroup*> c, vector<CellG
   // Calculate location of grid to be drawn
   FloatPair center;
   center.x = (float)(window.GetWidth())/2;
-  center.y = (float)(window.GetHeight())/3;
+  center.y = (float)(window.GetHeight())/2;
   gridRowHeight = 50;
   gridColWidth  = 50;
 
@@ -293,24 +293,17 @@ void Level::runCycle () {
   for( int i = 0; i < units.size(); ++i )
     units[i]->upCycle ();
   
-  //DOUBLE BUFFERING -- Switch present grid with future grid
+  //Switch present grid with future grid
   grid[0].clear(); //Clear old grid
   grid = grid + future;
   future = -future;
 
-  // HIGH CYCLES
-  vector<Event> tempEvs;
-  Event ev;
+  // HIGH CYCLES //
   for( int i = 0; i < gates.size(); ++i ) {
-    ev = gates[i]->highCycle();
-    if( ev.type == OPEN ) {
-      isDone = 1;
-      Gate* temp = (Gate*)ev.sender;
-      destination = temp->destination();
-    }
+    gates[i]->highCycle();
   }
 
-  // DOWN CYCLES (NEGATIVE EDGE OF CLOCK)
+  // DOWN CYCLES (NEGATIVE EDGE OF CLOCK) //
   // Detect bit death first
   for( int i = 0; i < units.size(); ++i ) {
     int dontDie = 0;
@@ -331,19 +324,11 @@ void Level::runCycle () {
     if( !dontDie )
       unitsToDie.insert( units[i] );
   }
-  
-  for( int i = 0; i < units.size(); ++i ) {
-    tempEvs = units[i]->downCycle();
-    
-    for( int j = 0; j < tempEvs.size(); ++j ) {
-      if( tempEvs[j].type != EMPTY ) {
-	handleEvent( tempEvs[j] );
-	events.push_back( tempEvs[j] );
-      }
 
-    } //End events of unit loop
-    
-  } //End units loop
+  // Unit events
+  for( int i = 0; i < units.size(); ++i ) {
+    units[i]->downCycle();
+  } //End events of unit loop
 
 }
 
@@ -370,33 +355,6 @@ int Level::willMove ( Location myLoc ) {
     if( grid[0][fLoc]->getMovement(0).isZero() )           return 0; //unit wants to remain where it is; head-on
     return( willMove(fLoc) );                                        //I am free to move only if my future position clears up.
   }
-}
-
-void Level::handleEvent( Event ev ) {
-
-  switch( ev.type ) {
-    
-  case PULSE : //loops through grid pulseRadius distance away and if a user bit is detected, add that cellGroup to the white bit's flagged vector
-    for(int j = 0; j < ev.locations.size(); j++){
-      if(grid[0].find(ev.locations[j]) != grid[0].end() ) { //If there is a unit at that location
-	
-	CellGroup* pulsedUnit = grid[0][ev.locations[j]];
-	if( ((CellGroup*)ev.sender)->controlGroup != pulsedUnit->controlGroup ) {
-	  flaggedUnits.insert( pulsedUnit );
-	}
-      }
-    }
-    break;
-    
-  case CORRUPT:
-    for( int k = 0; k < ev.units.size(); ++k ) {
-      ev.units[k]->controlGroup->forfeit( ev.units[k] );
-      ((CellGroup*)ev.sender)->controlGroup->take( ev.units[k] );
-    }
-    break;
-    
-  }
-
 }
 
 // Handles a merge or absorption between two units who move to the same location
@@ -455,6 +413,15 @@ void Level::killUnit ( CellGroup* unitToDie ) {
   if( flaggedUnits.find( unitToDie ) != flaggedUnits.end() ) flaggedUnits.erase( flaggedUnits.find(unitToDie) );
 }
 
+void Level::flagUnit ( CellGroup* unitToFlag ) {
+  flaggedUnits.insert( unitToFlag ); 
+  //Also include animation for flagging
+}
+
+void Level::openGate ( Gate* gate ) {
+  isDone = 1;
+  destination = gate->destination();
+}
 
 /* DRAWING */
 void Level::draw() {

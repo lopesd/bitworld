@@ -4,6 +4,7 @@
  */
 
 #include "Pulser.h"
+#include "PulseEvent.h"
 
 using namespace std;
 
@@ -25,16 +26,13 @@ void Pulser::queueStandardActionOrders () {
   }
 }
 
-vector<Event> Pulser::downCycle () {
-
-  vector<Event> evs; //the vector to be returned
+void Pulser::downCycle () {
 
   //cycle through standard action orders
-  if( actionQueue.empty() ) return evs;
+  if( actionQueue.empty() ) return;
   else if( actionQueue.front() == 1 ) {
 
     cout << "Pulsing!" << endl;
-    EventType t = PULSE;	
     vector<Location> temp;
     vector<Location> myLocs = getLocations();
     Location tempLoc;
@@ -54,12 +52,12 @@ vector<Event> Pulser::downCycle () {
 	  }
       } 
   
-    evs.push_back( Event(t, this, temp) );
+    PulseEvent ev( this, temp );
+    ev.commit( controlGroup->level );
   }
   
   actionQueue.pop_front();
   if( actionQueue.empty() ) queueStandardActionOrders();
-  return evs;
 
 }
 

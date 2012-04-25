@@ -4,13 +4,13 @@
 #include "CellGroup.h"
 
 class ViralBit : public CellGroup {
-
+  
  public:
   ViralBit  (std::vector<Cell> cells);
 
   std::string type () {return std::string("ViralBit");} //for debugging
 
-  std::vector<Event> downCycle (); 
+  void downCycle (); 
 
  private:
 

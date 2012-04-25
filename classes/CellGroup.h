@@ -34,7 +34,7 @@ class CellGroup {
   virtual void issueMovementOrder (Direction dir);
   virtual void removeLastMoveOrder();
   virtual void upCycle   ();
-  virtual std::vector<Event> downCycle ();
+  virtual void downCycle ();
 
   //ACCESSORS
   virtual std::vector<Location>  getLocations (); //returns location or locations in a vector

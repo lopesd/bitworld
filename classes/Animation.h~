@@ -1,0 +1,14 @@
+#ifndef ANIMATION_H
+#define ANIMATION_H
+
+#include <vector>
+
+class Animation {
+  
+ public:
+  Animation();
+
+ private:
+  AnimType type;
+
+};

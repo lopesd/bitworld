@@ -10,7 +10,7 @@ WhiteBit::WhiteBit (vector<Cell> c) : CellGroup (c) {
   maxResistance = resistance = 5;
   for (int i = 0; i < cells.size(); ++i) {
     cells[i].setImage( "white_bit.png" ); 
-    cells[i].setMovementAnimation( WHITEBIT );
+    cells[i].setMovementAnimation( PHASE );
   }
   speed = 3;
   chosen = 0;

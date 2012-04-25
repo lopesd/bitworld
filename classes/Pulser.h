@@ -18,7 +18,7 @@ class Pulser : public CellGroup {
   
   /** UTILITY FUNCTIONS **/
   void queueStandardActionOrders (); 
-  std::vector<Event> downCycle ();
+  void downCycle ();
 
   /** ACCESSORS **/
   int getRadius();

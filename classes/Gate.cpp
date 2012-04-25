@@ -29,7 +29,7 @@ void Gate::setGridData ( int w, int h, int t, int l ) {
   }
 }
 
-Event Gate::highCycle () {
+void Gate::highCycle () {
   int foundUnit = 0;
   for( int i = 0; i < cells.size(); ++i ) { 
     CellGroup* unitOnMe = level->unitAtLocation( cells[i].getGridLocation() );
@@ -41,13 +41,7 @@ Event Gate::highCycle () {
   if( !foundUnit ) openCounter = weight;
 
   if( openCounter <= 0 ) { //Gate opens
-    EventType op = OPEN;
-    Event open( op, this );
-    return open;
-  }
-  else {
-    Event temp;
-    return temp;
+    level->openGate( this );
   }
 }
 

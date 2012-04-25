@@ -31,7 +31,7 @@ class Gate {
   virtual void draw ( sf::RenderWindow &screen );
   virtual void setGridData ( int, int, int, int );
   // GAME LOGIC
-  virtual Event highCycle ();
+  virtual void highCycle ();
 
   /** MUTATORS **/
   void setWeight        ( int );
