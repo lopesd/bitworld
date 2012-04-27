@@ -13,8 +13,7 @@ void UserControlGroup::startTurn () {
   // Do nothing -- await more input
 }
 
-void UserControlGroup::handleInput (CellGroup* clickedUnit)
-{
+void UserControlGroup::handleInput (CellGroup* clickedUnit) {
   if( !clickedUnit || clickedUnit->controlGroup != this )
     selectedUnit = 0;
   else
@@ -23,6 +22,9 @@ void UserControlGroup::handleInput (CellGroup* clickedUnit)
 
 void UserControlGroup::handleInput (Direction dir) {
   if( selectedUnit ) {
+
+    // Don't queue more movements than there are cycles in a period.
+    if( selectedUnit->numOfMovements() >= level->getCyclesPerPeriod() ) return;
 
     vector<Location> flocs = selectedUnit->getLocationPathHeads();
     for( int i = 0; i < flocs.size(); ++i ) { //Check to see if the movement will be off-screen

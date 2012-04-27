@@ -5,7 +5,7 @@
 
 enum CellStillAnimType   { NORMAL, PULSER, WHITEBIT };
 enum CellMoveAnimType    { WALK, PHASE };
-enum AnimType            { PULSE, CORRUPT };
+enum AnimType            { PULSE, CORRUPT, DETECT, GLOW };
 
 struct Location;
 struct Direction;

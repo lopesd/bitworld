@@ -9,6 +9,7 @@
 #define LEVEL_H
 
 #include "structures.h"
+#include "Animation.h"
 
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
@@ -56,9 +57,12 @@ class Level {
   void drawUnits        ();
   void drawGates        ();
   void drawArrows       ();
+  void drawAnimations   ();
   void drawCycle        ( int offset );
   void drawBackground   ();
   void highlightSelect  ();
+
+  void addAnimation     ( Animation* anim );
 
   void requestDeafFrames (int amount);
 
@@ -74,6 +78,8 @@ class Level {
   int getCyclesPerPeriod();
   int getWidth();
   int getHeight();
+  int getCellWidth();
+  int getCellHeight();
 
  private:
   /** UNITS, CONTROLGROUPS, GRIDS **/
@@ -82,7 +88,7 @@ class Level {
   std::vector<ControlGroup*>        controlGroups;
   std::vector<CellGroup*>           units;
   std::vector<Gate*>                gates;
-  std::vector<Event>                events;
+  std::vector<Animation>            animations;
   std::set<CellGroup*>              unitsToDie;
   std::set<CellGroup*>              flaggedUnits;
   std::map<Location, CellGroup*>    doubleBufferGrid [2];  //Double buffered grid

@@ -455,6 +455,7 @@ void Level::draw() {
   highlightSelect();
   drawGates();
   drawUnits();
+  drawAnimations();
   drawArrows();
 
   if     ( cycleOffset == 0 ) cycleOffset = 20;
@@ -516,6 +517,16 @@ void Level::drawUnits() {
 void Level::drawGates() {
   for( int i = 0; i < gates.size(); ++i )
     gates[i]->draw( window );
+}
+
+void Level::drawAnimations() {
+  for( int i = 0; i < animations.size(); ) {
+    animations[i].draw( window );
+    if( animations[i].isDone() )
+      animations.erase( animations.begin() + i );
+    else 
+      ++i;
+  }
 }
 
 void Level::drawArrows()
@@ -747,6 +758,10 @@ void Level::highlightSelect() {
 
 }
 
+void Level::addAnimation ( Animation* anim ) {
+  animations.push_back( *anim );
+}
+
 void Level::requestDeafFrames( int requestedAmount ) {
   if( deafFrames < requestedAmount)
     deafFrames = requestedAmount;
@@ -804,4 +819,12 @@ int Level::getWidth () {
 
 int Level::getHeight () {
   return height;
+}
+
+int Level::getCellWidth () {
+  return gridColWidth;
+}
+
+int Level::getCellHeight () {
+  return gridRowHeight;
 }
