@@ -14,6 +14,11 @@ InfoBox::InfoBox(const char* filename, Level& newLevel, sf::RenderWindow& newWin
     cout << "Can't load the infobox font file." << endl;
     exit(0);
   }
+  if(!infoTitleFont.LoadFromFile("fonts/Courier.ttf", 50))
+  {
+    cout << "Can't load the infobox font file." << endl;
+    exit(0);
+  }
 
   //Import text from level file
   infoText = LevelParser::getInfoText(filename);
@@ -34,7 +39,7 @@ InfoBox::InfoBox(const char* filename, Level& newLevel, sf::RenderWindow& newWin
   //Add necessary spaces to the beginning of the title to center it
   title += infoText[0];
 
-  renderTitle = sf::String(title.c_str(), infoTextFont, 50);
+  renderTitle = sf::String(title.c_str(), infoTitleFont, 50);
 }
 
 void InfoBox::draw()

@@ -32,6 +32,7 @@ class InfoBox
     string title;
     vector<string> infoText; //Contains level information
     sf::Font infoTextFont;
+    sf::Font infoTitleFont;
 
     double titleCharacterWidth;
     int titleCharsPerLine;
