@@ -5,15 +5,21 @@
 
 using namespace std;
 
+extern int FPS;
+
 WhiteBit::WhiteBit (vector<Cell> c) : CellGroup (c) { 
   weight = 4;
   maxResistance = resistance = 5;
+  vector<string> imgs;
+  imgs.push_back( "new_white_bit.png" );
+  imgs.push_back( "new_white_bit_halo.png" );
   for (int i = 0; i < cells.size(); ++i) {
-    cells[i].setImage( "white_bit.png" ); 
-    cells[i].setMovementAnimation( WHITEBIT );
+    cells[i].setImages( imgs, WHITEBIT ); 
+    cells[i].setMovementAnimation( PHASE );
   }
   speed = 3;
   chosen = 0;
+
 }
 
 //chooses the closest of the flaggedBits to move towards/kill
@@ -43,8 +49,6 @@ void WhiteBit::findClosest( set<CellGroup*> flaggedBits, map<Location, CellGroup
 	
     }
   }
-
-  cout << "Chose to chase " << chosen->type() << ", at location " << temp << endl << endl;
 
 }
 
@@ -91,7 +95,6 @@ Direction WhiteBit::findMove ( map<Location, CellGroup*> grid, set<CellGroup*> f
 	  cout << floc << ", in direction " << dir2 << " is out of range." << endl;
 	} else {
 	  
-	  cout << "Checking location " << floc << " in direction " << dir2 << endl;
 	  if( grid.find(floc) != grid.end() ) {
 	    if( grid[floc] == chosen ) {
 	      return dir2; //WE HAVE FOUND THE CHOSEN ONE

@@ -51,10 +51,17 @@ Level::Level (sf::RenderWindow &newWindow, vector<ControlGroup*> c, vector<CellG
 
   // Calculate location of grid to be drawn
   FloatPair center;
+<<<<<<< HEAD
   center.x = (float)(window.GetWidth() - 400)/2;
   center.y = (float)(window.GetHeight() - 150)/2;
+  gridRowHeight = 50;
+  gridColWidth  = 50;
+=======
+  center.x = (float)(window.GetWidth())/2;
+  center.y = (float)(window.GetHeight())/2;
   gridRowHeight = 40;
   gridColWidth  = 40;
+>>>>>>> f8940f64080558e71310008f38773a756f7e8db0
 
   left_offset = center.x - (float)(width)/2*gridColWidth;
   top_offset  = center.y - (float)(height)/2*gridRowHeight;
@@ -281,6 +288,12 @@ void Level::runCycle () {
 	Direction dir = ((WhiteBit*)units[i])->findMove( grid[future], flaggedUnits ); //The white bit finds its desired move
 
 	units[i]->issueMovementOrder( dir );
+<<<<<<< HEAD
+
+	vector<Location> myLocs = units[i]->getLocations();
+=======
+	
+>>>>>>> f8940f64080558e71310008f38773a756f7e8db0
 	for( int j = 0; j < myLocs.size(); ++j ) {
 	  Location floc = myLocs[j] + dir;
 	  if( grid[future].find( floc ) != grid[future].end() ) { //If there is a unit at the desired location
@@ -299,7 +312,13 @@ void Level::runCycle () {
   //Move all units (only the ones that are free to move will move)
   for( int i = 0; i < units.size(); ++i )
     units[i]->upCycle ();
+<<<<<<< HEAD
+
+  //DOUBLE BUFFERING -- Switch present grid with future grid
+=======
+  
   //Switch present grid with future grid
+>>>>>>> f8940f64080558e71310008f38773a756f7e8db0
   grid[0].clear(); //Clear old grid
   grid = grid + future;
   future = -future;
@@ -330,16 +349,40 @@ void Level::runCycle () {
     if( !dontDie )
       unitsToDie.insert( units[i] );
   }
+<<<<<<< HEAD
+
+  for( int i = 0; i < units.size(); ++i ) {
+    tempEvs = units[i]->downCycle();
+
+    for( int j = 0; j < tempEvs.size(); ++j ) {
+      if( tempEvs[j].type != EMPTY ) {
+	handleEvent( tempEvs[j] );
+	events.push_back( tempEvs[j] );
+      }
+
+    } //End events of unit loop
+
+  } //End units loop
+=======
+
   // Unit events
   for( int i = 0; i < units.size(); ++i ) {
     units[i]->downCycle();
   } //End events of unit loop
+>>>>>>> f8940f64080558e71310008f38773a756f7e8db0
+
 }
 
 //Recursive checking if the unit currently at myLoc will move (eg. no head-on collision)
 int Level::willMove ( Location myLoc ) {
+<<<<<<< HEAD
+  if( grid[0].find( myLoc ) == grid[0].end() ) cout << "could not find myLoc. OH SHIT SEGFAULT" << endl;
+
+=======
   if( grid[0].find( myLoc ) == grid[0].end() ) 
     cout << "could not find myLoc. OH my goodness gracious SEGFAULT" << endl;
+  
+>>>>>>> f8940f64080558e71310008f38773a756f7e8db0
   CellGroup* unit = grid[0][myLoc]; //the unit that owns a cell at the given location
 
   //always return 1 if the unit is a white bit and if there are flaggedUnits it should be chasing.
@@ -364,6 +407,35 @@ int Level::willMove ( Location myLoc ) {
   }
 }
 
+<<<<<<< HEAD
+void Level::handleEvent( Event ev ) {
+
+  switch( ev.type ) {
+
+  case PULSE : //loops through grid pulseRadius distance away and if a user bit is detected, add that cellGroup to the white bit's flagged vector
+    for(int j = 0; j < ev.locations.size(); j++){
+      if(grid[0].find(ev.locations[j]) != grid[0].end() ) { //If there is a unit at that location
+
+	CellGroup* pulsedUnit = grid[0][ev.locations[j]];
+	if( ((CellGroup*)ev.sender)->controlGroup != pulsedUnit->controlGroup ) {
+	  flaggedUnits.insert( pulsedUnit );
+	}
+      }
+    }
+    break;
+
+  case CORRUPT:
+    for( int k = 0; k < ev.units.size(); ++k ) {
+      ev.units[k]->controlGroup->forfeit( ev.units[k] );
+      ((CellGroup*)ev.sender)->controlGroup->take( ev.units[k] );
+    }
+    break;
+  }
+
+}
+
+=======
+>>>>>>> f8940f64080558e71310008f38773a756f7e8db0
 // Handles a merge or absorption between two units who move to the same location
 void Level::handleMerge ( CellGroup* unit1, CellGroup* unit2, Location loc ) {
 

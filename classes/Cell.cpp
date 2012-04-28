@@ -10,6 +10,8 @@
 #include <cstring>
 #include <cmath>
 
+#define PI 3.14159265
+
 using namespace std;
 
 const extern int FPS;
@@ -23,6 +25,7 @@ Cell::Cell (int c, int r) {
   animIncrement.x = 0; animIncrement.y = 0;
   moveCount = 0;
   framesToMove = FPS/2;
+  alpha = 255;
   stillAnimCount = imageIndex = 0;
   stillAnimType = NORMAL;
 }
@@ -37,7 +40,8 @@ Cell::Cell ( const Cell& c ) {
   animIncrement = c.animIncrement;
   moveCount = c.moveCount;
   framesToMove = c.framesToMove;
-  
+  alpha = c.alpha;
+
   setGridData( c.width, c.height, c.top_offset, c.left_offset );
   // If Cell being copied had an image
   if ( !c.imageNames.empty() )
@@ -49,7 +53,7 @@ void Cell::move ( Direction dir ) {
   col += dir.x;
   row += dir.y;
 
-  if( movementAnimType == WHITEBIT ) {
+  if( movementAnimType == PHASE ) {
     moveCount = framesToMove;
     fadeIncrement = (float)255/moveCount*2;
   } else {
@@ -76,9 +80,11 @@ void Cell::setGridData ( int w, int h, int t, int l ) {
   if( sprite.GetImage() )
     sprite.SetCenter( sprite.GetImage()->GetWidth() / 2, sprite.GetImage()->GetHeight() / 2 );
   sprite2.SetPosition( x, y );
-  sprite2.Resize( width, height );
-  if( sprite2.GetImage() )
+  if( stillAnimType != WHITEBIT ) // don't resize if it's a white bit halo
+    sprite2.Resize( width, height );
+  if( sprite2.GetImage() ) {
     sprite2.SetCenter( sprite2.GetImage()->GetWidth() / 2, sprite2.GetImage()->GetHeight() /2 );
+  }
 }
 
 // Update image. Image must be loaded in the ImageCache beforehand
@@ -93,15 +99,18 @@ void Cell::setImage ( const char* name ) {
 }
 
 // Set images for the cell's animation
-void Cell::setImages ( vector<string> imgs, enum AnimType aType ) {
+void Cell::setImages ( vector<string> imgs, enum CellStillAnimType aType ) {
   imageNames = imgs;
   stillAnimType = aType;
   if( stillAnimType == PULSER ) stillAnimCount = 1;
-  else                     stillAnimCount = 0;
+  else                          stillAnimCount = 0;
 
   if( !imgs.empty() ) {
     sprite.SetImage( ImageCache::GetImage(imageNames[0]) );
     if( stillAnimType == PULSER ) {
+      sprite2.SetImage( ImageCache::GetImage(imageNames[1]) );
+    }
+    if( stillAnimType == WHITEBIT ) {
       sprite2.SetImage( ImageCache::GetImage(imageNames[1]) );
     }
   }
@@ -109,9 +118,9 @@ void Cell::setImages ( vector<string> imgs, enum AnimType aType ) {
 }
 
 // Set the movement animation type
-void Cell::setMovementAnimation( AnimType type ) {
+void Cell::setMovementAnimation( CellMoveAnimType type ) {
   movementAnimType = type;
-  if( type == WHITEBIT ) framesToMove = FPS;
+  if( type == PHASE ) framesToMove = FPS;
 }
 
 // Draw Cell on the given SFML screen object
@@ -121,15 +130,16 @@ void Cell::draw ( sf::RenderWindow& screen ) {
   if( moveCount != 0 ) {
     --moveCount;
     
-    if( movementAnimType == WHITEBIT ) {
+    if( movementAnimType == PHASE ) {
 
       if( moveCount == framesToMove/2 ) { //move the sprite at the halfway point
 	x = (left_offset+col*width + 0.5*width);
 	y = (top_offset+row*height + 0.5*height);
 	sprite.SetPosition( x, y );
+	sprite2.SetPosition( x, y );
       }
       
-      float alpha = fadeIncrement*abs(moveCount-framesToMove/2);
+      alpha = fadeIncrement*abs(moveCount-framesToMove/2);
       sprite.SetColor( sf::Color(255, 255, 255, alpha) );
 
     } else {
@@ -165,6 +175,14 @@ void Cell::draw ( sf::RenderWindow& screen ) {
     screen.Draw( sprite );
     sprite2.SetRotation( rotation++ );
     screen.Draw( sprite2 );
+  }
+  
+  else if( stillAnimType == WHITEBIT ) {
+    static float sinCounter = 0;
+    sprite2.SetColor( sf::Color( 255, 255, 255, abs(sin((sinCounter+=2)*PI/180)*255)*(alpha/255) ) );
+    if( sinCounter >= 360 ) sinCounter = 0;
+    screen.Draw( sprite2 );
+    screen.Draw( sprite );
   }
 
 }

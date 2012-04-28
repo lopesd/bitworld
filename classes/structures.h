@@ -3,8 +3,9 @@
 
 #include <iostream>
 
-enum AnimType {NORMAL, PULSER, WHITEBIT};
-enum EventType {EMPTY, OPEN, PULSE, CORRUPT};
+enum CellStillAnimType   { NORMAL, PULSER, WHITEBIT };
+enum CellMoveAnimType    { WALK, PHASE };
+enum AnimType            { PULSE, CORRUPT, DETECT, GLOW };
 
 struct Location;
 struct Direction;

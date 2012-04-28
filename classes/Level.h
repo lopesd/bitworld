@@ -9,6 +9,7 @@
 #define LEVEL_H
 
 #include "structures.h"
+#include "Animation.h"
 
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
@@ -45,8 +46,9 @@ class Level {
   void runCycle     ();
   int  willMove     ( Location myLoc );
   void handleMerge  ( CellGroup*, CellGroup*, Location );
-  void handleEvent  ( Event ev );
   void killUnit     ( CellGroup* unitToDie );
+  void flagUnit     ( CellGroup* unitToFlag );
+  void openGate     ( Gate* gate );
   std::vector<CellGroup*> findNeighbors (CellGroup*);
 
   /* DRAWING */
@@ -55,9 +57,12 @@ class Level {
   void drawUnits        ();
   void drawGates        ();
   void drawArrows       ();
+  void drawAnimations   ();
   void drawCycle        ( int offset );
   void drawBackground   ();
   void highlightSelect  ();
+
+  void addAnimation     ( Animation* anim );
 
   void requestDeafFrames (int amount);
 
@@ -73,7 +78,10 @@ class Level {
   int getCyclesPerPeriod();
   int getWidth();
   int getHeight();
-
+  int getGameOver();	//because to hell with data hiding, that's why
+  int getCellWidth();
+  int getCellHeight();
+  
  private:
   /** UNITS, CONTROLGROUPS, GRIDS **/
   ControlGroup*                     activeGroup;
@@ -81,7 +89,7 @@ class Level {
   std::vector<ControlGroup*>        controlGroups;
   std::vector<CellGroup*>           units;
   std::vector<Gate*>                gates;
-  std::vector<Event>                events;
+  std::vector<Animation>            animations;
   std::set<CellGroup*>              unitsToDie;
   std::set<CellGroup*>              flaggedUnits;
   std::map<Location, CellGroup*>    doubleBufferGrid [2];  //Double buffered grid
@@ -101,6 +109,8 @@ class Level {
   /** COMPLETION INFO **/
   int isDone;
   std::string destination;
+	
+	int gameOver;
 
   /** SFML OBJECTS AND ANIMATION STUFF **/
   int deafFrames; //The amount of frames to ignore input

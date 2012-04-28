@@ -18,7 +18,8 @@ class Pulser : public CellGroup {
   
   /** UTILITY FUNCTIONS **/
   void queueStandardActionOrders (); 
-  std::vector<Event> downCycle ();
+  void downCycle ();
+  void makeAnimation ( std::vector<Location> locationsToPulse );
 
   /** ACCESSORS **/
   int getRadius();

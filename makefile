@@ -1,11 +1,14 @@
 main=main
 dep=    classes/Cell.cpp \
 	classes/CellGroup.cpp \
-	classes/Event.cpp \
 	classes/Bit.cpp  \
 	classes/Pulser.cpp \
 	classes/ViralBit.cpp \
 	classes/WhiteBit.cpp \
+	classes/Event.cpp \
+	classes/CorruptEvent.cpp \
+	classes/PulseEvent.cpp \
+	classes/Animation.cpp \
 	classes/Gate.cpp \
 	classes/ControlGroup.cpp \
 	classes/UserControlGroup.cpp \
@@ -26,4 +29,4 @@ classes/*.o: %.o: %.cpp %.h
 	$(compile) -g $<  -o  $@
 
 clean:
-	rm -rf classes/*~ $(main) $(main).o $(objects)
+	rm -rf classes/*~ *~ $(main) $(main).o $(objects)

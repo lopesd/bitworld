@@ -31,8 +31,8 @@ class Cell {
   // Update image. Image must be loaded in the ImageCache beforehand
   void setImage  ( std::string imageName );
   void setImage  ( const char* imageName );
-  void setImages ( std::vector<std::string>, AnimType = NORMAL );
-  void setMovementAnimation( AnimType type );
+  void setImages ( std::vector<std::string>, CellStillAnimType = NORMAL );
+  void setMovementAnimation( CellMoveAnimType type );
 
   // Return location on the grid or location on the screen (pixels)y
   Location getGridLocation ();
@@ -50,9 +50,10 @@ class Cell {
   // Image and animation stuff
   int framesToMove; //indicates the amount of frames it takes to run the movement animation
   FloatPair animIncrement;
-  float fadeIncrement; //used for white bits' fading animation
+  float fadeIncrement, alpha; //used for white bits' fading animation
   int moveCount;
-  AnimType stillAnimType, movementAnimType; //types of animation
+  CellStillAnimType stillAnimType;
+  CellMoveAnimType  movementAnimType; //types of animation
   int stillAnimCount, imageIndex;
   std::vector<std::string> imageNames;
   sf::Sprite sprite;

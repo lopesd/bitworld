@@ -23,8 +23,9 @@ CellGroup::CellGroup ( vector<Cell> c ) {
   CGGroupName = "AI"; // Default ControlGroup, used for level parsing
   for (int i = 0; i < cells.size(); i++) {
     locations.push_back( cells.at(i).getGridLocation() );
-    cells.at(i).setMovementAnimation( NORMAL );
+    cells.at(i).setMovementAnimation( WALK );
   }
+
 }
 
 /** UTILITY FUNCTIONS **/
@@ -33,8 +34,7 @@ void CellGroup::draw ( sf::RenderWindow& screen ) {
     i->draw( screen );
 }
 
-void CellGroup::removeLastMoveOrder()
-{
+void CellGroup::removeLastMoveOrder() {
   if( movementQueue.empty() )
     return;
 
@@ -95,10 +95,7 @@ void CellGroup::upCycle () {
 }
 
 // events occur on the downcycle. should be overloaded for classes that have events.
-vector<Event> CellGroup::downCycle () {
-  vector<Event> e;
-  return e; //return empty events
-}
+void CellGroup::downCycle () {}
 
 /** ACCESSORS **/
 vector<Location> CellGroup::getLocations () {
