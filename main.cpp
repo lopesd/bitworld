@@ -110,7 +110,6 @@ int main (void) {
       string newLevel = level->nextLevel();
       level->destroy();
       level = new Level( LevelParser::Parse( newLevel.c_str(), window) );
-cout << "TEST" << endl;
       infoBox = new InfoBox(newLevel.c_str(), *level, window);
     }
 

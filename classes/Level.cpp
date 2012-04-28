@@ -408,9 +408,9 @@ void Level::killUnit ( CellGroup* unitToDie ) {
     }
   }
   units.erase( find( units.begin(), units.end(), unitToDie ) ); //Remove him from the units vector
-  delete unitToDie;                 //Finally, deallocate him
   if( activeGroup->getSelectedUnit() == unitToDie ) activeGroup->clearSelection();
-  if( flaggedUnits.find( unitToDie ) != flaggedUnits.end() ) flaggedUnits.erase( flaggedUnits.find(unitToDie) );
+  if( flaggedUnits.find(unitToDie) != flaggedUnits.end() ) flaggedUnits.erase( flaggedUnits.find(unitToDie) );
+  delete unitToDie;                 //Finally, deallocate him
 }
 
 void Level::flagUnit ( CellGroup* unitToFlag ) {

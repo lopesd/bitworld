@@ -21,11 +21,10 @@
 --- --- --- --- --- --- ;
 --- --- --- --- --- G1a ;
 V1a --- P1a --- --- G1b ;
---- P2a --- --- --- G1c ;
+--- --- --- --- --- G1c ;
 --- --- --- --- --- --- ;
 
 ~METADATA
 V1: -cg user ;
-P1: -pulse ppw ;
-P2: -pulse pwp ;
+P1: -pulse wpw ;
 G1: -weight 3 -destination levels/level_T2.bit ;
