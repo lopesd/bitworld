@@ -5,6 +5,7 @@
 */
 
 #include "ControlGroup.h"
+#include <cstring>
 
 using namespace std;
 
@@ -16,6 +17,11 @@ ControlGroup::ControlGroup (vector<CellGroup*> u) {
   for (int i = 0; i < units.size(); ++i) { // Initialize the CellGroups' controlGroups
     units.at(i)->controlGroup = this;
   }
+
+	if( strcmp(units.at(0)->CGGroupName.c_str(), "user") == 0 ) 
+		player = 1;
+	else
+		player = 0;	
 }
 
 /** UTILITY FUNCTIONS **/
@@ -43,4 +49,12 @@ void ControlGroup::setLevel (Level* l) {
 
 void ControlGroup::clearSelection () {
   selectedUnit = 0;
+}
+
+int ControlGroup::getUnitsSize() {
+	return units.size();
+}
+
+int ControlGroup::getPlayer() {
+	return player;
 }

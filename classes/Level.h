@@ -74,7 +74,7 @@ class Level {
   int getCyclesPerPeriod();
   int getWidth();
   int getHeight();
-
+	int getGameOver();	//because to hell with data hiding, that's why
  private:
   /** UNITS, CONTROLGROUPS, GRIDS **/
   ControlGroup*                     activeGroup;
@@ -102,6 +102,8 @@ class Level {
   /** COMPLETION INFO **/
   int isDone;
   std::string destination;
+	
+	int gameOver;
 
   /** SFML OBJECTS AND ANIMATION STUFF **/
   int deafFrames; //The amount of frames to ignore input

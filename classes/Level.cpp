@@ -83,6 +83,8 @@ Level::Level (sf::RenderWindow &newWindow, vector<ControlGroup*> c, vector<CellG
   activeGroupIndex = 0;
   activeGroup = controlGroups[0]; // set active group to be the first in the list
   activeGroup->startTurn();
+
+	gameOver = 0;
 }
 
 Level::Level (const Level& L) : window(L.window) {
@@ -99,7 +101,7 @@ Level::Level (const Level& L) : window(L.window) {
   cyclesPerPeriod = L.cyclesPerPeriod;
   cyclesToRun = L.cyclesToRun;
   isDone = 0;
-
+	gameOver = 0; //we changed this
   for( int i = 0; i < controlGroups.size(); ++i) // Tell controlGroups to recognize me as their level overlord
     controlGroups[i]->setLevel( this );
   for( int i = 0; i < gates.size(); ++i )
@@ -330,16 +332,25 @@ void Level::runCycle () {
     units[i]->downCycle();
   } //End events of unit loop
 
+
+//Check for loss here?
+	for( int i = 0; i < controlGroups.size(); ++i ) {
+		if(controlGroups[i]->getPlayer() && !(controlGroups[i]->getUnitsSize() ) ) {
+			//destroy();
+			gameOver = 1;	
+			isDone = 1;
+		}
+	}
 }
 
 //Recursive checking if the unit currently at myLoc will move (eg. no head-on collision)
 int Level::willMove ( Location myLoc ) {
-  if( grid[0].find( myLoc ) == grid[0].end() ) cout << "could not find myLoc. OH SHIT SEGFAULT" << endl;
+  if( grid[0].find( myLoc ) == grid[0].end() ) cout << "could not find myLoc. OH my goodness gracious SEGFAULT" << endl;
   
   CellGroup* unit = grid[0][myLoc]; //the unit that owns a cell at the given location
 
   //always return 1 if the unit is a white bit and if there are flaggedUnits it should be chasing.
-  cout << "Cheking if " << unit->type() << " will move... ";
+  cout << "Checking if " << unit->type() << " will move... ";
   if( strcmp( unit->type().c_str(), "WhiteBit" ) == 0 && !flaggedUnits.empty() ) {
     cout << "It is a moving whitebit!";
     return 1;
@@ -408,9 +419,11 @@ void Level::killUnit ( CellGroup* unitToDie ) {
     }
   }
   units.erase( find( units.begin(), units.end(), unitToDie ) ); //Remove him from the units vector
-  delete unitToDie;                 //Finally, deallocate him
+	unitToDie->controlGroup->forfeit(unitToDie);
+
   if( activeGroup->getSelectedUnit() == unitToDie ) activeGroup->clearSelection();
   if( flaggedUnits.find( unitToDie ) != flaggedUnits.end() ) flaggedUnits.erase( flaggedUnits.find(unitToDie) );
+  delete unitToDie;                 //Finally, deallocate him
 }
 
 void Level::flagUnit ( CellGroup* unitToFlag ) {
@@ -447,19 +460,20 @@ void Level::draw() {
 
   }
 
-  window.Clear();
+	if(!isDone) {
+		window.Clear();
+		drawBackground();
 
-  drawBackground();
+		drawGrid();
+		highlightSelect();
+		drawGates();
+		drawUnits();
+		drawArrows();
 
-  drawGrid();
-  highlightSelect();
-  drawGates();
-  drawUnits();
-  drawArrows();
-
-  if     ( cycleOffset == 0 ) cycleOffset = 20;
-  else if( cycleOffset != 20 ) --cycleOffset;
-  drawCycle(20-cycleOffset);
+		if     ( cycleOffset == 0 ) cycleOffset = 20;
+		else if( cycleOffset != 20 ) --cycleOffset;
+		drawCycle(20-cycleOffset);
+	}
 }
 
 void Level::drawGrid() {
@@ -804,4 +818,8 @@ int Level::getWidth () {
 
 int Level::getHeight () {
   return height;
+}
+
+int Level::getGameOver() {
+	return gameOver;
 }
