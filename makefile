@@ -29,4 +29,4 @@ classes/*.o: %.o: %.cpp %.h
 	$(compile) -g $<  -o  $@
 
 clean:
-	rm -rf classes/*~ $(main) $(main).o $(objects)
+	rm -rf classes/*~ *~ $(main) $(main).o $(objects)

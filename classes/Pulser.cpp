@@ -71,11 +71,8 @@ void Pulser::makeAnimation ( vector<Location> locationsToPulse ) {
       Animation glow( locationsToPulse[i] );
       glow.addImage( "pulse_glow.png" );
       glow.setAlphaInterval( alphas );
-      glow.setDuration( 1 );
-      glow.setRotationInterval( 0, 180 );
       glow.commit( controlGroup->level );
     }
-    
     
     // Create circle pulsing animation
     Animation pulse( getLocations()[0] );
@@ -99,7 +96,7 @@ void Pulser::makeAnimation ( vector<Location> locationsToPulse ) {
 
     pulse.commit  ( controlGroup->level );
     effect.commit ( controlGroup->level );
-        
+
     // For the lulz (2)
     Animation radar( getLocations()[0] );
     radar.addImage( "pulse_radar.png" );

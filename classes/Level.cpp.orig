@@ -53,8 +53,8 @@ Level::Level (sf::RenderWindow &newWindow, vector<ControlGroup*> c, vector<CellG
   FloatPair center;
   center.x = (float)(window.GetWidth())/2;
   center.y = (float)(window.GetHeight())/2;
-  gridRowHeight = 40;
-  gridColWidth  = 40;
+  gridRowHeight = 50;
+  gridColWidth  = 50;
 
   left_offset = center.x - (float)(width)/2*gridColWidth;
   top_offset  = center.y - (float)(height)/2*gridRowHeight;
@@ -84,7 +84,7 @@ Level::Level (sf::RenderWindow &newWindow, vector<ControlGroup*> c, vector<CellG
   activeGroup = controlGroups[0]; // set active group to be the first in the list
   activeGroup->startTurn();
 
-  gameOver = 0;
+	gameOver = 0;
 }
 
 Level::Level (const Level& L) : window(L.window) {
@@ -101,8 +101,7 @@ Level::Level (const Level& L) : window(L.window) {
   cyclesPerPeriod = L.cyclesPerPeriod;
   cyclesToRun = L.cyclesToRun;
   isDone = 0;
-  gameOver = 0;
-
+	gameOver = 0; //we changed this
   for( int i = 0; i < controlGroups.size(); ++i) // Tell controlGroups to recognize me as their level overlord
     controlGroups[i]->setLevel( this );
   for( int i = 0; i < gates.size(); ++i )
@@ -334,20 +333,19 @@ void Level::runCycle () {
   } //End events of unit loop
 
 
-  //Check for loss here?
-  for( int i = 0; i < controlGroups.size(); ++i ) {
-    if(controlGroups[i]->getPlayer() && !(controlGroups[i]->getUnitsSize()) ) {
-      gameOver = 1;	
-      isDone = 1;
-    }
-  }
-
+//Check for loss here?
+	for( int i = 0; i < controlGroups.size(); ++i ) {
+		if(controlGroups[i]->getPlayer() && !(controlGroups[i]->getUnitsSize() ) ) {
+			//destroy();
+			gameOver = 1;	
+			isDone = 1;
+		}
+	}
 }
 
 //Recursive checking if the unit currently at myLoc will move (eg. no head-on collision)
 int Level::willMove ( Location myLoc ) {
-  if( grid[0].find( myLoc ) == grid[0].end() ) 
-    cout << "could not find myLoc. OH my goodness gracious SEGFAULT" << endl;
+  if( grid[0].find( myLoc ) == grid[0].end() ) cout << "could not find myLoc. OH my goodness gracious SEGFAULT" << endl;
   
   CellGroup* unit = grid[0][myLoc]; //the unit that owns a cell at the given location
 
@@ -421,9 +419,15 @@ void Level::killUnit ( CellGroup* unitToDie ) {
     }
   }
   units.erase( find( units.begin(), units.end(), unitToDie ) ); //Remove him from the units vector
+<<<<<<< HEAD
   if( activeGroup->getSelectedUnit() == unitToDie ) activeGroup->clearSelection();
   if( flaggedUnits.find(unitToDie) != flaggedUnits.end() ) flaggedUnits.erase( flaggedUnits.find(unitToDie) );
-  unitToDie->controlGroup->forfeit(unitToDie);
+=======
+	unitToDie->controlGroup->forfeit(unitToDie);
+
+  if( activeGroup->getSelectedUnit() == unitToDie ) activeGroup->clearSelection();
+  if( flaggedUnits.find( unitToDie ) != flaggedUnits.end() ) flaggedUnits.erase( flaggedUnits.find(unitToDie) );
+>>>>>>> e2834cf55b8113323b8337f4dc8e8e71a34b7fa9
   delete unitToDie;                 //Finally, deallocate him
 }
 
@@ -460,21 +464,30 @@ void Level::draw() {
     }
 
   }
-  
-  window.Clear();
-  drawBackground();
-  
+
+	if(!isDone) {
+		window.Clear();
+		drawBackground();
+
+<<<<<<< HEAD
+		drawGrid();
+		highlightSelect();
+		drawGates();
+		drawUnits();
+		drawArrows();
+=======
   drawGrid();
   highlightSelect();
   drawGates();
   drawUnits();
   drawAnimations();
   drawArrows();
-  
-  if     ( cycleOffset == 0 ) cycleOffset = 20;
-  else if( cycleOffset != 20 ) --cycleOffset;
-  drawCycle(20-cycleOffset);
+>>>>>>> 3bc690284558bc2641f82840824082dc8d663fab
 
+		if     ( cycleOffset == 0 ) cycleOffset = 20;
+		else if( cycleOffset != 20 ) --cycleOffset;
+		drawCycle(20-cycleOffset);
+	}
 }
 
 void Level::drawGrid() {
@@ -658,9 +671,9 @@ void Level::drawCycle(int offset)
 
 
   //Number of cycles in the box
-  //  int numOfCycles = 2;
-  //(rightCycleEdge - leftCycleEdge) / cycleWidth / 2 * 2;
-  
+//  int numOfCycles = 2;
+//(rightCycleEdge - leftCycleEdge) / cycleWidth / 2 * 2;
+
   //Width and height of one cycle pulse
   int cycleWidth = (rightCycleEdge - leftCycleEdge) / 2;
 
@@ -835,15 +848,15 @@ int Level::getHeight () {
   return height;
 }
 
+<<<<<<< HEAD
 int Level::getGameOver() {
-  if( deafFrames ) return 0; // Level is not complete until animations finish
-  return gameOver;
-}
-
+	return gameOver;
+=======
 int Level::getCellWidth () {
   return gridColWidth;
 }
 
 int Level::getCellHeight () {
   return gridRowHeight;
+>>>>>>> 3bc690284558bc2641f82840824082dc8d663fab
 }

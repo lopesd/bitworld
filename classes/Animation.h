@@ -47,9 +47,12 @@ class Animation {
   /** UTILITY FUNCTIONS **/
   // Store values of interpolation between "values" in "result"
   void interpolate ( std::vector<float>& values, std::vector<float>& results );
+
+  // Initialize the drawing to be drawn on the given level
+  void init ( Level* level );
   
   // Commit the drawing to a level
-  void commit ( Level * level );
+  void commit ( Level* level );
   
   // Draw and update the animation (to be called every frame)
   void draw   ( sf::RenderWindow& screen );

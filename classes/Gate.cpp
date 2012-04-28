@@ -11,7 +11,7 @@ using namespace std;
 Gate::Gate ( vector<Cell> c ) {
   cells = c;
   for( int i = 0; i < cells.size(); ++i ) {
-    cells[i].setImage( "black_square.png" );
+    cells[i].setImage( "new_gate_open.png" );
   }
   weight = 3;
   openCounter = weight;

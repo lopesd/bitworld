@@ -23,6 +23,7 @@ class WhiteBit : public CellGroup {
   CellGroup* chosen;
   Location chosenLoc;
   int speed;
+
 };
 
 #endif

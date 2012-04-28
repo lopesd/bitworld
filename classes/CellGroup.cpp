@@ -25,6 +25,7 @@ CellGroup::CellGroup ( vector<Cell> c ) {
     locations.push_back( cells.at(i).getGridLocation() );
     cells.at(i).setMovementAnimation( WALK );
   }
+
 }
 
 /** UTILITY FUNCTIONS **/
@@ -33,8 +34,7 @@ void CellGroup::draw ( sf::RenderWindow& screen ) {
     i->draw( screen );
 }
 
-void CellGroup::removeLastMoveOrder()
-{
+void CellGroup::removeLastMoveOrder() {
   if( movementQueue.empty() )
     return;
 

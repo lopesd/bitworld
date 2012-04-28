@@ -102,8 +102,8 @@ void Animation::interpolate( vector<float>& values, vector<float>& results ) {
   
 }
 
-// Initialize myself, and tell level object to take me in
-void Animation::commit ( Level* level ) {
+// Initialize the drawing to be drawn on the given level
+void Animation::init ( Level* level ) {
 
   // Check for location validity...
   if( location.x < 0 || location.y < 0 || location.x >= level->getWidth() || location.y >= level->getHeight() ) 
@@ -115,6 +115,11 @@ void Animation::commit ( Level* level ) {
   cellHeight = level->getCellHeight();
 
   maxFrameCount = (float)FPS * duration;
+
+  imageForFrame.clear();
+  sizeForFrame.clear();
+  alphaForFrame.clear();
+  rotationForFrame.clear();
   imageForFrame.resize ( maxFrameCount, -1 );
   sizeForFrame.resize  ( maxFrameCount, 1 );
   alphaForFrame.resize ( maxFrameCount, 255 );  
@@ -151,6 +156,14 @@ void Animation::commit ( Level* level ) {
   // Set inital rotation
   sprite.SetRotation( rotations[0] );
 
+}
+
+// Initialize myself, and tell level object to take me in
+void Animation::commit ( Level* level ) {
+
+  // INITIALIZE //
+  init( level );
+  
   // COMMIT TO LEVEL //
   level->requestDeafFrames( maxFrameCount );
   level->addAnimation( this );

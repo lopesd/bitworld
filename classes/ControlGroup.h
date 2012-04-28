@@ -34,7 +34,8 @@ class ControlGroup {
 
   /** ACCESSORS **/
   CellGroup* getSelectedUnit();
-
+	int getUnitsSize();
+	int getPlayer();
   /** MUTATORS **/
   void setLevel (Level* level);
   void clearSelection ();
@@ -45,6 +46,7 @@ class ControlGroup {
  protected:
   std::vector<CellGroup*> units;
   CellGroup* selectedUnit;
+	int player; //defines 0 as computer control group, 1 for a player
 
 };
 

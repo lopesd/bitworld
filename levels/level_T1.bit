@@ -19,12 +19,13 @@
 
 ~GRID
 --- --- --- --- --- --- ;
---- --- --- --- --- G1a ;
-V1a --- P1a --- --- G1b ;
---- --- --- --- --- G1c ;
+--- K1a --- --- --- G1a ;
+V1a --- P1a --- --- --- ;
+--- --- --- --- --- --- ;
 --- --- --- --- --- --- ;
 
 ~METADATA
-V1: -cg user ;
+V1: -cg	 user ;
+K1: -speed 2 -cg user;
 P1: -pulse wpw ;
 G1: -weight 3 -destination levels/level_T2.bit ;
