@@ -5,6 +5,7 @@
 
 #include "Pulser.h"
 #include "PulseEvent.h"
+#include "Animation.h"
 
 using namespace std;
 
@@ -33,7 +34,7 @@ void Pulser::downCycle () {
   else if( actionQueue.front() == 1 ) {
 
     cout << "Pulsing!" << endl;
-    vector<Location> temp;
+    vector<Location> locationsToPulse;
     vector<Location> myLocs = getLocations();
     Location tempLoc;
     for(int i = -pulseRadius; i <= pulseRadius; ++i)
@@ -42,17 +43,37 @@ void Pulser::downCycle () {
 	  {
 	    tempLoc.x = myLocs[0].x + i;
 	    tempLoc.y = myLocs[0].y + j;
-	    temp.push_back(tempLoc);
+	    locationsToPulse.push_back(tempLoc);
 	    if(j)
 	      {
 		tempLoc.x = myLocs[0].x + i;
 		tempLoc.y = myLocs[0].y - j;
-		temp.push_back(tempLoc);
+		locationsToPulse.push_back(tempLoc);
 	      }
 	  }
       } 
-  
-    PulseEvent ev( this, temp );
+    
+    // Create circle pulsing animation
+    Animation anim( getLocations()[0] );
+    anim.addImage( "pulse_radius.png" );
+    anim.addImage( "pulse_glow.png" );
+    anim.addImage( "pulse_radius.png" );
+    anim.addImage( "pulse_glow.png" );
+    anim.setSizeInterval( 0.001, pulseRadius*2 + 1 );
+    anim.setAlphaInterval( 255, 0 );
+    anim.commit( controlGroup->level );
+    
+    // Create glowing animation
+    vector<float> alphas( 3, 0 );
+    alphas[1] = 70;
+    for( int i = 0; i < locationsToPulse.size(); ++i ) {
+      Animation glow( locationsToPulse[i] );
+      glow.addImage( "pulse_glow.png" );
+      glow.setAlphaInterval( alphas );
+      glow.commit( controlGroup->level );
+    }
+
+    PulseEvent ev( this, locationsToPulse );
     ev.commit( controlGroup->level );
   }
   

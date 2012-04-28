@@ -464,11 +464,20 @@ void Level::draw() {
 		window.Clear();
 		drawBackground();
 
+<<<<<<< HEAD
 		drawGrid();
 		highlightSelect();
 		drawGates();
 		drawUnits();
 		drawArrows();
+=======
+  drawGrid();
+  highlightSelect();
+  drawGates();
+  drawUnits();
+  drawAnimations();
+  drawArrows();
+>>>>>>> 3bc690284558bc2641f82840824082dc8d663fab
 
 		if     ( cycleOffset == 0 ) cycleOffset = 20;
 		else if( cycleOffset != 20 ) --cycleOffset;
@@ -530,6 +539,16 @@ void Level::drawUnits() {
 void Level::drawGates() {
   for( int i = 0; i < gates.size(); ++i )
     gates[i]->draw( window );
+}
+
+void Level::drawAnimations() {
+  for( int i = 0; i < animations.size(); ) {
+    animations[i].draw( window );
+    if( animations[i].isDone() )
+      animations.erase( animations.begin() + i );
+    else 
+      ++i;
+  }
 }
 
 void Level::drawArrows()
@@ -761,6 +780,10 @@ void Level::highlightSelect() {
 
 }
 
+void Level::addAnimation ( Animation* anim ) {
+  animations.push_back( *anim );
+}
+
 void Level::requestDeafFrames( int requestedAmount ) {
   if( deafFrames < requestedAmount)
     deafFrames = requestedAmount;
@@ -820,6 +843,15 @@ int Level::getHeight () {
   return height;
 }
 
+<<<<<<< HEAD
 int Level::getGameOver() {
 	return gameOver;
+=======
+int Level::getCellWidth () {
+  return gridColWidth;
+}
+
+int Level::getCellHeight () {
+  return gridRowHeight;
+>>>>>>> 3bc690284558bc2641f82840824082dc8d663fab
 }

@@ -8,6 +8,7 @@ dep=    classes/Cell.cpp \
 	classes/Event.cpp \
 	classes/CorruptEvent.cpp \
 	classes/PulseEvent.cpp \
+	classes/Animation.cpp \
 	classes/Gate.cpp \
 	classes/ControlGroup.cpp \
 	classes/UserControlGroup.cpp \
