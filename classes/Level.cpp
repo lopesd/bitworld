@@ -552,6 +552,55 @@ void Level::drawGates() {
 
 void Level::drawArrows()
 {
+  vector<Location> groupLocations;
+  CellGroup* unit;
+  unit = activeGroup->getSelectedUnit();
+
+  if(unit == 0)
+    return;
+
+  // DRAW ON GRID ARROWS
+  // Create and position arrow sprite
+  FloatPair arrowLocation = unit->getMiddle();
+  arrowSprite.SetPosition( left_offset + gridColWidth*arrowLocation.x + gridColWidth/2,
+                           top_offset + gridRowHeight*arrowLocation.y + gridRowHeight/2 );
+
+  for (int i = 0; i < unit->numOfMovements(); ++i) { // For each queued movement in selected unit...
+    // Rotate sprite and draw a(n)...
+    // Upward arrow
+    if ( unit->getMovement(i).x == 0 && unit->getMovement(i).y == -1 ) {
+      arrowSprite.Move( 0, -gridRowHeight/2 );
+      arrowSprite.SetRotation(270);
+      window.Draw( arrowSprite );
+      arrowSprite.Move( 0, -gridRowHeight/2 );
+    }
+    // Downward arrow
+    else if ( unit->getMovement(i).x == 0 && unit->getMovement(i).y == 1 ) {
+      arrowSprite.Move( 0, gridRowHeight/2 );
+      arrowSprite.SetRotation(90);
+      window.Draw( arrowSprite );
+      arrowSprite.Move( 0, gridRowHeight/2 );
+    }
+    // Left arrow
+    else if ( unit->getMovement(i).x == -1 && unit->getMovement(i).y == 0 ) {
+      arrowSprite.Move( -gridColWidth/2, 0 );
+      arrowSprite.SetRotation(0);
+      window.Draw( arrowSprite );
+      arrowSprite.Move( -gridColWidth/2, 0 );
+    }
+    // Right arrow
+    else if ( unit->getMovement(i).x == 1 && unit->getMovement(i).y == 0 ) {
+      arrowSprite.Move( gridColWidth/2, 0 );
+      arrowSprite.SetRotation(180);
+      window.Draw( arrowSprite );
+      arrowSprite.Move( gridColWidth/2, 0 );
+    }
+    // Stopped
+    else if ( unit->getMovement(i).isZero() ) {
+      stopSprite.SetPosition( arrowSprite.GetPosition() );
+      window.Draw( stopSprite );
+    }
+  }
 }
 
 void Level::drawCycle(int offset)
