@@ -5,7 +5,7 @@ using namespace std;
 Bit::Bit (vector<Cell> c) : CellGroup (c) { 
   weight = 1;
   for (int i = 0; i < cells.size(); ++i) {
-    cells[i].setImage( "simple_bit.png" );
+    cells[i].setImage( "new_simple_bit.png" );
   }
 }
 

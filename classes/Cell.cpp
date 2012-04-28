@@ -25,6 +25,7 @@ Cell::Cell (int c, int r) {
   animIncrement.x = 0; animIncrement.y = 0;
   moveCount = 0;
   framesToMove = FPS/2;
+  alpha = 255;
   stillAnimCount = imageIndex = 0;
   stillAnimType = NORMAL;
 }
@@ -39,7 +40,8 @@ Cell::Cell ( const Cell& c ) {
   animIncrement = c.animIncrement;
   moveCount = c.moveCount;
   framesToMove = c.framesToMove;
-  
+  alpha = c.alpha;
+
   setGridData( c.width, c.height, c.top_offset, c.left_offset );
   // If Cell being copied had an image
   if ( !c.imageNames.empty() )
@@ -137,7 +139,7 @@ void Cell::draw ( sf::RenderWindow& screen ) {
 	sprite2.SetPosition( x, y );
       }
       
-      float alpha = fadeIncrement*abs(moveCount-framesToMove/2);
+      alpha = fadeIncrement*abs(moveCount-framesToMove/2);
       sprite.SetColor( sf::Color(255, 255, 255, alpha) );
 
     } else {
@@ -177,8 +179,8 @@ void Cell::draw ( sf::RenderWindow& screen ) {
   
   else if( stillAnimType == WHITEBIT ) {
     static float sinCounter = 0;
-    sprite2.SetColor( sf::Color( 255, 255, 255, sin((sinCounter++)*PI/180)*50 + 30 ) );
-    if( sinCounter >= 180 ) sinCounter = 0;
+    sprite2.SetColor( sf::Color( 255, 255, 255, abs(sin((sinCounter+=2)*PI/180)*255)*(alpha/255) ) );
+    if( sinCounter >= 360 ) sinCounter = 0;
     screen.Draw( sprite2 );
     screen.Draw( sprite );
   }

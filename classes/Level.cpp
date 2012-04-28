@@ -276,18 +276,23 @@ void Level::runCycle () {
   //Move white bits
   for( int i = 0; i < units.size(); ++i ) 
     if( strcmp( units[i]->type().c_str(), "WhiteBit" ) == 0 ) {
+      vector<Location> myLocs = units[i]->getLocations();
       if( !flaggedUnits.empty() ) {
 	Direction dir = ((WhiteBit*)units[i])->findMove( grid[future], flaggedUnits ); //The white bit finds its desired move
       
 	units[i]->issueMovementOrder( dir );
 	
-	vector<Location> myLocs = units[i]->getLocations();
 	for( int j = 0; j < myLocs.size(); ++j ) {
 	  Location floc = myLocs[j] + dir;
-	  if( grid[future].find( floc ) != grid[future].end() ) {
-	    if( grid[future][floc] == units[i] ) cout << "I'M EATING ME GAAAAH" << endl;
+	  if( grid[future].find( floc ) != grid[future].end() ) { //If there is a unit at the desired location
 	    handleMerge( units[i], grid[future][floc], floc );
+	  } else {
+	    grid[future][floc] = units[i];
 	  }
+	}
+      } else {
+	for( int j = 0; j < myLocs.size(); ++j ) {
+	  grid[future][myLocs[j]] = units[i];
 	}
       }
     }
@@ -333,15 +338,6 @@ void Level::runCycle () {
     units[i]->downCycle();
   } //End events of unit loop
 
-
-  //Check for loss here?
-  for( int i = 0; i < controlGroups.size(); ++i ) {
-    if(controlGroups[i]->getPlayer() && !(controlGroups[i]->getUnitsSize()) ) {
-      gameOver = 1;	
-      isDone = 1;
-    }
-  }
-
 }
 
 //Recursive checking if the unit currently at myLoc will move (eg. no head-on collision)
@@ -362,7 +358,10 @@ int Level::willMove ( Location myLoc ) {
   Direction myDir = unit->getMovement(0);
   Location fLoc = myLoc + myDir; //My desired future location
   if( (fLoc.x < 0) || (fLoc.y < 0) || (fLoc.x >= width) || (fLoc.y >= height) ) return 0; //Future position is off grid; do not move
-  if( (myDir.isZero()) || (grid[0].find(fLoc) == grid[0].end()) ) return 1;   //There is no one there (or I am stopped); I go (there may still be an absorption)
+  if( (myDir.isZero()) || (grid[0].find(fLoc) == grid[0].end()) ) {
+    cout << "There is no one at the cell I wish to move to. " << endl;
+    return 1;   //There is no one there (or I am stopped); I go (there may still be an absorption)
+  }
   else { //If there is someone there...
     if( (fLoc + grid[0][fLoc]->getMovement(0) ) == myLoc ) return 0; //unit wants to move to where I am; head-on
     if( grid[0][fLoc]->getMovement(0).isZero() )           return 0; //unit wants to remain where it is; head-on
@@ -448,12 +447,22 @@ void Level::draw() {
       for( set<CellGroup*>::iterator i = unitsToDie.begin(); i != unitsToDie.end(); ++i )
 	killUnit( *i );
       unitsToDie.clear();
+
+      // If a unit has died, check to see if that was the last player's unit
+      for( int i = 0; i < controlGroups.size(); ++i ) {
+	if(controlGroups[i]->getPlayer() && !(controlGroups[i]->getUnitsSize()) ) {
+	  gameOver = 1;	
+	  isDone = 1;
+	}
+      }
+
     }
     
     if( cyclesToRun != 0 && !isDone ) { // run cycles if we still need to
       --cyclesToRun;
       runCycle();
     }
+
     else { //if there are no deaf frames and no cycles to run, then gates must be reset
       for( int i = 0; i < gates.size(); ++i )
 	gates[i]->resetOpenCounter();

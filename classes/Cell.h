@@ -50,7 +50,7 @@ class Cell {
   // Image and animation stuff
   int framesToMove; //indicates the amount of frames it takes to run the movement animation
   FloatPair animIncrement;
-  float fadeIncrement; //used for white bits' fading animation
+  float fadeIncrement, alpha; //used for white bits' fading animation
   int moveCount;
   CellStillAnimType stillAnimType;
   CellMoveAnimType  movementAnimType; //types of animation
