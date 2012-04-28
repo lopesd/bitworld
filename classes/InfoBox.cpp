@@ -9,7 +9,7 @@ using namespace std;
 InfoBox::InfoBox(const char* filename, Level& newLevel, sf::RenderWindow& newWindow)
 :level(newLevel), window(newWindow)
 {
-  if(!infoTextFont.LoadFromFile("fonts/Courier.ttf"))
+  if(!infoTextFont.LoadFromFile("fonts/Courier.ttf", 17))
   {
     cout << "Can't load the infobox font file." << endl;
     exit(0);
@@ -20,8 +20,8 @@ InfoBox::InfoBox(const char* filename, Level& newLevel, sf::RenderWindow& newWin
 
   //Set up the dimensinos of the boxes
   topBorder = SPACING;
-  leftBorder = window.GetWidth() - level.getRightOffset() + SPACING;
-  bottomBorder = window.GetHeight() - SPACING;
+  leftBorder = window.GetWidth() - 400;
+  bottomBorder = window.GetHeight() - 200;
   rightBorder = window.GetWidth() - SPACING;
   xCenter = (leftBorder + rightBorder) / 2.0;
   yCenter = (topBorder + bottomBorder) / 2.0;
@@ -69,9 +69,9 @@ void InfoBox::drawText()
 {
   for(int count = 1; count < infoText.size(); count++)
   {
-    sf::String renderInfo = sf::String(infoText[count].c_str(), infoTextFont, 20);
+    sf::String renderInfo = sf::String(infoText[count].c_str(), infoTextFont, 17);
     renderInfo.SetColor(sf::Color::Black);
-    renderInfo.SetPosition(leftBorder, topBorder + 30 * count + 50);
+    renderInfo.SetPosition(leftBorder, topBorder + 20 * count + 50);
     window.Draw(renderInfo);
   }
 }
