@@ -51,10 +51,17 @@ Level::Level (sf::RenderWindow &newWindow, vector<ControlGroup*> c, vector<CellG
 
   // Calculate location of grid to be drawn
   FloatPair center;
-  center.x = (float)(window.GetWidth())/2;
-  center.y = (float)(window.GetHeight())/2;
+<<<<<<< HEAD
+  center.x = (float)(window.GetWidth() - 400)/2;
+  center.y = (float)(window.GetHeight() - 150)/2;
   gridRowHeight = 50;
   gridColWidth  = 50;
+=======
+  center.x = (float)(window.GetWidth())/2;
+  center.y = (float)(window.GetHeight())/2;
+  gridRowHeight = 40;
+  gridColWidth  = 40;
+>>>>>>> f8940f64080558e71310008f38773a756f7e8db0
 
   left_offset = center.x - (float)(width)/2*gridColWidth;
   top_offset  = center.y - (float)(height)/2*gridRowHeight;
@@ -84,7 +91,7 @@ Level::Level (sf::RenderWindow &newWindow, vector<ControlGroup*> c, vector<CellG
   activeGroup = controlGroups[0]; // set active group to be the first in the list
   activeGroup->startTurn();
 
-	gameOver = 0;
+  gameOver = 0;
 }
 
 Level::Level (const Level& L) : window(L.window) {
@@ -101,7 +108,8 @@ Level::Level (const Level& L) : window(L.window) {
   cyclesPerPeriod = L.cyclesPerPeriod;
   cyclesToRun = L.cyclesToRun;
   isDone = 0;
-	gameOver = 0; //we changed this
+  gameOver = 0;
+
   for( int i = 0; i < controlGroups.size(); ++i) // Tell controlGroups to recognize me as their level overlord
     controlGroups[i]->setLevel( this );
   for( int i = 0; i < gates.size(); ++i )
@@ -239,7 +247,7 @@ void Level::runCycle () {
   // COLLISION DETECTION
   for( int i = 0; i < units.size(); ++i) { //For every unit
     if( strcmp( units[i]->type().c_str(), "WhiteBit" ) == 0 ) continue; //don't check white bits
-    
+
     locs =    units[i]->getLocations();
     tempDir = units[i]->getMovement(0);     //Get my next desired movement
 
@@ -256,11 +264,11 @@ void Level::runCycle () {
 
 	if( grid[future].find(fLoc) == grid[future].end() ) {
 	  grid[future][fLoc] = units[i]; //I am allowed to move.
-	} else { //ABSORPTION	  
+	} else { //ABSORPTION
 	  handleMerge( units[i], grid[future][fLoc], fLoc );
 	}
       }
-      
+
       else { //COLLISION IS HEAD-ON -- apply directly to the forehead
 	for( int k = 0; k < j; ++k ) //Clear all of my previous positions that have been placed
 	  grid[future].erase( grid[future].find( locs[k]+tempDir ) ); //Remove that pointer
@@ -273,29 +281,44 @@ void Level::runCycle () {
   }
 
   //Move white bits
-  for( int i = 0; i < units.size(); ++i ) 
+  for( int i = 0; i < units.size(); ++i )
     if( strcmp( units[i]->type().c_str(), "WhiteBit" ) == 0 ) {
+      vector<Location> myLocs = units[i]->getLocations();
       if( !flaggedUnits.empty() ) {
 	Direction dir = ((WhiteBit*)units[i])->findMove( grid[future], flaggedUnits ); //The white bit finds its desired move
-      
+
 	units[i]->issueMovementOrder( dir );
-	
+<<<<<<< HEAD
+
 	vector<Location> myLocs = units[i]->getLocations();
+=======
+	
+>>>>>>> f8940f64080558e71310008f38773a756f7e8db0
 	for( int j = 0; j < myLocs.size(); ++j ) {
 	  Location floc = myLocs[j] + dir;
-	  if( grid[future].find( floc ) != grid[future].end() ) {
-	    if( grid[future][floc] == units[i] ) cout << "I'M EATING ME GAAAAH" << endl;
+	  if( grid[future].find( floc ) != grid[future].end() ) { //If there is a unit at the desired location
 	    handleMerge( units[i], grid[future][floc], floc );
+	  } else {
+	    grid[future][floc] = units[i];
 	  }
+	}
+      } else {
+	for( int j = 0; j < myLocs.size(); ++j ) {
+	  grid[future][myLocs[j]] = units[i];
 	}
       }
     }
-  
+
   //Move all units (only the ones that are free to move will move)
   for( int i = 0; i < units.size(); ++i )
     units[i]->upCycle ();
+<<<<<<< HEAD
+
+  //DOUBLE BUFFERING -- Switch present grid with future grid
+=======
   
   //Switch present grid with future grid
+>>>>>>> f8940f64080558e71310008f38773a756f7e8db0
   grid[0].clear(); //Clear old grid
   grid = grid + future;
   future = -future;
@@ -326,27 +349,40 @@ void Level::runCycle () {
     if( !dontDie )
       unitsToDie.insert( units[i] );
   }
+<<<<<<< HEAD
+
+  for( int i = 0; i < units.size(); ++i ) {
+    tempEvs = units[i]->downCycle();
+
+    for( int j = 0; j < tempEvs.size(); ++j ) {
+      if( tempEvs[j].type != EMPTY ) {
+	handleEvent( tempEvs[j] );
+	events.push_back( tempEvs[j] );
+      }
+
+    } //End events of unit loop
+
+  } //End units loop
+=======
 
   // Unit events
   for( int i = 0; i < units.size(); ++i ) {
     units[i]->downCycle();
   } //End events of unit loop
+>>>>>>> f8940f64080558e71310008f38773a756f7e8db0
 
-
-//Check for loss here?
-	for( int i = 0; i < controlGroups.size(); ++i ) {
-		if(controlGroups[i]->getPlayer() && !(controlGroups[i]->getUnitsSize() ) ) {
-			//destroy();
-			gameOver = 1;	
-			isDone = 1;
-		}
-	}
 }
 
 //Recursive checking if the unit currently at myLoc will move (eg. no head-on collision)
 int Level::willMove ( Location myLoc ) {
-  if( grid[0].find( myLoc ) == grid[0].end() ) cout << "could not find myLoc. OH my goodness gracious SEGFAULT" << endl;
+<<<<<<< HEAD
+  if( grid[0].find( myLoc ) == grid[0].end() ) cout << "could not find myLoc. OH SHIT SEGFAULT" << endl;
+
+=======
+  if( grid[0].find( myLoc ) == grid[0].end() ) 
+    cout << "could not find myLoc. OH my goodness gracious SEGFAULT" << endl;
   
+>>>>>>> f8940f64080558e71310008f38773a756f7e8db0
   CellGroup* unit = grid[0][myLoc]; //the unit that owns a cell at the given location
 
   //always return 1 if the unit is a white bit and if there are flaggedUnits it should be chasing.
@@ -360,7 +396,10 @@ int Level::willMove ( Location myLoc ) {
   Direction myDir = unit->getMovement(0);
   Location fLoc = myLoc + myDir; //My desired future location
   if( (fLoc.x < 0) || (fLoc.y < 0) || (fLoc.x >= width) || (fLoc.y >= height) ) return 0; //Future position is off grid; do not move
-  if( (myDir.isZero()) || (grid[0].find(fLoc) == grid[0].end()) ) return 1;   //There is no one there (or I am stopped); I go (there may still be an absorption)
+  if( (myDir.isZero()) || (grid[0].find(fLoc) == grid[0].end()) ) {
+    cout << "There is no one at the cell I wish to move to. " << endl;
+    return 1;   //There is no one there (or I am stopped); I go (there may still be an absorption)
+  }
   else { //If there is someone there...
     if( (fLoc + grid[0][fLoc]->getMovement(0) ) == myLoc ) return 0; //unit wants to move to where I am; head-on
     if( grid[0][fLoc]->getMovement(0).isZero() )           return 0; //unit wants to remain where it is; head-on
@@ -368,6 +407,35 @@ int Level::willMove ( Location myLoc ) {
   }
 }
 
+<<<<<<< HEAD
+void Level::handleEvent( Event ev ) {
+
+  switch( ev.type ) {
+
+  case PULSE : //loops through grid pulseRadius distance away and if a user bit is detected, add that cellGroup to the white bit's flagged vector
+    for(int j = 0; j < ev.locations.size(); j++){
+      if(grid[0].find(ev.locations[j]) != grid[0].end() ) { //If there is a unit at that location
+
+	CellGroup* pulsedUnit = grid[0][ev.locations[j]];
+	if( ((CellGroup*)ev.sender)->controlGroup != pulsedUnit->controlGroup ) {
+	  flaggedUnits.insert( pulsedUnit );
+	}
+      }
+    }
+    break;
+
+  case CORRUPT:
+    for( int k = 0; k < ev.units.size(); ++k ) {
+      ev.units[k]->controlGroup->forfeit( ev.units[k] );
+      ((CellGroup*)ev.sender)->controlGroup->take( ev.units[k] );
+    }
+    break;
+  }
+
+}
+
+=======
+>>>>>>> f8940f64080558e71310008f38773a756f7e8db0
 // Handles a merge or absorption between two units who move to the same location
 void Level::handleMerge ( CellGroup* unit1, CellGroup* unit2, Location loc ) {
 
@@ -419,15 +487,9 @@ void Level::killUnit ( CellGroup* unitToDie ) {
     }
   }
   units.erase( find( units.begin(), units.end(), unitToDie ) ); //Remove him from the units vector
-<<<<<<< HEAD
   if( activeGroup->getSelectedUnit() == unitToDie ) activeGroup->clearSelection();
   if( flaggedUnits.find(unitToDie) != flaggedUnits.end() ) flaggedUnits.erase( flaggedUnits.find(unitToDie) );
-=======
-	unitToDie->controlGroup->forfeit(unitToDie);
-
-  if( activeGroup->getSelectedUnit() == unitToDie ) activeGroup->clearSelection();
-  if( flaggedUnits.find( unitToDie ) != flaggedUnits.end() ) flaggedUnits.erase( flaggedUnits.find(unitToDie) );
->>>>>>> e2834cf55b8113323b8337f4dc8e8e71a34b7fa9
+  unitToDie->controlGroup->forfeit(unitToDie);
   delete unitToDie;                 //Finally, deallocate him
 }
 
@@ -452,42 +514,43 @@ void Level::draw() {
       for( set<CellGroup*>::iterator i = unitsToDie.begin(); i != unitsToDie.end(); ++i )
 	killUnit( *i );
       unitsToDie.clear();
+
+      // If a unit has died, check to see if that was the last player's unit
+      for( int i = 0; i < controlGroups.size(); ++i ) {
+	if(controlGroups[i]->getPlayer() && !(controlGroups[i]->getUnitsSize()) ) {
+	  gameOver = 1;	
+	  isDone = 1;
+	}
+      }
+
     }
-    
+
     if( cyclesToRun != 0 && !isDone ) { // run cycles if we still need to
       --cyclesToRun;
       runCycle();
     }
+
     else { //if there are no deaf frames and no cycles to run, then gates must be reset
       for( int i = 0; i < gates.size(); ++i )
 	gates[i]->resetOpenCounter();
     }
 
   }
-
-	if(!isDone) {
-		window.Clear();
-		drawBackground();
-
-<<<<<<< HEAD
-		drawGrid();
-		highlightSelect();
-		drawGates();
-		drawUnits();
-		drawArrows();
-=======
+  
+  window.Clear();
+  drawBackground();
+  
   drawGrid();
   highlightSelect();
   drawGates();
   drawUnits();
   drawAnimations();
   drawArrows();
->>>>>>> 3bc690284558bc2641f82840824082dc8d663fab
+  
+  if     ( cycleOffset == 0 ) cycleOffset = 20;
+  else if( cycleOffset != 20 ) --cycleOffset;
+  drawCycle(20-cycleOffset);
 
-		if     ( cycleOffset == 0 ) cycleOffset = 20;
-		else if( cycleOffset != 20 ) --cycleOffset;
-		drawCycle(20-cycleOffset);
-	}
 }
 
 void Level::drawGrid() {
@@ -505,7 +568,7 @@ void Level::drawGrid() {
     addLength = scale * (window.GetWidth() - left_offset - right_offset) - 10;
 
     horLine = sf::Shape::Line(left_offset - addLength, top_offset,
-                            window.GetWidth() - right_offset + addLength, top_offset,
+                            left_offset + gridColWidth * width + addLength, top_offset,
                             2, gridColor,
                             1, gridOutlineColor);
 
@@ -565,53 +628,6 @@ void Level::drawArrows()
   if(unit == 0)
     return;
 
-  /*
-  sf::Color darkBlue = sf::Color(0, 92, 9, 200);
-
-  for(int count = 0; count < unit->numOfMovements(); count++)
-  {
-    window.Draw(sf::Shape::Rectangle(left_offset + ARROW_LENGTH * count,
-                                     window.GetHeight() - bottom_offset,
-                                     left_offset + ARROW_LENGTH * (count + 1),
-                                     window.GetHeight() - bottom_offset + ARROW_HEIGHT,
-                                     sf::Color(50, 50, 50, 100)));
-    window.Draw(sf::Shape::Rectangle(left_offset + ARROW_LENGTH * (count + 0.3),
-                                     window.GetHeight() - bottom_offset + ARROW_HEIGHT * 0.3,
-                                     left_offset + ARROW_LENGTH * (count + 0.7),
-                                     window.GetHeight() - bottom_offset + ARROW_HEIGHT * 0.7,
-                                     darkBlue));
-    int x1 = ARROW_LENGTH * -0.4;
-    int x2 = ARROW_LENGTH * 0.4;
-    int y1 = -ARROW_HEIGHT * 0.2;
-    int y2 = -ARROW_HEIGHT * 0.5;
-
-    sf::Shape Triangle;
-
-    Triangle.SetPosition( (left_offset + ARROW_LENGTH * (count + 0.5)),
-                         (window.GetHeight() - bottom_offset + ARROW_HEIGHT * 0.5));
-
-    Triangle.AddPoint(x1, y1, darkBlue);
-    Triangle.AddPoint(x2, y1, darkBlue);
-    Triangle.AddPoint((x1 + x2) / 2, y2, darkBlue);
-
-    switch((int)(unit->getMovement(count).x))
-    {
-      case 0:
-        if(unit->getMovement(count).y == 1)
-          Triangle.SetRotation(180);
-        break;
-      case -1:
-        Triangle.SetRotation(90);
-        break;
-      case 1:
-        Triangle.SetRotation(270);
-        break;
-    }
-
-    window.Draw(Triangle);
-  }
-  */
-
   // DRAW ON GRID ARROWS
   // Create and position arrow sprite
   FloatPair arrowLocation = unit->getMiddle();
@@ -656,24 +672,23 @@ void Level::drawArrows()
   }
 }
 
-
 void Level::drawCycle(int offset)
 {
   //Edges of the cycle box
-  int lowEdge = window.GetHeight() - bottom_offset / 5;
-  int highEdge = window.GetHeight() - bottom_offset + bottom_offset / 5;
+  int lowEdge = window.GetHeight() - 25;
+  int highEdge = window.GetHeight() - 175;
 
   //Edges of the cycle
   int highCycleEdge = highEdge + 20;
   int lowCycleEdge = lowEdge - 20;
-  int leftCycleEdge = left_offset + 20;
-  int rightCycleEdge = window.GetWidth() - right_offset - 20;
+  int leftCycleEdge = 40;
+  int rightCycleEdge = window.GetWidth() - 40;
 
 
   //Number of cycles in the box
-//  int numOfCycles = 2;
-//(rightCycleEdge - leftCycleEdge) / cycleWidth / 2 * 2;
-
+  //  int numOfCycles = 2;
+  //(rightCycleEdge - leftCycleEdge) / cycleWidth / 2 * 2;
+  
   //Width and height of one cycle pulse
   int cycleWidth = (rightCycleEdge - leftCycleEdge) / 2;
 
@@ -687,9 +702,9 @@ void Level::drawCycle(int offset)
   sf::Color cycleColor = sf::Color(170, 0, 0);
   sf::Color arrowColor = sf::Color(0, 92, 9, 200);
 
-  window.Draw(sf::Shape::Rectangle(left_offset,
+  window.Draw(sf::Shape::Rectangle(20,
                                    lowEdge,
-                                   window.GetWidth() - right_offset,
+                                   window.GetWidth() - 20,
                                    highEdge,
                                    backgroundColor));
 
@@ -848,15 +863,15 @@ int Level::getHeight () {
   return height;
 }
 
-<<<<<<< HEAD
 int Level::getGameOver() {
-	return gameOver;
-=======
+  if( deafFrames ) return 0; // Level is not complete until animations finish
+  return gameOver;
+}
+
 int Level::getCellWidth () {
   return gridColWidth;
 }
 
 int Level::getCellHeight () {
   return gridRowHeight;
->>>>>>> 3bc690284558bc2641f82840824082dc8d663fab
 }
