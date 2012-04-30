@@ -1,5 +1,5 @@
 #define FULLSCREEN 0
-#define LEVELFILE "levels/sentinel.bit"
+#define LEVELFILE "levels/level_kill.bit"
 
 int FPS = 30;
 
@@ -181,23 +181,27 @@ int main (void) {
     window.Draw(GameOverScreen);
     window.Display();
     while(!pressSpaceToStart){
-      while(window.GetEvent(endingEvent)) {
-	//cout << "game over screen" <<endl;
-	if(endingEvent.Type == sf::Event::KeyPressed) {
-	  if(endingEvent.Key.Code == sf::Key::Space) {
-	    pressSpaceToStart = 1;
-	    //cout << "space happened what do" <<endl;
-	  }
-	  else if(endingEvent.Key.Code == sf::Key::Escape) {
-	    window.Close();
-	    pressSpaceToStart = 1;
-	    doNotQuit = 0;
-	  }
+			while(window.GetEvent(endingEvent)) {
+				if(endingEvent.Type == sf::Event::KeyPressed) {
+	  			if(endingEvent.Key.Code == sf::Key::Space) {
+	    			pressSpaceToStart = 1;
+	  			}
+	  			else if(endingEvent.Key.Code == sf::Key::Escape) {
+	  			  window.Close();
+	    			pressSpaceToStart = 1;
+	    			doNotQuit = 0;
+	    			return 0;
+					}
 	  
+				}
+				else if (endingEvent.Type == sf::Event::Closed) { //in case user wants to close the window rather than playing
+	  			window.Close();
+	  			doNotQuit = 0;
+	  			return 0;
+				}
+			}
+		}
 	}
-      }
-    }
-  }
   
   return 0;
   
