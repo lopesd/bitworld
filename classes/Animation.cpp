@@ -75,19 +75,27 @@ void Animation::setRotationInterval ( vector<float> r ) {
   rotations = r;
 }
 
+// Preset counter type animation. Interpolates between the given numbers
 void Animation::fromCountDownPreset ( int begin, int end ) {
-  imageNames.clear();
-  if( begin == 1 ) imageNames.push_back( "one.png" );
-  else if( begin == 2 ) imageNames.push_back( "two.png" );
-  else if( begin == 3 ) imageNames.push_back( "three.png" );
-  else if( begin == 4 ) imageNames.push_back( "four.png" );
-  else if( begin == 0 ) imageNames.push_back( "zero.png" );
+  vector<int> nums;
+  int increment = begin > end ? -1 : 1 ;
+  for( ; begin != end; begin+=increment ) {
+    nums.push_back( begin );
+  }
+  nums.push_back( begin );
+  fromCountDownPreset( nums );
+}
 
-  if( end == 1 ) imageNames.push_back( "one.png" );
-  else if( end == 2 ) imageNames.push_back( "two.png" );
-  else if( end == 3 ) imageNames.push_back( "three.png" );
-  else if( end == 4 ) imageNames.push_back( "four.png" );
-  else if( end == 0 ) imageNames.push_back( "zero.png" );
+// Preset counter type animation. Interpolates between the given numbers
+void Animation::fromCountDownPreset ( vector<int> nums ) {
+  imageNames.clear();
+  for( int i = 0; i < nums.size(); ++i ) {
+    if( nums[i] == 1 ) imageNames.push_back( "one.png" );
+    else if( nums[i] == 2 ) imageNames.push_back( "two.png" );
+    else if( nums[i] == 3 ) imageNames.push_back( "three.png" );
+    else if( nums[i] == 4 ) imageNames.push_back( "four.png" );
+    else if( nums[i] == 0 ) imageNames.push_back( "zero.png" );
+  }
 }
 
 /** UTILITY FUNCTIONS **/

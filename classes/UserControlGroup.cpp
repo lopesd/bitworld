@@ -6,7 +6,8 @@ using namespace std;
 
 UserControlGroup::UserControlGroup (vector<CellGroup*> c)
 :ControlGroup(c) {
-  selectedUnit = 0;
+  if( !units.empty() )
+    selectedUnit = units[0]; // select the first unit
   player = 1;
 }
 
@@ -60,4 +61,7 @@ void UserControlGroup::take ( CellGroup* unitToTake ) {
   unitToTake->setSMO( vector<Direction>() );
   unitToTake->clearMovementQueue();
   unitToTake->CGGroupName = "user";
+  // Select the unit if it has priority over the already selected unit
+  if( !selectedUnit ) selectedUnit = unitToTake;
+  else if( selectedUnit->getWeight() < unitToTake->getWeight() ) selectedUnit = unitToTake;
 }

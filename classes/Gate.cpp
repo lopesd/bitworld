@@ -5,7 +5,9 @@
 */
 
 #include "Gate.h"
-#include <string>
+
+#include "Animation.h"
+
 #include <cstring>
 
 using namespace std;
@@ -116,6 +118,7 @@ void Gate::setGridData ( int w, int h, int t, int l ) {
 void Gate::highCycle () {
   unitsToTransfer.clear();
   int foundUnit = 0;
+  int prevOpenCounter = openCounter; // Used for animation
   for( int i = 0; i < cells.size(); ++i ) { 
     CellGroup* unitOnMe = level->unitAtLocation( cells[i].getGridLocation() );
     if( unitOnMe ) {
@@ -127,7 +130,13 @@ void Gate::highCycle () {
     }
   }
 
-  if( !foundUnit ) openCounter = weight;
+  if( !foundUnit ) {
+    openCounter = weight;
+  } else { // There is someone attempting to open us -- create animation
+    Animation anim( getLocations()[0] );
+    anim.fromCountDownPreset( prevOpenCounter, openCounter );
+    anim.commit( level );
+  }
 
   if( openCounter <= 0 ) { //Gate opens
     level->openGate( this );

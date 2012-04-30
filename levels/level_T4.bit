@@ -23,4 +23,4 @@ G1c --- --- --- --- --- --- --- --- --- ;
 K1: -speed 3 ;
 G1: -weight 9 -destination levels/level_T3.bit -tag 1 -dtag 2 ;
 G2: -weight 3 -destination levels/level_T5.bit -tag 2 -dtag 1 ;
-P1: -radius 2 ;
+P1: -radius 2 -pulse wpw ;

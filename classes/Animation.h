@@ -46,6 +46,7 @@ class Animation {
 
   // Set animation based on a preset
   void fromCountDownPreset( int begin, int end );
+  void fromCountDownPreset( std::vector<int> nums );
 
   /** UTILITY FUNCTIONS **/
   // Store values of interpolation between "values" in "result"

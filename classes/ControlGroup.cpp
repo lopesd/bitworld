@@ -10,12 +10,14 @@
 using namespace std;
 
 /** CONSTRUCTORS **/
-ControlGroup::ControlGroup (vector<CellGroup*> u) {
+ControlGroup::ControlGroup ( vector<CellGroup*> u ) {
   units = u;
   selectedUnit = 0;
+  if( !units.empty() ) {
+    selectedUnit = units[0]; // select the first unit
+  }
 
   for (int i = 0; i < units.size(); ++i) { // Initialize the CellGroups' controlGroups
-    cout << "Setting unit " << units.at(i)->type() << " to CG " << this << endl;
     units.at(i)->controlGroup = this;
   }
   
@@ -28,7 +30,7 @@ void ControlGroup::take ( CellGroup* unitToTake ) {
 }
 
 void ControlGroup::forfeit ( CellGroup* unitToForfeit ) {
-  if( selectedUnit = unitToForfeit ) selectedUnit = 0;
+  if( selectedUnit == unitToForfeit ) selectedUnit = 0;
   for( int i = 0; i < units.size(); ++i )
     if( units[i] == unitToForfeit )
       units.erase( units.begin() + i );
@@ -37,6 +39,18 @@ void ControlGroup::forfeit ( CellGroup* unitToForfeit ) {
 /** ACCESSORS **/
 CellGroup* ControlGroup::getSelectedUnit() {
   return selectedUnit;
+}
+
+int ControlGroup::getUnitsSize() {
+  return units.size();
+}
+
+vector<CellGroup*> ControlGroup::getUnits() {
+  return units;
+}
+
+int ControlGroup::getPlayer() {
+  return player;
 }
 
 /** MUTATORS **/
@@ -48,10 +62,3 @@ void ControlGroup::clearSelection () {
   selectedUnit = 0;
 }
 
-int ControlGroup::getUnitsSize() {
-  return units.size();
-}
-
-int ControlGroup::getPlayer() {
-  return player;
-}

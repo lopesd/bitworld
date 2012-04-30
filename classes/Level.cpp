@@ -403,7 +403,6 @@ int Level::willMove ( Location myLoc ) {
   CellGroup* unit = grid[0][myLoc]; //the unit that owns a cell at the given location
 
   //always return 1 if the unit is a white bit and if there are flaggedUnits it should be chasing.
-  cout << "Checking if " << unit->type() << " will move... ";
   if( strcmp( unit->type().c_str(), "WhiteBit" ) == 0 && !flaggedUnits.empty() ) {
     cout << "It is a moving whitebit!";
     return 1;
@@ -414,7 +413,6 @@ int Level::willMove ( Location myLoc ) {
   Location fLoc = myLoc + myDir; //My desired future location
   if( (fLoc.x < 0) || (fLoc.y < 0) || (fLoc.x >= width) || (fLoc.y >= height) ) return 0; //Future position is off grid; do not move
   if( (myDir.isZero()) || (grid[0].find(fLoc) == grid[0].end()) ) {
-    cout << "There is no one at the cell I wish to move to. " << endl;
     return 1;   //There is no one there (or I am stopped); I go (there may still be an absorption)
   }
   else { //If there is someone there...
@@ -428,7 +426,7 @@ int Level::willMove ( Location myLoc ) {
 // Handles a merge or absorption between two units who move to the same location
 void Level::handleMerge ( CellGroup* unit1, CellGroup* unit2, Location loc ) {
 
-  cout << "Merge Detected at " << loc << " between a " << unit1->type() << " and a " << unit2->type() << endl;
+  //cout << "Merge Detected at " << loc << " between a " << unit1->type() << " and a " << unit2->type() << endl;
 
   // If they are allowed to merge into one big unit...
   if( 0 ) {
@@ -476,7 +474,9 @@ void Level::killUnit ( CellGroup* unitToDie ) {
     }
   }
   units.erase( find( units.begin(), units.end(), unitToDie ) ); //Remove him from the units vector
-  if( activeGroup->getSelectedUnit() == unitToDie ) activeGroup->clearSelection();
+  if( activeGroup->getSelectedUnit() == unitToDie ) {
+    activeGroup->clearSelection();
+  }
   if( flaggedUnits.find(unitToDie) != flaggedUnits.end() ) flaggedUnits.erase( flaggedUnits.find(unitToDie) );
   unitToDie->controlGroup->forfeit(unitToDie);
   delete unitToDie;                 //Finally, deallocate him
@@ -566,8 +566,8 @@ void Level::draw() {
   drawBackground();
   
   drawGrid();
-  highlightSelect();
   drawGates();
+  highlightSelect();
   drawUnits();
   drawAnimations();
   drawArrows();
@@ -644,57 +644,61 @@ void Level::drawAnimations() {
   }
 }
 
-void Level::drawArrows()
-{
-  vector<Location> groupLocations;
-  CellGroup* unit;
-  unit = activeGroup->getSelectedUnit();
+void Level::drawArrows() {
+  // Draw arrows for every unit of the active group, if it is a user's group
+  if( activeGroup->getPlayer() ) 
+    for( int i = 0; i < activeGroup->getUnitsSize(); ++i ) {
+      CellGroup* unit = activeGroup->getUnits()[i];
+      int notSelected = !( unit == activeGroup->getSelectedUnit() );
 
-  if(unit == 0)
-    return;
+      if(unit == 0)
+	return;
 
-  // DRAW ON GRID ARROWS
-  // Create and position arrow sprite
-  FloatPair arrowLocation = unit->getMiddle();
-  arrowSprite.SetPosition( left_offset + gridColWidth*arrowLocation.x + gridColWidth/2,
-                           top_offset + gridRowHeight*arrowLocation.y + gridRowHeight/2 );
+      // DRAW ON GRID ARROWS
+      // Create and position arrow sprite
+      FloatPair arrowLocation = unit->getMiddle();
+      arrowSprite.SetPosition( left_offset + gridColWidth*arrowLocation.x + gridColWidth/2,
+			       top_offset + gridRowHeight*arrowLocation.y + gridRowHeight/2 );
+      if( notSelected ) arrowSprite.SetColor( sf::Color( 0, 0, 0, 100) );
+      else              arrowSprite.SetColor( sf::Color( 255, 255, 255, 255 ) );
 
-  for (int i = 0; i < unit->numOfMovements(); ++i) { // For each queued movement in selected unit...
-    // Rotate sprite and draw a(n)...
-    // Upward arrow
-    if ( unit->getMovement(i).x == 0 && unit->getMovement(i).y == -1 ) {
-      arrowSprite.Move( 0, -gridRowHeight/2 );
-      arrowSprite.SetRotation(270);
-      window.Draw( arrowSprite );
-      arrowSprite.Move( 0, -gridRowHeight/2 );
+      for (int i = 0; i < unit->numOfMovements(); ++i) { // For each queued movement in selected unit...
+	// Rotate sprite and draw a(n)...
+	// Upward arrow
+	if ( unit->getMovement(i).x == 0 && unit->getMovement(i).y == -1 ) {
+	  arrowSprite.Move( 0, -gridRowHeight/2 );
+	  arrowSprite.SetRotation(270);
+	  window.Draw( arrowSprite );
+	  arrowSprite.Move( 0, -gridRowHeight/2 );
+	}
+	// Downward arrow
+	else if ( unit->getMovement(i).x == 0 && unit->getMovement(i).y == 1 ) {
+	  arrowSprite.Move( 0, gridRowHeight/2 );
+	  arrowSprite.SetRotation(90);
+	  window.Draw( arrowSprite );
+	  arrowSprite.Move( 0, gridRowHeight/2 );
+	}
+	// Left arrow
+	else if ( unit->getMovement(i).x == -1 && unit->getMovement(i).y == 0 ) {
+	  arrowSprite.Move( -gridColWidth/2, 0 );
+	  arrowSprite.SetRotation(0);
+	  window.Draw( arrowSprite );
+	  arrowSprite.Move( -gridColWidth/2, 0 );
+	}
+	// Right arrow
+	else if ( unit->getMovement(i).x == 1 && unit->getMovement(i).y == 0 ) {
+	  arrowSprite.Move( gridColWidth/2, 0 );
+	  arrowSprite.SetRotation(180);
+	  window.Draw( arrowSprite );
+	  arrowSprite.Move( gridColWidth/2, 0 );
+	}
+	// Stopped
+	else if ( unit->getMovement(i).isZero() ) {
+	  stopSprite.SetPosition( arrowSprite.GetPosition() );
+	  window.Draw( stopSprite );
+	}
+      }
     }
-    // Downward arrow
-    else if ( unit->getMovement(i).x == 0 && unit->getMovement(i).y == 1 ) {
-      arrowSprite.Move( 0, gridRowHeight/2 );
-      arrowSprite.SetRotation(90);
-      window.Draw( arrowSprite );
-      arrowSprite.Move( 0, gridRowHeight/2 );
-    }
-    // Left arrow
-    else if ( unit->getMovement(i).x == -1 && unit->getMovement(i).y == 0 ) {
-      arrowSprite.Move( -gridColWidth/2, 0 );
-      arrowSprite.SetRotation(0);
-      window.Draw( arrowSprite );
-      arrowSprite.Move( -gridColWidth/2, 0 );
-    }
-    // Right arrow
-    else if ( unit->getMovement(i).x == 1 && unit->getMovement(i).y == 0 ) {
-      arrowSprite.Move( gridColWidth/2, 0 );
-      arrowSprite.SetRotation(180);
-      window.Draw( arrowSprite );
-      arrowSprite.Move( gridColWidth/2, 0 );
-    }
-    // Stopped
-    else if ( unit->getMovement(i).isZero() ) {
-      stopSprite.SetPosition( arrowSprite.GetPosition() );
-      window.Draw( stopSprite );
-    }
-  }
 }
 
 void Level::drawCycle(int offset)
@@ -816,9 +820,8 @@ void Level::highlightSelect() {
 
   if( !deafFrames ) {
     CellGroup* unit = activeGroup->getSelectedUnit();
-    if(unit == 0)
-      return;
-
+    if(unit == 0) return;
+    
     vector<FloatPair> groupLocations = unit->getScreenLocations();
 
     for (int i = 0; i < groupLocations.size(); ++i) {
