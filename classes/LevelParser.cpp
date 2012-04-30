@@ -9,6 +9,8 @@
 #include "ViralBit.h"
 #include "WhiteBit.h"
 #include "Gate.h"
+#include "Byte.h"
+#include "Wall.h"
 #include "UserControlGroup.h"
 #include "AIControlGroup.h"
 #include "Level.h"
@@ -24,12 +26,13 @@ using namespace std;
 ifstream LevelParser::file;
 char LevelParser::commentChar = '#';
 
-// Used to sort the units vector
+// Used to sort the units vector, compare pointers to CellGroup
 struct pointerCompare {
   bool operator() (CellGroup* first, CellGroup* second) { 
     return ( first->getWeight() < second->getWeight() );
   }
 } pointerCompare;
+
 
 // Parse text file into level object
 Level LevelParser::Parse ( const char* filename, sf::RenderWindow& window ) {
@@ -74,7 +77,7 @@ Level LevelParser::Parse ( const char* filename, sf::RenderWindow& window ) {
 	do {
 	  // CHECK TO SEE WHICH TYPE IT NEEDS TO BE, THEN CREATE AND GET POINTER
 	  // Have different if statements for different kinds of cells, if needed
-	  if ( token[0] == 'B' || token[0] == 'G' || token[0] == 'P' || token[0] == 'V' || token[0] == 'K' ) { 
+	  if ( token[0] == 'B' || token[0] == 'G' || token[0] == 'P' || token[0] == 'V' || token[0] == 'K' || token[0] == 'Y' || token[0] == 'W' ) { 
 	    Cell cell (gridX, gridY);
 	    //inserts a cell in the map
 	    cellsMap[ token.substr(0,token.length()-1) ][ token[token.length()-1] ] = cell; 
@@ -132,6 +135,15 @@ Level LevelParser::Parse ( const char* filename, sf::RenderWindow& window ) {
 	  gate = new Gate (cellVector);
 	  gatesMap[token.substr(0,token.length()-1)] = gate; // may be unnecessary for now, but will probably be necessary for events
 	}
+	else if ( token[0] == 'Y' ) {
+	  unit = new Byte (cellVector);
+	  unitsMap[token.substr(0,token.length()-1)] = unit; // may be unnecessary for now, but will probably be necessary for events
+	}
+	else if ( token[0] == 'W' ) {
+	  unit = new Wall (cellVector);
+	  unitsMap[token.substr(0,token.length()-1)] = unit; // may be unnecessary for now, but will probably be necessary for events
+	}
+
 	// INVALID UNIT TYPE, SKIP LINE
 	else {
 	  //cout << "Warning -- invalid unit type " << token << "; killing line" << endl;
@@ -214,6 +226,18 @@ Level LevelParser::Parse ( const char* filename, sf::RenderWindow& window ) {
 	      file >> newSpeed;
 	      ((WhiteBit*)unit)->setSpeed( newSpeed );
 	    }
+
+	    else if( strcmp(token.c_str(), "-tag") == 0 ) {
+	      int tag;
+	      file >> tag;
+	      gate->tag = tag;
+	    }
+
+	    else if( strcmp(token.c_str(), "-dtag") == 0 ) {
+	      int dtag;
+	      file >> dtag;
+	      gate->destinationTag = dtag;
+	    }
 	    
 	  } 
 	  
@@ -243,10 +267,14 @@ Level LevelParser::Parse ( const char* filename, sf::RenderWindow& window ) {
   vector<Gate*>      gatesVector;
   for( map<string, CellGroup*>::iterator it = unitsMap.begin(); it != unitsMap.end(); ++it ) {
     unitsVector.push_back( it->second );
-    if( strcmp(it->second->CGGroupName.c_str(), "user") == 0 )
+    if( strcmp(it->second->CGGroupName.c_str(), "user") == 0 ) {
+      cout << "Adding a " << it->second->type() << " to the user. " <<endl;
       userUnitsVector.push_back( it->second );
-    else
+    }
+    else {
+      cout << "Adding a " << it->second->type() << " to the AI. " <<endl;
       AIUnitsVector.push_back( it->second );
+    }
   }
   for( map<string, Gate*>::iterator it = gatesMap.begin(); it != gatesMap.end(); ++it ) {
     gatesVector.push_back( it->second );

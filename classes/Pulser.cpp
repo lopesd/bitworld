@@ -14,7 +14,7 @@ Pulser::Pulser (vector<Cell> c) : CellGroup(c) {
   maxResistance = resistance = 5;
   vector<string> imgs;
   imgs.push_back( "new_pulser_bit.png" );
-  imgs.push_back( "pulser_center.png" );
+  imgs.push_back( "new_pulser_center.png" );
   for (int i = 0; i < cells.size(); ++i) {
     cells[i].setImages( imgs, PULSER );
   }

@@ -7,6 +7,7 @@ using namespace std;
 UserControlGroup::UserControlGroup (vector<CellGroup*> c)
 :ControlGroup(c) {
   selectedUnit = 0;
+  player = 1;
 }
 
 void UserControlGroup::startTurn () {

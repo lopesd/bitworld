@@ -49,6 +49,8 @@ class Level {
   void killUnit     ( CellGroup* unitToDie );
   void flagUnit     ( CellGroup* unitToFlag );
   void openGate     ( Gate* gate );
+  void transferUnits( Level* newLevel );
+  void take         ( CellGroup* unit );
   std::vector<CellGroup*> findNeighbors (CellGroup*);
 
   /* DRAWING */
@@ -68,7 +70,9 @@ class Level {
 
   /* ACCESSORS */
   CellGroup* unitAtLocation ( Location );
+  Gate*      gateWithTag    ( int tag );
   std::string nextLevel     ();
+  int destinationGate ();
   std::set<CellGroup*> getFlaggedUnits ();
   int done ();
   int getTopOffset();
@@ -92,6 +96,8 @@ class Level {
   std::vector<Animation>            animations;
   std::set<CellGroup*>              unitsToDie;
   std::set<CellGroup*>              flaggedUnits;
+  std::set<CellGroup*>              unitsToTransfer;
+
   std::map<Location, CellGroup*>    doubleBufferGrid [2];  //Double buffered grid
   std::map<Location, CellGroup*>*   grid;                 //Pointer to reference current grid
   int future;                                  //Indicates which grid contains info on future positions
@@ -108,10 +114,10 @@ class Level {
 
   /** COMPLETION INFO **/
   int isDone;
-  std::string destination;
+  std::string destination;	
+  int gateDestTag;
+  int gameOver;
 	
-	int gameOver;
-
   /** SFML OBJECTS AND ANIMATION STUFF **/
   int deafFrames; //The amount of frames to ignore input
   int cycleOffset; //The offset for the CPU cycle animation

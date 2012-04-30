@@ -6,15 +6,10 @@ using namespace std;
 
 AIControlGroup::AIControlGroup (vector<CellGroup*> c) : ControlGroup(c) {
   selectedUnit = 0;
+  player = 0;
 }
 
 void AIControlGroup::startTurn () {
-  //Issue orders
-  /*
-  for( int i = 0; i < units.size(); ++i) {
-    units[i]->queueStandardMovementOrders;
-    }*/
-  cout << "Ending turn." << endl;
   level->controlGroupDone();
 }
 

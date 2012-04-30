@@ -11,6 +11,7 @@
 
 #include <vector>
 #include <string>
+#include <set>
 
 #include "structures.h"
 #include "Cell.h"
@@ -28,6 +29,7 @@ class Gate {
 
   /** UTILITY METHODS **/
   // DRAWING AND ANIMATION
+  virtual void setCellContexts ();
   virtual void draw ( sf::RenderWindow &screen );
   virtual void setGridData ( int, int, int, int );
   // GAME LOGIC
@@ -40,12 +42,17 @@ class Gate {
 
   /** ACCESSORS **/
   std::string destination ();
+  std::set<CellGroup*> getUnitsToTransfer ();
+  std::vector<Location> getLocations ();
 
   /** PUBLIC DATA MEMBERS **/
   Level* level;
+  int tag;
+  int destinationTag;
 
  private:
   std::vector<Cell> cells;
+  std::set<CellGroup*> unitsToTransfer;
   std::string dest; // the destination level
 
   int weight; // how long it takes to open
