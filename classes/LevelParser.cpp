@@ -8,6 +8,7 @@
 #include "Pulser.h"
 #include "ViralBit.h"
 #include "WhiteBit.h"
+#include "Sentinel.h"
 #include "Gate.h"
 #include "UserControlGroup.h"
 #include "AIControlGroup.h"
@@ -74,7 +75,7 @@ Level LevelParser::Parse ( const char* filename, sf::RenderWindow& window ) {
 	do {
 	  // CHECK TO SEE WHICH TYPE IT NEEDS TO BE, THEN CREATE AND GET POINTER
 	  // Have different if statements for different kinds of cells, if needed
-	  if ( token[0] == 'B' || token[0] == 'G' || token[0] == 'P' || token[0] == 'V' || token[0] == 'K' ) { 
+	  if ( token[0] == 'B' || token[0] == 'G' || token[0] == 'P' || token[0] == 'V' || token[0] == 'K' || token[0] == 'S' ) { 
 	    Cell cell (gridX, gridY);
 	    //inserts a cell in the map
 	    cellsMap[ token.substr(0,token.length()-1) ][ token[token.length()-1] ] = cell; 
@@ -124,14 +125,20 @@ Level LevelParser::Parse ( const char* filename, sf::RenderWindow& window ) {
 	  unit = new ViralBit (cellVector);
 	  unitsMap[token.substr(0,token.length()-1)] = unit; // may be unnecessary for now, but will probably be necessary for events
 	}
-	else if ( token[0] == 'K' ) { // VIRAL BIT
+	else if ( token[0] == 'K' ) { // WHITE BIT
 	  unit = new WhiteBit (cellVector);	  
+	  unitsMap[token.substr(0,token.length()-1)] = unit; // may be unnecessary for now, but will probably be necessary for events
+	}
+	else if ( token[0] == 'S' ) {// SENTINEL
+	  unit = new Sentinel (cellVector);
+	  cout <<"hello"<<endl;
 	  unitsMap[token.substr(0,token.length()-1)] = unit; // may be unnecessary for now, but will probably be necessary for events
 	}
 	else if ( token[0] == 'G' ) {
 	  gate = new Gate (cellVector);
 	  gatesMap[token.substr(0,token.length()-1)] = gate; // may be unnecessary for now, but will probably be necessary for events
 	}
+
 	// INVALID UNIT TYPE, SKIP LINE
 	else {
 	  //cout << "Warning -- invalid unit type " << token << "; killing line" << endl;
@@ -213,6 +220,40 @@ Level LevelParser::Parse ( const char* filename, sf::RenderWindow& window ) {
 	      int newSpeed;
 	      file >> newSpeed;
 	      ((WhiteBit*)unit)->setSpeed( newSpeed );
+	    }
+	    
+	    else if( strcmp(token.c_str(), "-direction") == 0 ) {
+	      Direction newDirection;
+	      char dir;
+	      file >> dir;
+	      switch (dir) {
+		  case 'u':
+		    newDirection.x = 0; newDirection.y = -1;
+		    break;
+		  case 'd':
+		    newDirection.x = 0; newDirection.y = 1;
+		    break;
+		  case 'l':
+		    newDirection.x = -1; newDirection.y = 0;
+		    break;
+		  case 'r':
+		    newDirection.x = 1; newDirection.y = 0;
+		    break;
+		  case 's':
+		    newDirection.x = 0; newDirection.y = 0;
+		    break;
+		  }
+	      ((Sentinel*)unit)->setDirection( newDirection );
+	    }
+	    
+	    else if( strcmp(token.c_str(), "-zap") == 0 ) {
+	      vector<int> zaps;
+	      file >> token;
+	      for( int i = 0; i < token.size(); ++i ) {
+					if( token[i] == 'z' ) zaps.push_back( 1 );
+					else if( token[i] == 'w' ) zaps.push_back( 0 );
+	      }
+	      ((Sentinel*)unit)->setStandardActionOrders( zaps );
 	    }
 	    
 	  } 

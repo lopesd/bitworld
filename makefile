@@ -5,9 +5,11 @@ dep=    classes/Cell.cpp \
 	classes/Pulser.cpp \
 	classes/ViralBit.cpp \
 	classes/WhiteBit.cpp \
+	classes/Sentinel.cpp\
 	classes/Event.cpp \
 	classes/CorruptEvent.cpp \
 	classes/PulseEvent.cpp \
+	classes/ZapEvent.cpp\
 	classes/Animation.cpp \
 	classes/Gate.cpp \
 	classes/ControlGroup.cpp \
