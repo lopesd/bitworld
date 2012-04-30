@@ -1,23 +1,13 @@
-/** Gate.cpp
- *  A gate does not derive from CellGroup and is not a "unit" per se.
- *  It is responsible for drawing its cells, and is the base class for other specialized gates.
- *  Written for Bitworld by: David Lopes, Casey O'Meilia, Catherine Carothers, Mark Riehm
-*/
-
-#include "Gate.h"
-#include <string>
-#include <cstring>
+#include "Wall.h"
 
 using namespace std;
 
-Gate::Gate ( vector<Cell> c ) {
-  cells = c;
+Wall::Wall ( vector<Cell> c ) : CellGroup(c) {
+  weight = 100;
   setCellContexts();
-  weight = 3;
-  openCounter = weight;
 }
 
-void Gate::setCellContexts () {
+void Wall::setCellContexts () {
 
   // Set indicators to the cells around any given cell
   int a, b, l, r, al, ar, bl, br; // above, below, left, right, above-left, etc.
@@ -55,7 +45,7 @@ void Gate::setCellContexts () {
 
     // Set the image depending on who is around. We assume the byte is 4 cells big.
 
-    string imgName = "new_gate_";
+    string imgName = "new_wall_";
 
     // Find the right image and rotation for the cell
     int numConnections = ( int(a!=-1) + int(b!=-1) + int(r!=-1) + int(l!=-1) );
@@ -100,65 +90,4 @@ void Gate::setCellContexts () {
     
   }  
   
-}
-
-void Gate::draw ( sf::RenderWindow &screen ) {
-  for( int i = 0; i < cells.size(); ++i ) {
-    cells[i].draw( screen );
-  }
-}
-
-void Gate::setGridData ( int w, int h, int t, int l ) {
-  for (int i = 0; i < cells.size(); ++i) {
-    cells[i].setGridData( w, h, t, l );
-  }
-}
-
-void Gate::highCycle () {
-  unitsToTransfer.clear();
-  int foundUnit = 0;
-  for( int i = 0; i < cells.size(); ++i ) { 
-    CellGroup* unitOnMe = level->unitAtLocation( cells[i].getGridLocation() );
-    if( unitOnMe ) {
-      if( strcmp(unitOnMe->CGGroupName.c_str(), "user") == 0 ) {
-	unitsToTransfer.insert( unitOnMe );
-	foundUnit = 1;
-	--openCounter;
-      }
-    }
-  }
-
-  if( !foundUnit ) openCounter = weight;
-
-  if( openCounter <= 0 ) { //Gate opens
-    level->openGate( this );
-  }
-}
-
-void Gate::setWeight ( int w ) {
-  weight = w;
-  openCounter = weight;
-}
-
-void Gate::setDest ( std::string s ) {
-  dest = s;
-}
-
-void Gate::resetOpenCounter () {
-  openCounter = weight;
-}
-
-string Gate::destination () {
-  return dest;
-}
-
-set<CellGroup*> Gate::getUnitsToTransfer () {
-  return unitsToTransfer;
-}
-
-vector<Location> Gate::getLocations () {
-  vector<Location> locs;
-  for( int i = 0; i < cells.size(); ++i )
-    locs.push_back( cells[i].getGridLocation() );
-  return locs;
 }

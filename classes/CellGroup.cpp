@@ -25,7 +25,6 @@ CellGroup::CellGroup ( vector<Cell> c ) {
     locations.push_back( cells.at(i).getGridLocation() );
     cells.at(i).setMovementAnimation( WALK );
   }
-
 }
 
 /** UTILITY FUNCTIONS **/
@@ -51,6 +50,7 @@ void CellGroup::move (Direction dir) {
     cells[i].move( dir );
     controlGroup->level->requestDeafFrames( cells[i].getMoveCount() );
   }
+
   locations.clear();
   for (int i = 0; i < cells.size(); i++) //update the locations vector
     locations.push_back( cells.at(i).getGridLocation() );
@@ -159,6 +159,18 @@ int CellGroup::numOfMovements() {
 }
 
 /** MUTATORS **/
+// NEVER USE THIS FUNCTION EXCEPT IN CASE OF EMERGENCY AND CERTAINTY THAT UNIT IS 1 CELL BIG
+void CellGroup::setLocation ( Location newLoc ) {
+  for( int i = 0; i < cells.size(); ++i ) {
+    cells[i].setGridLocation( newLoc );
+  }
+  clearMovementQueue();
+  locations.clear();
+  for (int i = 0; i < cells.size(); i++) //update the locations vector
+    locations.push_back( cells.at(i).getGridLocation() );
+  pathHead = getMiddle();
+}
+
 void CellGroup::setSMO ( vector<Direction> m ) {
   standardMovementOrders = m;
   queueStandardMovementOrders();
@@ -173,6 +185,7 @@ void CellGroup::setGridData (int w, int h, int t, int l) {
   for (int i = 0; i < cells.size(); ++i) {
     cells[i].setGridData( w, h, t, l );
   }
+  pathHead = getMiddle();
 }
 
 void CellGroup::setFreeToMove (int f) {

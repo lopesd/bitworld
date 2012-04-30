@@ -15,13 +15,10 @@ ControlGroup::ControlGroup (vector<CellGroup*> u) {
   selectedUnit = 0;
 
   for (int i = 0; i < units.size(); ++i) { // Initialize the CellGroups' controlGroups
+    cout << "Setting unit " << units.at(i)->type() << " to CG " << this << endl;
     units.at(i)->controlGroup = this;
   }
-
-	if( strcmp(units.at(0)->CGGroupName.c_str(), "user") == 0 ) 
-		player = 1;
-	else
-		player = 0;	
+  
 }
 
 /** UTILITY FUNCTIONS **/
@@ -52,9 +49,9 @@ void ControlGroup::clearSelection () {
 }
 
 int ControlGroup::getUnitsSize() {
-	return units.size();
+  return units.size();
 }
 
 int ControlGroup::getPlayer() {
-	return player;
+  return player;
 }

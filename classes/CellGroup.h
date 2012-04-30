@@ -49,6 +49,7 @@ class CellGroup {
   virtual std::string            type () = 0; //return the type of the unit
 
   //MUTATORS
+  virtual void setLocation ( Location newLoc );
   virtual void setSMO      (std::vector<Direction>);
   virtual void clearMovementQueue ();
   virtual void setGridData (int, int, int, int);

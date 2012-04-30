@@ -28,6 +28,8 @@ Cell::Cell (int c, int r) {
   alpha = 255;
   stillAnimCount = imageIndex = 0;
   stillAnimType = NORMAL;
+  sinCounter = rotation = 0;
+  a=b=l=r=ar=al=br=bl= -1;
 }
 
 // Copy constructor is defined to make sure the sprite information is copied
@@ -41,6 +43,8 @@ Cell::Cell ( const Cell& c ) {
   moveCount = c.moveCount;
   framesToMove = c.framesToMove;
   alpha = c.alpha;
+  sinCounter = rotation = 0;
+  a=b=l=r=ar=al=br=bl= -1;
 
   setGridData( c.width, c.height, c.top_offset, c.left_offset );
   // If Cell being copied had an image
@@ -76,21 +80,29 @@ void Cell::setGridData ( int w, int h, int t, int l ) {
   y = top_offset + height*row + 0.5*height;
   
   sprite.SetPosition( x, y );
-  sprite.Resize( width, height );
-  if( sprite.GetImage() )
-    sprite.SetCenter( sprite.GetImage()->GetWidth() / 2, sprite.GetImage()->GetHeight() / 2 );
   sprite2.SetPosition( x, y );
+  sprite.Resize( width, height );
   if( stillAnimType != WHITEBIT ) // don't resize if it's a white bit halo
-    sprite2.Resize( width, height );
-  if( sprite2.GetImage() ) {
-    sprite2.SetCenter( sprite2.GetImage()->GetWidth() / 2, sprite2.GetImage()->GetHeight() /2 );
-  }
+    sprite2.Resize( width, height );  
+}
+
+// Set relative location (used for large units) 
+void Cell::setCellContext( int a_, int b_, int l_, int r_, int ar_, int al_, int br_, int bl_ ) {
+  a = a_;
+  b = b_;
+  l = l_;
+  r = r_;
+  ar = ar_;
+  al = al_;
+  br = br_;
+  bl = bl_;
 }
 
 // Update image. Image must be loaded in the ImageCache beforehand
 void Cell::setImage ( string name ) {
   imageNames.push_back( name );
   sprite.SetImage( ImageCache::GetImage(name) );
+  sprite.SetCenter( sprite.GetSize() / 2.f );
 }
 
 // C-style string overload of above function
@@ -107,20 +119,34 @@ void Cell::setImages ( vector<string> imgs, enum CellStillAnimType aType ) {
 
   if( !imgs.empty() ) {
     sprite.SetImage( ImageCache::GetImage(imageNames[0]) );
+    sprite.SetCenter( sprite.GetSize() / 2.f );
     if( stillAnimType == PULSER ) {
       sprite2.SetImage( ImageCache::GetImage(imageNames[1]) );
+      sprite2.SetCenter( sprite2.GetSize() / 2.f );
     }
     if( stillAnimType == WHITEBIT ) {
       sprite2.SetImage( ImageCache::GetImage(imageNames[1]) );
+      sprite2.SetCenter( sprite2.GetSize() / 2.f );
     }
   }
   else cout << "ERROR >> Image vector passed is empty." << endl;
+}
+
+// Set the rotation for the sprite
+void Cell::setSpriteRotation ( float r ) {
+  sprite.SetRotation( r );
+  sprite2.SetRotation( r );
 }
 
 // Set the movement animation type
 void Cell::setMovementAnimation( CellMoveAnimType type ) {
   movementAnimType = type;
   if( type == PHASE ) framesToMove = FPS;
+}
+
+void Cell::setGridLocation ( Location newLoc ) {
+  col = newLoc.x;
+  row = newLoc.y;
 }
 
 // Draw Cell on the given SFML screen object
@@ -171,14 +197,12 @@ void Cell::draw ( sf::RenderWindow& screen ) {
   }
 
   else if( stillAnimType == PULSER ) {
-    static float rotation = 0;
     screen.Draw( sprite );
     sprite2.SetRotation( rotation++ );
     screen.Draw( sprite2 );
   }
   
   else if( stillAnimType == WHITEBIT ) {
-    static float sinCounter = 0;
     sprite2.SetColor( sf::Color( 255, 255, 255, abs(sin((sinCounter+=2)*PI/180)*255)*(alpha/255) ) );
     if( sinCounter >= 360 ) sinCounter = 0;
     screen.Draw( sprite2 );

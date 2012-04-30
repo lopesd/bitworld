@@ -22,7 +22,7 @@ using namespace std;
 
 int main (void) {
 
-  sf::Clock clock; //The whole thing crashes if I don't initialize a clock for some reason...
+  //sf::Clock clock; //The whole thing crashes if I don't initialize a clock for some reason...
 
   // INITIALIZE LIBRARIES AND OBJECTS
   sf::RenderWindow window;
@@ -153,8 +153,14 @@ int main (void) {
       if( level->done() && !(level->getGameOver()) ) {
 	cout << "Level is done and the new level should be " << level->nextLevel () << endl;
 	string newLevel = level->nextLevel();
+	
+	Level* nextLevel = new Level( LevelParser::Parse( newLevel.c_str(), window) );
+	level->transferUnits( nextLevel );
+
 	level->destroy();
-	level = new Level( LevelParser::Parse( newLevel.c_str(), window) );
+	delete level;
+	level = nextLevel;
+	delete infoBox;
 	infoBox = new InfoBox( newLevel.c_str(), *level, window );
       }
       

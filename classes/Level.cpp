@@ -27,10 +27,18 @@ using namespace std;
 
 extern int FPS;
 
+// Used to sort the units vector, compare pointers to CellGroup
+struct pointerCompare2 {
+  bool operator() (CellGroup* first, CellGroup* second) { 
+    return ( first->getWeight() < second->getWeight() );
+  }
+} pointerCompare2;
+
+
 /** CONSTRUCTORS **/
 Level::Level (sf::RenderWindow &newWindow, vector<ControlGroup*> c, vector<CellGroup*> u, vector<Gate*> g,
               int w, int h, int cpp)
-: window(newWindow)
+: window(newWindow) 
 {
   controlGroups = c;
   for( int i = 0; i < controlGroups.size(); ++i ) // Tell controlGroups to recognize me as their level overlord
@@ -128,7 +136,8 @@ Level::Level (const Level& L) : window(L.window) {
 
 void Level::destroy () {
   for( int i = 0; i < units.size(); ++i ) {
-    delete units[i];
+    if( unitsToTransfer.find(units[i]) == unitsToTransfer.end() ) // If the unit is not being transferred
+      delete units[i];
   }
   for( int i = 0; i < controlGroups.size(); ++i ) {
     delete controlGroups[i];
@@ -359,6 +368,7 @@ int Level::willMove ( Location myLoc ) {
   }
   else { //If there is someone there...
     if( (fLoc + grid[0][fLoc]->getMovement(0) ) == myLoc ) return 0; //unit wants to move to where I am; head-on
+    if( strcmp(grid[0][fLoc]->type().c_str(), "WhiteBit")==0 && !flaggedUnits.empty() ) return 1; //moving white bit
     if( grid[0][fLoc]->getMovement(0).isZero() )           return 0; //unit wants to remain where it is; head-on
     return( willMove(fLoc) );                                        //I am free to move only if my future position clears up.
   }
@@ -429,6 +439,33 @@ void Level::flagUnit ( CellGroup* unitToFlag ) {
 void Level::openGate ( Gate* gate ) {
   isDone = 1;
   destination = gate->destination();
+  unitsToTransfer = gate->getUnitsToTransfer();
+  gateDestTag = gate->destinationTag;
+}
+
+void Level::transferUnits ( Level* newLevel ) {
+  int locCounter = 0;
+  Gate* destGate = newLevel->gateWithTag( gateDestTag );
+  for( set<CellGroup*>::iterator it = unitsToTransfer.begin(); it != unitsToTransfer.end(); ++it ) {
+    (*it)->setLocation( destGate->getLocations()[locCounter++] );
+    newLevel->take( *it );
+  }
+}
+
+void Level::take ( CellGroup* unit ) {
+  units.push_back( unit );
+  unit->setGridData( gridColWidth, gridRowHeight, top_offset, left_offset );
+
+  for( int i = 0; i < controlGroups.size(); ++i ) {
+    if( controlGroups[i]->getPlayer() ) {
+      controlGroups[i]->take( unit );
+    }
+  }
+  
+  for( int i = 0; i < unit->getLocations().size(); ++i )
+    grid[0].insert( pair<Location, CellGroup*> ( unit->getLocations()[i], unit ) );
+
+  sort( units.begin(), units.end(), pointerCompare2 );
 }
 
 /* DRAWING */
@@ -436,6 +473,13 @@ void Level::draw() {
   // deafFrames is how long the level will ignore user input. We decrease the count by 1 each frame.
   if( deafFrames ) --deafFrames;
   if( deafFrames == 0 ) {
+
+    /*
+    for( int i = 0; i < units.size(); ++i ) {
+      cout << "Drawing unit " << units[i]->type() << ", loc = " << units[i]->getLocations()[0]
+	   << ", screen = " << units[i]->getScreenLocations()[0].x << ", "
+	   << units[i]->getScreenLocations()[0].y << endl;
+	   }*/
 
     //Kill any units that must die
     if( !unitsToDie.empty() ) {
@@ -749,6 +793,12 @@ CellGroup* Level::unitAtLocation ( Location loc ) {
     return 0;
 }
 
+Gate* Level::gateWithTag ( int tag ) {
+  for( int i = 0; i < gates.size(); ++i )
+    if( gates[i]->tag == tag )
+      return gates[i];
+}
+
 set<CellGroup*> Level::getFlaggedUnits () {
   return flaggedUnits;
 }
@@ -806,4 +856,8 @@ int Level::getCellWidth () {
 
 int Level::getCellHeight () {
   return gridRowHeight;
+}
+
+int Level::destinationGate () {
+  return gateDestTag;
 }

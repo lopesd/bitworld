@@ -1,7 +1,9 @@
 main=main
 dep=    classes/Cell.cpp \
 	classes/CellGroup.cpp \
+	classes/Wall.cpp \
 	classes/Bit.cpp  \
+	classes/Byte.cpp \
 	classes/Pulser.cpp \
 	classes/ViralBit.cpp \
 	classes/WhiteBit.cpp \

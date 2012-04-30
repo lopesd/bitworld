@@ -6,11 +6,13 @@
 class Byte : public CellGroup {
 
  public:
-  Byte (std::vector<Cell> cells);
+  Byte ( std::vector<Cell> cells );
+  Byte ( const Byte& );
 
-  std::string type ();
+  std::string type () {return std::string("Byte");}
 
  private:
+  void setCellContexts ();
 
 };
 
