@@ -10,11 +10,15 @@
 
 using namespace std;
 
+int Gate::IDCounter = 0;
+
 Gate::Gate ( vector<Cell> c ) {
   cells = c;
   setCellContexts();
   weight = 3;
   openCounter = weight;
+  ID = IDCounter++;
+  cout << "Constructing gate " << ID << endl;
 }
 
 void Gate::setCellContexts () {
@@ -27,28 +31,19 @@ void Gate::setCellContexts () {
     
     for( int j = 0; j < cells.size(); ++j ) {
       Location otherLoc = cells[j].getGridLocation();
-      if( (myLoc.x == otherLoc.x) && (myLoc.y == (otherLoc.y + 1)) )
-	a = j;
-      if( (myLoc.x == otherLoc.x) && (myLoc.y == (otherLoc.y - 1)) )
-	b = j;
-      if( ((myLoc.x + 1) == otherLoc.x) && (myLoc.y == otherLoc.y) )
-	r = j;
-      if( ((myLoc.x - 1) == otherLoc.x) && (myLoc.y == otherLoc.y) )
-	l = j;
-      if( ((myLoc.x + 1) == otherLoc.x) && (myLoc.y == (otherLoc.y + 1)) )
-	ar = j;
-      if( ((myLoc.x + 1) == otherLoc.x) && (myLoc.y == (otherLoc.y - 1)) ) 
-	br = j;
-      if( ((myLoc.x - 1) == otherLoc.x) && (myLoc.y == (otherLoc.y + 1)) ) 
-	al = j;
-      if( ((myLoc.x - 1) == otherLoc.x) && (myLoc.y == (otherLoc.y - 1)) ) 
-	bl = j;
-     
+      if( (myLoc.x == otherLoc.x) && (myLoc.y == (otherLoc.y + 1)) )            a = j;
+      if( (myLoc.x == otherLoc.x) && (myLoc.y == (otherLoc.y - 1)) )	        b = j;
+      if( ((myLoc.x + 1) == otherLoc.x) && (myLoc.y == otherLoc.y) )    	r = j;
+      if( ((myLoc.x - 1) == otherLoc.x) && (myLoc.y == otherLoc.y) )    	l = j;
+      if( ((myLoc.x + 1) == otherLoc.x) && (myLoc.y == (otherLoc.y + 1)) )	ar = j;
+      if( ((myLoc.x + 1) == otherLoc.x) && (myLoc.y == (otherLoc.y - 1)) ) 	br = j;
+      if( ((myLoc.x - 1) == otherLoc.x) && (myLoc.y == (otherLoc.y + 1)) ) 	al = j;
+      if( ((myLoc.x - 1) == otherLoc.x) && (myLoc.y == (otherLoc.y - 1)) ) 	bl = j;
     }
     
     cells[i].setCellContext( a, b, l, r, al, ar, bl, br );
     
-    /*
+    /* // For debugging
     cout << "For cell "<< i << ", a = " << a << ", b = " << b << ", l = " << l << ", r = " << r
 	 << ", ar = " << ar << ", al = " << al << ", br = " << br << ", bl = " << bl << endl;
     */
@@ -59,15 +54,18 @@ void Gate::setCellContexts () {
 
     // Find the right image and rotation for the cell
     int numConnections = ( int(a!=-1) + int(b!=-1) + int(r!=-1) + int(l!=-1) );
-    int rotation = 0;
+    int rotation = 0;  // how to rotate the sprite
+    int horizFlip = 0; // indicates if the sprite should be flipped
     if ( numConnections == 0 ) {
       imgName += "0";
     } else if( numConnections == 1 ) {
+
       imgName += "1";
       if( a != -1 )  rotation = 0;
-      if( b != -1 )  rotation = 180;
+      if( b != -1 )  {rotation = 180; horizFlip = 1;}
       if( l != -1 )  rotation = 90;
-      if( r != -1 )  rotation = 270;
+      if( r != -1 )  {rotation = 270; horizFlip = 1;}
+
     } else if ( numConnections == 2 ) {
       imgName += "2";
       if( a != -1  &&  b != -1 ) {
@@ -78,10 +76,10 @@ void Gate::setCellContexts () {
 	rotation = 90;
       } else {
 	imgName += "b";
-	if( a != -1 && r != -1 ) rotation = 0;
-	if( a != -1 && l != -1 ) rotation = 90;
-	if( b != -1 && r != -1 ) rotation = 270;
-	if( b != -1 && l != -1 ) rotation = 180;
+	if( a != -1 && r != -1 ) {rotation = 0; imgName += "l";}
+	if( a != -1 && l != -1 ) {rotation = 0; horizFlip = 1; imgName += "l";}
+	if( b != -1 && r != -1 ) {rotation = 0; horizFlip = 1; imgName += "r";}
+	if( b != -1 && l != -1 ) {rotation = 0; imgName += "r";}
       } 
     } else if ( numConnections == 3 ) {
       imgName += "3";
@@ -97,6 +95,7 @@ void Gate::setCellContexts () {
 
     cells[i].setImage( imgName );
     cells[i].setSpriteRotation( rotation );
+    if(horizFlip) cells[i].flipSprite();
     
   }  
   
@@ -157,7 +156,9 @@ set<CellGroup*> Gate::getUnitsToTransfer () {
 }
 
 vector<Location> Gate::getLocations () {
+  cout << "Getting locations of gate " << ID << endl;
   vector<Location> locs;
+  cout << "Cells " << cells.empty() << " empty. " << endl;
   for( int i = 0; i < cells.size(); ++i )
     locs.push_back( cells[i].getGridLocation() );
   return locs;

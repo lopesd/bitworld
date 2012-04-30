@@ -44,6 +44,9 @@ class Animation {
   void setRotationInterval ( float rotationStart, float rotationEnd );
   void setRotationInterval ( std::vector<float> rotations );
 
+  // Set animation based on a preset
+  void fromCountDownPreset( int begin, int end );
+
   /** UTILITY FUNCTIONS **/
   // Store values of interpolation between "values" in "result"
   void interpolate ( std::vector<float>& values, std::vector<float>& results );

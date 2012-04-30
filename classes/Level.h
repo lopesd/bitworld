@@ -44,6 +44,10 @@ class Level {
   void controlGroupDone ();
   void runPeriod    ();
   void runCycle     ();
+  void runUpCycle   ();
+  void runHighCycle ();
+  void runDownCycle ();
+  void runLowCycle  ();
   int  willMove     ( Location myLoc );
   void handleMerge  ( CellGroup*, CellGroup*, Location );
   void killUnit     ( CellGroup* unitToDie );
@@ -107,6 +111,7 @@ class Level {
   int width, height;   //Size of grid in terms of cells
   int cyclesPerPeriod;
   int cyclesToRun;
+  int partOfCycle;
 
   int top_offset, left_offset, right_offset, bottom_offset; //Offset used to draw the grid on the window
   float gridRowHeight;

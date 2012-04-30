@@ -75,6 +75,20 @@ void Animation::setRotationInterval ( vector<float> r ) {
   rotations = r;
 }
 
+void Animation::fromCountDownPreset ( int begin, int end ) {
+  imageNames.clear();
+  if( begin == 1 ) imageNames.push_back( "one.png" );
+  else if( begin == 2 ) imageNames.push_back( "two.png" );
+  else if( begin == 3 ) imageNames.push_back( "three.png" );
+  else if( begin == 4 ) imageNames.push_back( "four.png" );
+  else if( begin == 0 ) imageNames.push_back( "zero.png" );
+
+  if( end == 1 ) imageNames.push_back( "one.png" );
+  else if( end == 2 ) imageNames.push_back( "two.png" );
+  else if( end == 3 ) imageNames.push_back( "three.png" );
+  else if( end == 4 ) imageNames.push_back( "four.png" );
+  else if( end == 0 ) imageNames.push_back( "zero.png" );
+}
 
 /** UTILITY FUNCTIONS **/
 

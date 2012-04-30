@@ -9,13 +9,16 @@
 #by other bits.
 
 ~GRID
---- --- --- --- --- --- --- ---
-G1a --- --- --- --- --- --- G2a
-G1b --- --- B2a B3a B1a --- G2b
-G1c --- --- --- B4a --- --- G2c
---- --- --- --- --- --- --- ---
+--- --- --- --- --- --- --- --- ;
+--- --- --- --- --- --- --- --- ;
+G1b --- --- B2a B3a B1a --- G2b ;
+--- --- --- --- B4a --- --- --- ;
+--- --- --- --- --- --- --- --- ;
 
-~METADATA
-MAP: name:Death_Happens tag:5 links(4,6) -tutorial
-G1: tag:1 dest(map:4,gate:2) weight:1 priorities(b)
-G2: tag:2 dest(map:6,gate:1) weight:3 priorities(b)
+~METADATA 
+G1: -weight 3 -destination levels/level_T4.bit -tag 1 -dtag 2 ;
+G2: -weight 3 -destination levels/level_T6.bit -tag 2 -dtag 1 ;
+B1: ;
+B2: ;
+B3: ;
+B4: ;

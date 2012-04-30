@@ -11,7 +11,7 @@ using namespace std;
 
 Pulser::Pulser (vector<Cell> c) : CellGroup(c) {
   weight = 3;
-  maxResistance = resistance = 5;
+  maxResistance = resistance = 4;
   vector<string> imgs;
   imgs.push_back( "new_pulser_bit.png" );
   imgs.push_back( "new_pulser_center.png" );

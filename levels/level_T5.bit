@@ -1,23 +1,24 @@
 ~DESCRIPTION
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#Tutorial 4
-#A viral bit, such as yours,
-#can corrupt a simple bit by
-#standing next to it for
-#a cycle.
+#Tutorial 6
+#There are times when bits
+#must die.
 #
-#This gate's weight is 9.
-#You will need three bits on it
-#for all three period cycles.
+#Any bit dies when its four
+#adjacent sides are visited
+#by other bits.
 
 ~GRID
---- --- --- --- --- --- --- 
-G1a --- --- --- --- --- G2a
-G1b --- --- B1a --- --- G2b
-G1c --- --- --- --- --- G2c
---- --- --- --- B2a --- ---
+--- --- --- --- --- --- --- --- ;
+--- --- --- --- --- --- --- --- ;
+G1b --- --- B2a B3a B1a --- G2b ;
+--- --- --- --- B4a --- --- --- ;
+--- --- --- --- --- --- --- --- ;
 
-~METADATA
-MAP: name:Corruption tag:4 links(3,5) -tutorial
-G1: tag:1 dest(map:3,gate:2) weight:1 priorities(b)
-G2: tag:2 dest(map:5,gate:1) weight:9 priorities(b)
+~METADATA 
+G1: -weight 3 -destination levels/level_T4.bit -tag 1 -dtag 2 ;
+G2: -weight 3 -destination levels/level_T6.bit -tag 2 -dtag 1 ;
+B1: ;
+B2: ;
+B3: ;
+B4: ;

@@ -51,6 +51,7 @@ Level::Level (sf::RenderWindow &newWindow, vector<ControlGroup*> c, vector<CellG
   height = h;
   cyclesPerPeriod = cpp;
   cyclesToRun = 0;
+  partOfCycle = 0;
   isDone = 0;
 
   grid = doubleBufferGrid;
@@ -110,6 +111,7 @@ Level::Level (const Level& L) : window(L.window) {
   cyclesToRun = L.cyclesToRun;
   isDone = 0;
   gameOver = 0;
+  partOfCycle = 0;
 
   for( int i = 0; i < controlGroups.size(); ++i) // Tell controlGroups to recognize me as their level overlord
     controlGroups[i]->setLevel( this );
@@ -238,9 +240,43 @@ void Level::runPeriod () {
 }
 
 void Level::runCycle () {
+  
+  //cout << "Part of cycle = " << partOfCycle << endl;
+  requestDeafFrames( 1 ); // at least one frame of silence.
 
-  cycleOffset = 19; //Set offset for the cycle animation
-  requestDeafFrames( 20 );
+  if( partOfCycle == 0 ) {
+    //cout << "Running up cycle."  << endl;
+    runUpCycle();
+    ++partOfCycle;
+  }
+  else if( partOfCycle == 1 ) {
+    //cout << "Running high cycle." << endl;
+    runHighCycle();
+    ++partOfCycle;
+  }
+  else if( partOfCycle == 2 ) {
+    //cout << "Running down cycle." << endl;
+    runDownCycle();
+    ++partOfCycle;
+  }
+  else if( partOfCycle == 3 ) {
+    //cout << "Running low cycle." << endl;
+    runLowCycle();
+    ++partOfCycle;
+  }
+  else if( partOfCycle == 4 ) {
+    //cout << "done with cycle. " << endl;
+    --cyclesToRun;
+    partOfCycle = 0;
+  }
+
+  //cycleOffset = 19; //Set offset for the cycle animation
+  //requestDeafFrames( 20 );
+
+}
+
+// Run the part of the cycle in which unit movement occurs
+void Level::runUpCycle () {
 
   Location fLoc;
   Direction tempDir;
@@ -312,13 +348,21 @@ void Level::runCycle () {
   grid[0].clear(); //Clear old grid
   grid = grid + future;
   future = -future;
+  
+}
 
-  // HIGH CYCLES //
+// High cycles -- gates check if they should open
+void Level::runHighCycle () {
   for( int i = 0; i < gates.size(); ++i ) {
     gates[i]->highCycle();
-  }
+  }  
+}
 
-  // DOWN CYCLES (NEGATIVE EDGE OF CLOCK) //
+// Down cycles -- events, such as pulsing
+void Level::runDownCycle () {
+
+  requestDeafFrames( FPS/2 );
+
   // Detect bit death first
   for( int i = 0; i < units.size(); ++i ) {
     int dontDie = 0;
@@ -339,10 +383,17 @@ void Level::runCycle () {
     if( !dontDie )
       unitsToDie.insert( units[i] );
   }
+
   // Unit events
   for( int i = 0; i < units.size(); ++i ) {
     units[i]->downCycle();
-  } //End events of unit loop
+  }
+  
+}
+
+// Nothing in here yet.
+void Level::runLowCycle () {
+  
 }
 
 //Recursive checking if the unit currently at myLoc will move (eg. no head-on collision)
@@ -479,14 +530,15 @@ void Level::draw() {
       cout << "Drawing unit " << units[i]->type() << ", loc = " << units[i]->getLocations()[0]
 	   << ", screen = " << units[i]->getScreenLocations()[0].x << ", "
 	   << units[i]->getScreenLocations()[0].y << endl;
-	   }*/
-
+    }
+    */
+    
     //Kill any units that must die
     if( !unitsToDie.empty() ) {
       for( set<CellGroup*>::iterator i = unitsToDie.begin(); i != unitsToDie.end(); ++i )
 	killUnit( *i );
       unitsToDie.clear();
-
+      
       // If a unit has died, check to see if that was the last player's unit
       for( int i = 0; i < controlGroups.size(); ++i ) {
 	if(controlGroups[i]->getPlayer() && !(controlGroups[i]->getUnitsSize()) ) {
@@ -494,20 +546,21 @@ void Level::draw() {
 	  isDone = 1;
 	}
       }
-
+      
     }
-
+    
     if( cyclesToRun != 0 && !isDone ) { // run cycles if we still need to
-      --cyclesToRun;
+      //cout << "Running part of a cycle because cyclesToRun is " << cyclesToRun << endl;
       runCycle();
     }
-
+    
     else { //if there are no deaf frames and no cycles to run, then gates must be reset
       for( int i = 0; i < gates.size(); ++i )
 	gates[i]->resetOpenCounter();
     }
-
   }
+  
+    
   
   window.Clear();
   drawBackground();
@@ -525,7 +578,7 @@ void Level::draw() {
 
 }
 
-void Level::drawGrid() {
+  void Level::drawGrid() {
   sf::Color gridColor(sf::Color(143, 114, 19, 0));
   sf::Color gridOutlineColor(sf::Color(100, 100, 240, 0));
 

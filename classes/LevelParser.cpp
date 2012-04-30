@@ -75,6 +75,7 @@ Level LevelParser::Parse ( const char* filename, sf::RenderWindow& window ) {
 
 	gridX = 0;
 	do {
+	  cout << "Getting token " << token << endl;
 	  // CHECK TO SEE WHICH TYPE IT NEEDS TO BE, THEN CREATE AND GET POINTER
 	  // Have different if statements for different kinds of cells, if needed
 	  if ( token[0] == 'B' || token[0] == 'G' || token[0] == 'P' || token[0] == 'V' || token[0] == 'K' || token[0] == 'Y' || token[0] == 'W' ) { 

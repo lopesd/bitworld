@@ -138,6 +138,11 @@ void Cell::setSpriteRotation ( float r ) {
   sprite2.SetRotation( r );
 }
 
+// Flip the sprite horizontally 
+void Cell::flipSprite () {
+  sprite.FlipX( 1 );
+}
+
 // Set the movement animation type
 void Cell::setMovementAnimation( CellMoveAnimType type ) {
   movementAnimType = type;

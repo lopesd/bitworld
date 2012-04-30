@@ -37,6 +37,7 @@ class Cell {
   void setImage  ( const char* imageName );
   void setImages ( std::vector<std::string>, CellStillAnimType = NORMAL );
   void setSpriteRotation ( float r );
+  void flipSprite ();
   void setMovementAnimation( CellMoveAnimType type );
   
   void setGridLocation( Location loc );

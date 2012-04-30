@@ -57,6 +57,9 @@ class Gate {
 
   int weight; // how long it takes to open
   int openCounter; // counts down till the gate is open
+  
+  static int IDCounter;
+  int ID;
 
 };
 
