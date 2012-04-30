@@ -1,0 +1,22 @@
+~DESCRIPTION
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Blocking
+# In order to get by,
+# Make the White Bit move
+
+~GRID
+--- --- --- --- W1a --- --- ;
+--- B1a --- --- W1b --- --- ;
+G1c --- --- --- W1c --- G2a ;
+G1b --- --- --- P1a --- --- ;
+G1a V1a --- --- K1a --- --- ;
+
+
+~METADATA
+K1: -speed 3 ;
+V1: -cg user ;
+P1: -pulse wwwp -radius 2 ;
+B1: -move usd ;
+W1: ;
+G1: -weight 3 -destination levels/level_kill.bit -tag 2 -dtag 2 ;
+G2: -weight 3 -destination levels/level_deathrow.bit -tag 1 -dtag 1 ;
