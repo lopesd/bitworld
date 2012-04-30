@@ -1,5 +1,5 @@
 #define FULLSCREEN 0
-#define LEVELFILE "levels/level_kill.bit"
+#define LEVELFILE "levels/level_white_bit_move.bit"
 
 int FPS = 30;
 
