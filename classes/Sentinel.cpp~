@@ -67,7 +67,7 @@ void Sentinel::makeAnimation ( vector<Location> locationsToZap) {
     alphas[1] = 130;
     for( int i = 0; i < locationsToZap.size(); ++i ) {
       Animation trace( locationsToZap[i] );
-      trace.addImage( "sentinelZap2.png" );
+      trace.addImage( "zap_trace.png" );
       trace.setAlphaInterval( alphas );
       trace.commit( controlGroup->level );
     }
