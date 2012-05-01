@@ -13,6 +13,7 @@ Sentinel::Sentinel (vector<Cell> c) : CellGroup(c) {
   weight = 3;
   maxResistance = resistance = 5;
   vector<string> imgs;
+  //setting images
   imgs.push_back( "new_pulser_bit.png" );
   imgs.push_back( "pulser_center.png" );
   for (int i = 0; i < cells.size(); ++i) {
@@ -21,12 +22,14 @@ Sentinel::Sentinel (vector<Cell> c) : CellGroup(c) {
   
 }
 
+//add orders 
 void Sentinel::queueStandardActionOrders () {
   for (int i = 0; i < standardActionOrders.size(); ++i ) {
     actionQueue.push_back( standardActionOrders.at(i) );
   }
 }
 
+//This is where zapEvents are created
 void Sentinel::downCycle () {
 
   //cycle through standard action orders
@@ -35,27 +38,26 @@ void Sentinel::downCycle () {
 
     vector<Location> locationsToZap;
     Location tempLoc = getLocations()[0] +dir;
-    while(!(controlGroup->level->unitAtLocation(tempLoc))){
-    	if(tempLoc.x > -1 && tempLoc.x < controlGroup->level->getWidth() && tempLoc.y  > -1 && tempLoc.y < controlGroup->level->getHeight()){
-    		locationsToZap.push_back(tempLoc);
+    while(!(controlGroup->level->unitAtLocation(tempLoc))){ //if next location in direction doesn't have a unit
+    	if(tempLoc.x > -1 && tempLoc.x < controlGroup->level->getWidth() && tempLoc.y  > -1 && tempLoc.y < controlGroup->level->getHeight()){ //if its in the grid
+    		locationsToZap.push_back(tempLoc); //add to vector
     		tempLoc = tempLoc + dir;
     	}
     	else
     		break;
     }
-    if(controlGroup->level->unitAtLocation(tempLoc))
+    if(controlGroup->level->unitAtLocation(tempLoc)) 
     {
-    	if(controlGroup->level->unitAtLocation(tempLoc)->controlGroup != controlGroup)
+    	if(controlGroup->level->unitAtLocation(tempLoc)->controlGroup != controlGroup) //if unit at end is of different control group save loc for event
     	{
-    		locationToZap = tempLoc;
-    		//locationsToZap.push_back(tempLoc);
+    		locationToZap = tempLoc; 
     	}
     }
     
-    ZapEvent ev( this, locationToZap);
+    ZapEvent ev( this, locationToZap); //zap at locationToZaP
     ev.commit( controlGroup->level );
     
-    makeAnimation( locationsToZap);
+    makeAnimation( locationsToZap); //animation for tracer of zap
   }
   
   actionQueue.pop_front();
@@ -63,6 +65,7 @@ void Sentinel::downCycle () {
 
 }
 
+//animates tracer
 void Sentinel::makeAnimation ( vector<Location> locationsToZap) {
 
     // Create glowing animations
@@ -74,47 +77,17 @@ void Sentinel::makeAnimation ( vector<Location> locationsToZap) {
       trace.setAlphaInterval( alphas );
       trace.commit( controlGroup->level );
     }
-    /*
-    // Create circle pulsing animation
-    Animation pulse( getLocations()[0] );
-    vector<float> sizes( 3, 1 );
-    sizes[0] = 0.001;
-    sizes[1] = 3*(pulseRadius*2)/4;
-    sizes[2] = pulseRadius*2;
-    pulse.addImage( "pulse_radius.png" );
-    pulse.setSizeInterval( sizes );
-    pulse.setAlphaInterval( 255, 0 );
-    
-    pulse.commit( controlGroup->level );
-		*/
-    /*
-    // For the lulz
-    Animation effect = pulse;
-    sizes[1] = 40;
-    sizes[2] = 55;
-    effect.setAlphaInterval( 50, 0 );
-    effect.setSizeInterval( sizes );
 
-    pulse.commit  ( controlGroup->level );
-    effect.commit ( controlGroup->level );
+}
 
-    // For the lulz (2)
-    Animation radar( getLocations()[0] );
-    radar.addImage( "pulse_radar.png" );
-    radar.setSizeInterval( pulseRadius*2+1, pulseRadius*2+1 );
-    radar.setRotationInterval( 0, 360 );
-    radar.setAlphaInterval( 140, 0 );
-    radar.commit( controlGroup->level );
- 		*/   
+Direction Sentinel::getDirection(){
+ return dir;
 }
 
 void Sentinel::setDirection(Direction d){
 	dir = d;
 }
 
-Direction Sentinel::getDirection(){
- return dir;
-}
 void Sentinel::setStandardActionOrders ( std::vector<int> s ) {
   standardActionOrders = s;
   queueStandardActionOrders();

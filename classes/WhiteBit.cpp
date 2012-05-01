@@ -1,3 +1,8 @@
+/*  WhiteBit.cpp
+ *  System protector that chases down flagged bits. Moves multiple spaces at once and
+ *  can phase through walls. Doesn't move unless there is a flagged bit.
+ *  Written for Bitworld by: David Lopes, Casey O'Meilia, Catherine Carothers, Mark Riehm
+ */
 #include "WhiteBit.h"
 #include <stdlib.h>
 
@@ -7,10 +12,13 @@ using namespace std;
 
 extern int FPS;
 
+/** CONSTRUCTOR **/
 WhiteBit::WhiteBit (vector<Cell> c) : CellGroup (c) { 
   weight = 4;
   maxResistance = resistance = 5;
   vector<string> imgs;
+  
+  //sets the images for the white bit
   imgs.push_back( "new_white_bit.png" );
   imgs.push_back( "new_white_bit_halo.png" );
   for (int i = 0; i < cells.size(); ++i) {
@@ -25,12 +33,12 @@ WhiteBit::WhiteBit (vector<Cell> c) : CellGroup (c) {
 //chooses the closest of the flaggedBits to move towards/kill
 void WhiteBit::findClosest( set<CellGroup*> flaggedBits, map<Location, CellGroup*> grid ){
   
-  if( flaggedBits.empty() ) {
+  if( flaggedBits.empty() ) { //if no flagged bits, no chosen
     chosen = 0;
     return;
   }
 
-  cout << endl << "FINDING CLOSEST FLAGGED BIT " << endl;
+  //cout << endl << "FINDING CLOSEST FLAGGED BIT " << endl;
   Location temp;
   Location white = getLocations()[0];
   int distance = 100; //intitalize to a large value for checking purposes
@@ -86,7 +94,7 @@ Direction WhiteBit::findMove ( map<Location, CellGroup*> grid, set<CellGroup*> f
 	}
       }
       
-      if( j ) {
+      if( j ) { //get negative values for J without adding 0 twice
 
 	Direction dir2 = {i,-j};
 	floc = getLocations()[0] + dir2;
@@ -108,8 +116,10 @@ Direction WhiteBit::findMove ( map<Location, CellGroup*> grid, set<CellGroup*> f
     }
   }
   
+  
+  //now find best move out of the possible locations to move
   Direction best = {0,0};
-  Direction smallestDist = {controlGroup->level->getWidth(),controlGroup->level->getHeight()};
+  Direction smallestDist = {controlGroup->level->getWidth(),controlGroup->level->getHeight()}; //intitaliaze to largest possible distance
   vector<Location> myLocs = getLocations();
   for( int j = 0; j < myLocs.size(); ++j )
     for( int i = 0; i < possibles.size(); ++i ) {
@@ -118,9 +128,9 @@ Direction WhiteBit::findMove ( map<Location, CellGroup*> grid, set<CellGroup*> f
       distance.x = abs(chosenLoc.x - (myLocs[j].x+possibles[i].x));
       distance.y = abs(chosenLoc.y - (myLocs[j].y+possibles[i].y));
 
-      if( distance < smallestDist ) {
-	smallestDist = distance;
-	best = possibles[i];
+      if( distance < smallestDist ) {//if this location is closer than all the previous ones, this is the new best move
+				smallestDist = distance;
+				best = possibles[i];
       }
 
     }
@@ -129,6 +139,7 @@ Direction WhiteBit::findMove ( map<Location, CellGroup*> grid, set<CellGroup*> f
 
 }
 
+/** MUTATOR **/
 void WhiteBit::setSpeed ( int s ) {
   speed = s;
 }

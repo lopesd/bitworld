@@ -13,6 +13,7 @@ Pulser::Pulser (vector<Cell> c) : CellGroup(c) {
   weight = 3;
   maxResistance = resistance = 5;
   vector<string> imgs;
+  //sets the images
   imgs.push_back( "new_pulser_bit.png" );
   imgs.push_back( "new_pulser_center.png" );
   for (int i = 0; i < cells.size(); ++i) {
@@ -27,6 +28,7 @@ void Pulser::queueStandardActionOrders () {
   }
 }
 
+//pulse events are created here
 void Pulser::downCycle () {
 
   //cycle through standard action orders
@@ -36,25 +38,24 @@ void Pulser::downCycle () {
     vector<Location> locationsToPulse;
     vector<Location> myLocs = getLocations();
     Location tempLoc;
-    for(int i = -pulseRadius; i <= pulseRadius; ++i)
-      {
-	for(int j = 0; j <= pulseRadius - abs(i); ++j)
-	  {
-	    tempLoc.x = myLocs[0].x + i;
-	    tempLoc.y = myLocs[0].y + j;
-	    locationsToPulse.push_back(tempLoc);
-	    if(j)
-	      {
-		tempLoc.x = myLocs[0].x + i;
-		tempLoc.y = myLocs[0].y - j;
-		locationsToPulse.push_back(tempLoc);
+    //adds all the Locations within pulseRadius to vector 
+    for(int i = -pulseRadius; i <= pulseRadius; ++i){
+			for(int j = 0; j <= pulseRadius - abs(i); ++j)
+	  	{
+	    	tempLoc.x = myLocs[0].x + i;
+	    	tempLoc.y = myLocs[0].y + j;
+				locationsToPulse.push_back(tempLoc);
+		    if(j){ //adds negatives but not 0 again
+					tempLoc.x = myLocs[0].x + i;
+					tempLoc.y = myLocs[0].y - j;
+					locationsToPulse.push_back(tempLoc);
 	      }
-	  }
-      } 
+	  	}
+     } 
     
-    makeAnimation( locationsToPulse );
-    PulseEvent ev( this, locationsToPulse );
-    ev.commit( controlGroup->level );
+    makeAnimation( locationsToPulse ); //animates on those locations
+    PulseEvent ev( this, locationsToPulse ); //flags the bits on these locations in pulseEvent
+    ev.commit( controlGroup->level ); //commits the event
   }
   
   actionQueue.pop_front();
@@ -115,6 +116,7 @@ void Pulser::setRadius(int radius) {
   pulseRadius = radius;
 }
  
+ //sets the orders ie pulsing or waiting etc
 void Pulser::setStandardActionOrders ( std::vector<int> s ) {
   standardActionOrders = s;
   queueStandardActionOrders();
