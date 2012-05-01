@@ -9,6 +9,7 @@
 
 using namespace std;
 
+
 /** CONSTRUCTORS **/
 PulseEvent::PulseEvent ( void* sender, vector<Location> l ) 
   : Event( sender ) {
@@ -16,12 +17,14 @@ PulseEvent::PulseEvent ( void* sender, vector<Location> l )
   locs = l;
 }
 
+
 /** UTILITY FUNCTIONS **/
 void PulseEvent::commit ( Level* level ) {
 
   makePulseAnimation( level ); // create the full pulsing animation
   for(int j = 0; j < locs.size(); j++) { // for every location...
     CellGroup* pulsedUnit = level->unitAtLocation( locs[j] );
+
     if( pulsedUnit ) { // If there is someone in my pulse radius
       if( pulser->controlGroup != pulsedUnit->controlGroup ) { 
 	//If the unit pulsed is an enemy, flag it!

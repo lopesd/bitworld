@@ -1,3 +1,8 @@
+/*  Wall.cpp
+ *  Can't move onto squares where there a walls. Walls don't move, and can't be corrupted
+ *  Written for Bitworld by: David Lopes, Casey O'Meilia, Catherine Carothers, Mark Riehm
+ */
+
 #include "Wall.h"
 
 using namespace std;
@@ -7,6 +12,7 @@ Wall::Wall ( vector<Cell> c ) : CellGroup(c) {
   setCellContexts();
 }
 
+//Checks all the "pieces" of the wall to merge them together into a more cohesive looking picture
 void Wall::setCellContexts () {
 
   // Set indicators to the cells around any given cell
@@ -43,8 +49,7 @@ void Wall::setCellContexts () {
 	 << ", ar = " << ar << ", al = " << al << ", br = " << br << ", bl = " << bl << endl;
     */
 
-    // Set the image depending on who is around. We assume the byte is 4 cells big.
-
+  
     string imgName = "new_wall_";
 
     // Find the right image and rotation for the cell

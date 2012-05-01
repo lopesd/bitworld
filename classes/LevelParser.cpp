@@ -8,6 +8,7 @@
 #include "Pulser.h"
 #include "ViralBit.h"
 #include "WhiteBit.h"
+#include "Sentinel.h"
 #include "Gate.h"
 #include "Byte.h"
 #include "Wall.h"
@@ -75,7 +76,6 @@ Level LevelParser::Parse ( const char* filename, sf::RenderWindow& window ) {
 
 	gridX = 0;
 	do {
-	  cout << "Getting token " << token << endl;
 	  // CHECK TO SEE WHICH TYPE IT NEEDS TO BE, THEN CREATE AND GET POINTER
 	  // Have different if statements for different kinds of cells, if needed
 
@@ -276,13 +276,14 @@ Level LevelParser::Parse ( const char* filename, sf::RenderWindow& window ) {
 		  }
 	      ((Sentinel*)unit)->setDirection( newDirection );
 	    }
-	    
-	    else if( strcmp(token.c_str(), "-zap") == 0 ) {
+
+	    // -zap sets the zapping pattern for a sentinel
+	    else if( strcmp(token.c_str(), "-zap") == 0 ) { 
 	      vector<int> zaps;
 	      file >> token;
 	      for( int i = 0; i < token.size(); ++i ) {
-					if( token[i] == 'z' ) zaps.push_back( 1 );
-					else if( token[i] == 'w' ) zaps.push_back( 0 );
+		if( token[i] == 'z' ) zaps.push_back( 1 );
+		else if( token[i] == 'w' ) zaps.push_back( 0 );
 	      }
 	      ((Sentinel*)unit)->setStandardActionOrders( zaps );
 	    }

@@ -1,3 +1,8 @@
+/*  ViralBit.cpp
+ *  The starting user bit. It can corrupt other bits by staying adjacent to them
+ *  for a certain number of cycles depending on the unit's resistance.
+ *  Written for Bitworld by: David Lopes, Casey O'Meilia, Catherine Carothers, Mark Riehm
+ */
 #include "ViralBit.h"
 #include "CorruptEvent.h"
 
@@ -8,12 +13,12 @@ ViralBit::ViralBit (vector<Cell> c) : CellGroup (c) {
   vector<string> imgs;
   imgs.push_back( "new_viral_bit.png" );
   imgs.push_back( "new_viral_bit2.png" );
-  //imgs.push_back( "new_viral_bit3.png" );
-  for (int i = 0; i < cells.size(); ++i) {
+  for (int i = 0; i < cells.size(); ++i) { //sets the images for the viral bit
     cells[i].setImages( imgs );
   }
 }
 
+//Where the corruption happens
 void ViralBit::downCycle () {
   vector<Location> myLocs = getLocations();
   vector<CellGroup*> unitsToCorrupt; //vector of units that have been corrupted
@@ -29,13 +34,13 @@ void ViralBit::downCycle () {
     };
     
     for( int j = 0; j < 4; ++j ) {
-      if( CellGroup* unit = controlGroup->level->unitAtLocation(temp[j]) )
-	if( unit->controlGroup != controlGroup ) {
-	  unit->dropResistance();
-	  if( unit->getResistance() <= 0 ) {
-	    unitsToCorrupt.push_back( unit );
-	  }
-	}
+      if( CellGroup* unit = controlGroup->level->unitAtLocation(temp[j]) ) // if there is an enemy unit, drop resitance until 0 and then corrupt it
+				if( unit->controlGroup != controlGroup ) {
+	  			unit->dropResistance();
+	  			if( unit->getResistance() <= 0 ) {
+	    			unitsToCorrupt.push_back( unit );
+	  			}
+				}
     }
   }
 
