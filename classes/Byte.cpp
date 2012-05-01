@@ -1,12 +1,20 @@
+/** Byte.cpp
+ *  The byte is a simple, lumbering, 4 cell big unit that has no further specialization.
+ *  Make sure the cells passed to it are correctly placed (in a square formation).
+ *  Written for Bitworld by: David Lopes, Casey O'Meilia, Catherine Carothers, Mark Riehm
+ */
+
 #include "Byte.h"
 
 using namespace std;
 
+/** CONSTRUCTORS **/
 Byte::Byte ( vector<Cell> c ) : CellGroup (c) { 
   weight = 10;
   setCellContexts();
 }
 
+// Set the images for each cell based on what cells are around it
 void Byte::setCellContexts () {
 
   // Set pointers to every cell to pointers to the cells around it
@@ -14,26 +22,14 @@ void Byte::setCellContexts () {
   for(int i = 0; i < cells.size(); ++i ) {
     a=b=l=r=-1;
     Location myLoc = cells[i].getGridLocation();
-    
+
+    // Find what cells are around each cell
     for( int j = 0; j < cells.size(); ++j ) {
       Location otherLoc = cells[j].getGridLocation();
-      if( (myLoc.x == otherLoc.x) && (myLoc.y == (otherLoc.y + 1)) ) {
-	cout << "a detected  ";
-	a = j;
-      }
-      if( (myLoc.x == otherLoc.x) && (myLoc.y == (otherLoc.y - 1)) ) {
-	cout << "b detected  ";
-	b = j;
-      }
-      if( ((myLoc.x + 1) == otherLoc.x) && (myLoc.y == otherLoc.y) ) {
-	cout << "r detected  ";
-	r = j;
-      }
-      if( ((myLoc.x - 1) == otherLoc.x) && (myLoc.y == otherLoc.y) ) {
-	cout << "l detected  ";
-	l = j;
-      }
-      cout << endl;
+      if( (myLoc.x == otherLoc.x) && (myLoc.y == (otherLoc.y + 1)) )  a = j;
+      if( (myLoc.x == otherLoc.x) && (myLoc.y == (otherLoc.y - 1)) )  b = j;
+      if( ((myLoc.x + 1) == otherLoc.x) && (myLoc.y == otherLoc.y) )  r = j;
+      if( ((myLoc.x - 1) == otherLoc.x) && (myLoc.y == otherLoc.y) )  l = j;
     }
     
     cells[i].setCellContext( a, b, l, r, -1, -1, -1, -1 );

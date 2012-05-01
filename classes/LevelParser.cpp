@@ -8,7 +8,6 @@
 #include "Pulser.h"
 #include "ViralBit.h"
 #include "WhiteBit.h"
-#include "Sentinel.h"
 #include "Gate.h"
 #include "Byte.h"
 #include "Wall.h"
@@ -133,12 +132,12 @@ Level LevelParser::Parse ( const char* filename, sf::RenderWindow& window ) {
 	else if ( token[0] == 'K' ) { // WHITE BIT
 	  unit = new WhiteBit (cellVector);	  
 	  unitsMap[token.substr(0,token.length()-1)] = unit; // may be unnecessary for now, but will probably be necessary for events
-	}
+	}/*
 	else if ( token[0] == 'S' ) {// SENTINEL
 	  unit = new Sentinel (cellVector);
 	  cout <<"hello"<<endl;
 	  unitsMap[token.substr(0,token.length()-1)] = unit; // may be unnecessary for now, but will probably be necessary for events
-	}
+	  }*/
 	else if ( token[0] == 'G' ) {
 	  gate = new Gate (cellVector);
 	  gatesMap[token.substr(0,token.length()-1)] = gate; // may be unnecessary for now, but will probably be necessary for events
@@ -214,12 +213,14 @@ Level LevelParser::Parse ( const char* filename, sf::RenderWindow& window ) {
 	      gate->setDest( token );
 	    }
 
+	    // -radius sets the pulse radius of a pulser
 	    else if( strcmp(token.c_str(), "-radius") == 0 ) { 
 	      int radius;
 	      file >> radius;
 	      ((Pulser*)unit)->setRadius( radius );
 	    }
 	    
+	    // -pulse sets the pulse pattern of a pulser
 	    else if( strcmp(token.c_str(), "-pulse") == 0 ) {
 	      vector<int> pulses;
 	      file >> token;
@@ -230,24 +231,28 @@ Level LevelParser::Parse ( const char* filename, sf::RenderWindow& window ) {
 	      ((Pulser*)unit)->setStandardActionOrders( pulses );
 	    }
 
+	    // -speed sets the movement speed of a white bit
 	    else if( strcmp(token.c_str(), "-speed") == 0 ) {
 	      int newSpeed;
 	      file >> newSpeed;
 	      ((WhiteBit*)unit)->setSpeed( newSpeed );
 	    }
 
+	    // -tag sets the tag for a gate
 	    else if( strcmp(token.c_str(), "-tag") == 0 ) {
 	      int tag;
 	      file >> tag;
 	      gate->tag = tag;
 	    }
 
+	    // -dtag sets the destination tag for a gate
 	    else if( strcmp(token.c_str(), "-dtag") == 0 ) {
 	      int dtag;
 	      file >> dtag;
 	      gate->destinationTag = dtag;
 	    }
 	    
+	    // -direction sets the direction for a sentinel
 	    else if( strcmp(token.c_str(), "-direction") == 0 ) {
 	      Direction newDirection;
 	      char dir;
@@ -305,26 +310,30 @@ Level LevelParser::Parse ( const char* filename, sf::RenderWindow& window ) {
   // PUT IT ALL TOGETHER
   // This vector contains pointers to all the units
   vector<CellGroup*> userUnitsVector;
+
   vector<CellGroup*> AIUnitsVector;
   vector<CellGroup*> unitsVector;
   vector<Gate*>      gatesVector;
+
+  // Fill the AI and User vectors
   for( map<string, CellGroup*>::iterator it = unitsMap.begin(); it != unitsMap.end(); ++it ) {
     unitsVector.push_back( it->second );
     if( strcmp(it->second->CGGroupName.c_str(), "user") == 0 ) {
-      cout << "Adding a " << it->second->type() << " to the user. " <<endl;
       userUnitsVector.push_back( it->second );
-    }
-    else {
-      cout << "Adding a " << it->second->type() << " to the AI. " <<endl;
+    } else {
       AIUnitsVector.push_back( it->second );
     }
   }
+
+  // Fill the gates vector
   for( map<string, Gate*>::iterator it = gatesMap.begin(); it != gatesMap.end(); ++it ) {
     gatesVector.push_back( it->second );
   }
 
+  // Sort the units, for animation
   sort( unitsVector.begin(), unitsVector.end(), pointerCompare );
   
+  // Dynamically allocate the control groups
   UserControlGroup* user = new UserControlGroup (userUnitsVector);
   AIControlGroup*   AI   = new AIControlGroup   (AIUnitsVector);
 
@@ -332,13 +341,15 @@ Level LevelParser::Parse ( const char* filename, sf::RenderWindow& window ) {
   controlGroups.push_back( AI );
   controlGroups.push_back( user );
 
+  // Finally, create the level object
   Level level (window, controlGroups, unitsVector, gatesVector, gridX, gridY);
 
   return level;
 }
 
-vector<string> LevelParser::getInfoText(string filename)
-{
+// Parse the information text for the infobox
+vector<string> LevelParser::getInfoText(string filename) {
+
   vector<string> infoBoxText;
   string input;
 

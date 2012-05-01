@@ -1,11 +1,15 @@
+/** main.cpp
+ *  BITWORLD
+ *  CREATED BY: DAVID LOPES, CASEY O'MEILIA, CATHERINE CAROTHERS, MARK RIEHM
+ *  FUNDAMENTALS OF COMPUTING II, University of Notre Dame, Spring 2012
+ */
+
 #define FULLSCREEN 0
-#define LEVELFILE "levels/level_white_bit_move.bit"
+#define LEVELFILE "levels/level_sandbox.bit" // Level to start at
 
-int FPS = 30;
+int FPS = 30; // Frames per second
 
-#include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
-#include <SFML/Window.hpp>
 #include <iostream>
 
 #include "classes/structures.h"
@@ -21,8 +25,6 @@ int FPS = 30;
 using namespace std;
 
 int main (void) {
-
-  //sf::Clock clock; //The whole thing crashes if I don't initialize a clock for some reason...
 
   // INITIALIZE LIBRARIES AND OBJECTS
   sf::RenderWindow window;

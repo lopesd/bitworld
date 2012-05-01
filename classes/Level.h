@@ -41,24 +41,26 @@ class Level {
   void handleInput  (sf::Key::Code);
 
   /* RUNNING */
+  // Called by the Control Group when it is done with its turn
   void controlGroupDone ();
-  void runPeriod    ();
-  void runCycle     ();
-  void runUpCycle   ();
-  void runHighCycle ();
-  void runDownCycle ();
-  void runLowCycle  ();
-  int  willMove     ( Location myLoc );
-  void handleMerge  ( CellGroup*, CellGroup*, Location );
-  void killUnit     ( CellGroup* unitToDie );
-  void flagUnit     ( CellGroup* unitToFlag );
-  void openGate     ( Gate* gate );
-  void transferUnits( Level* newLevel );
-  void take         ( CellGroup* unit );
-  std::vector<CellGroup*> findNeighbors (CellGroup*);
+
+  // Self explanatory
+  void runPeriod     ();
+  void runCycle      ();
+  void runUpCycle    ();
+  void runHighCycle  ();
+  void runDownCycle  ();
+  void runLowCycle   ();
+  int  willMove      ( Location myLoc );
+  void handleMerge   ( CellGroup*, CellGroup*, Location ); // Handles two units moving to the same location
+  void killUnit      ( CellGroup* unitToDie );
+  void flagUnit      ( CellGroup* unitToFlag );
+  void openGate      ( Gate* gate );
+  void transferUnits ( Level* newLevel );
+  void take          ( CellGroup* unit );
 
   /* DRAWING */
-  void draw             ();
+  void draw             (); // Draw everything -- also used for some constant checking
   void drawGrid         ();
   void drawUnits        ();
   void drawGates        ();
@@ -66,14 +68,15 @@ class Level {
   void drawAnimations   ();
   void drawCycle        ( int offset );
   void drawBackground   ();
-  void highlightSelect  ();
+  void highlightSelect  (); // Draw the orange selection behind the selected bit
 
-  void addAnimation     ( Animation* anim );
+  void addAnimation     ( Animation* anim ); // Add an animation to be drawn
 
-  void requestDeafFrames (int amount);
+  void requestDeafFrames (int amount);  // Sets the amount of deaf frames to AT LEAST the requested amount.
 
   /* ACCESSORS */
-  CellGroup* unitAtLocation ( Location );
+  // Self explanatory, mostly
+  CellGroup* unitAtLocation ( Location ); // Returns 0 if there is no unit at that location
   Gate*      gateWithTag    ( int tag );
   std::string nextLevel     ();
   int destinationGate ();
@@ -91,7 +94,7 @@ class Level {
   int getCellHeight();
   
  private:
-  /** UNITS, CONTROLGROUPS, GRIDS **/
+  /** UNITS, CONTROL GROUPS, GRIDS **/
   ControlGroup*                     activeGroup;
   int                               activeGroupIndex;
   std::vector<ControlGroup*>        controlGroups;

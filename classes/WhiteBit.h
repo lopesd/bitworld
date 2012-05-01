@@ -20,8 +20,11 @@ class WhiteBit : public CellGroup {
   std::string type () {return std::string("WhiteBit");}
 
  private:
+  Direction phaseBack ();
+  
   CellGroup* chosen;
   Location chosenLoc;
+  Location homeCell;
   int speed;
 
 };

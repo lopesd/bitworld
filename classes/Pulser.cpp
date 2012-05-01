@@ -52,7 +52,6 @@ void Pulser::downCycle () {
 	  }
       } 
     
-    makeAnimation( locationsToPulse );
     PulseEvent ev( this, locationsToPulse );
     ev.commit( controlGroup->level );
   }
@@ -60,51 +59,6 @@ void Pulser::downCycle () {
   actionQueue.pop_front();
   if( actionQueue.empty() ) queueStandardActionOrders();
 
-}
-
-void Pulser::makeAnimation ( vector<Location> locationsToPulse ) {
-
-    // Create glowing animations
-    vector<float> alphas( 3, 0 );
-    alphas[1] = 130;
-    for( int i = 0; i < locationsToPulse.size(); ++i ) {
-      Animation glow( locationsToPulse[i] );
-      glow.addImage( "pulse_glow.png" );
-      glow.setAlphaInterval( alphas );
-      glow.commit( controlGroup->level );
-    }
-    
-    // Create circle pulsing animation
-    Animation pulse( getLocations()[0] );
-    vector<float> sizes( 3, 1 );
-    sizes[0] = 0.001;
-    sizes[1] = 3*(pulseRadius*2)/4;
-    sizes[2] = pulseRadius*2;
-    pulse.addImage( "pulse_radius.png" );
-    pulse.setSizeInterval( sizes );
-    pulse.setAlphaInterval( 255, 0 );
-    
-    pulse.commit( controlGroup->level );
-
-    /*
-    // For the lulz
-    Animation effect = pulse;
-    sizes[1] = 40;
-    sizes[2] = 55;
-    effect.setAlphaInterval( 50, 0 );
-    effect.setSizeInterval( sizes );
-
-    pulse.commit  ( controlGroup->level );
-    effect.commit ( controlGroup->level );
-
-    // For the lulz (2)
-    Animation radar( getLocations()[0] );
-    radar.addImage( "pulse_radar.png" );
-    radar.setSizeInterval( pulseRadius*2+1, pulseRadius*2+1 );
-    radar.setRotationInterval( 0, 360 );
-    radar.setAlphaInterval( 140, 0 );
-    radar.commit( controlGroup->level );
-    */
 }
 
 int Pulser::getRadius() {

@@ -12,17 +12,15 @@
 
 using namespace std;
 
-int Gate::IDCounter = 0;
-
+/** CONSTRUCTORS **/
 Gate::Gate ( vector<Cell> c ) {
   cells = c;
   setCellContexts();
-  weight = 3;
+  weight = 3; // The standard weight of a gate is 3
   openCounter = weight;
-  ID = IDCounter++;
-  cout << "Constructing gate " << ID << endl;
 }
 
+/** UTILITY FUNCTIONS **/
 void Gate::setCellContexts () {
 
   // Set indicators to the cells around any given cell
@@ -44,11 +42,6 @@ void Gate::setCellContexts () {
     }
     
     cells[i].setCellContext( a, b, l, r, al, ar, bl, br );
-    
-    /* // For debugging
-    cout << "For cell "<< i << ", a = " << a << ", b = " << b << ", l = " << l << ", r = " << r
-	 << ", ar = " << ar << ", al = " << al << ", br = " << br << ", bl = " << bl << endl;
-    */
 
     // Set the image depending on who is around. We assume the byte is 4 cells big.
 
@@ -58,6 +51,7 @@ void Gate::setCellContexts () {
     int numConnections = ( int(a!=-1) + int(b!=-1) + int(r!=-1) + int(l!=-1) );
     int rotation = 0;  // how to rotate the sprite
     int horizFlip = 0; // indicates if the sprite should be flipped
+
     if ( numConnections == 0 ) {
       imgName += "0";
     } else if( numConnections == 1 ) {
@@ -95,6 +89,8 @@ void Gate::setCellContexts () {
     
     imgName += ".png";
 
+    // imgName should now be a string indicating the correct image
+
     cells[i].setImage( imgName );
     cells[i].setSpriteRotation( rotation );
     if(horizFlip) cells[i].flipSprite();
@@ -103,25 +99,21 @@ void Gate::setCellContexts () {
   
 }
 
+// Draw the gate on the given sfml window
 void Gate::draw ( sf::RenderWindow &screen ) {
   for( int i = 0; i < cells.size(); ++i ) {
     cells[i].draw( screen );
   }
 }
 
-void Gate::setGridData ( int w, int h, int t, int l ) {
-  for (int i = 0; i < cells.size(); ++i) {
-    cells[i].setGridData( w, h, t, l );
-  }
-}
-
+// Perform the unit's high cycle, checks for opening
 void Gate::highCycle () {
   unitsToTransfer.clear();
   int foundUnit = 0;
   int prevOpenCounter = openCounter; // Used for animation
   for( int i = 0; i < cells.size(); ++i ) { 
     CellGroup* unitOnMe = level->unitAtLocation( cells[i].getGridLocation() );
-    if( unitOnMe ) {
+    if( unitOnMe ) { // There is a unit on me
       if( strcmp(unitOnMe->CGGroupName.c_str(), "user") == 0 ) {
 	unitsToTransfer.insert( unitOnMe );
 	foundUnit = 1;
@@ -143,6 +135,13 @@ void Gate::highCycle () {
   }
 }
 
+/** MUTATORS **/
+void Gate::setGridData ( int w, int h, int t, int l ) {
+  for (int i = 0; i < cells.size(); ++i) {
+    cells[i].setGridData( w, h, t, l );
+  }
+}
+
 void Gate::setWeight ( int w ) {
   weight = w;
   openCounter = weight;
@@ -156,6 +155,7 @@ void Gate::resetOpenCounter () {
   openCounter = weight;
 }
 
+/** ACCESSORS **/
 string Gate::destination () {
   return dest;
 }
@@ -165,9 +165,7 @@ set<CellGroup*> Gate::getUnitsToTransfer () {
 }
 
 vector<Location> Gate::getLocations () {
-  cout << "Getting locations of gate " << ID << endl;
   vector<Location> locs;
-  cout << "Cells " << cells.empty() << " empty. " << endl;
   for( int i = 0; i < cells.size(); ++i )
     locs.push_back( cells[i].getGridLocation() );
   return locs;

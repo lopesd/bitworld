@@ -11,6 +11,7 @@
 
 #include "structures.h"
 #include "ImageCache.h"
+
 #include <string>
 
 class Cell {
@@ -20,27 +21,34 @@ class Cell {
   // Constructor takes location on grid as input
   Cell ( int col = -1, int row = -1 );
   // Copy constructor is defined to make sure the sprite information is copied
-  Cell ( const Cell& );
+  //Cell ( const Cell& );
   
-  /** UTILITY **/
+  /** UTILITY FUNCTIONS **/
   // Move in the given direction. Updates col, row, x and y data.
   void move ( Direction dir );
-  // Draw on the given SFML screen object
-  void draw ( sf::RenderWindow& screen );
   
   /** MUTATORS **/
   // Privately store the measurements of the grid. Should be called when Cell is passed to a Level object
   void setGridData ( int width, int height, int top_offset, int left_offset );
   void setCellContext ( int a, int b, int l, int r, int ar, int al, int br, int bl );
+
   // Update image. Image must be loaded in the ImageCache beforehand
   void setImage  ( std::string imageName );
   void setImage  ( const char* imageName );
   void setImages ( std::vector<std::string>, CellStillAnimType = NORMAL );
+
+  // Manipulate sprite directly
   void setSpriteRotation ( float r );
   void flipSprite ();
+
+  // Set movement animation type
   void setMovementAnimation( CellMoveAnimType type );
   
+  // Place the cell at a specified location
   void setGridLocation( Location loc );
+
+  // Draw on the given SFML screen object
+  void draw ( sf::RenderWindow& screen );
   
   /** ACCESSORS **/
   // Return location on the grid or location on the screen (pixels)
@@ -64,13 +72,15 @@ class Cell {
   int framesToMove; //indicates the amount of frames it takes to run the movement animation
   FloatPair animIncrement;
   float fadeIncrement, alpha, sinCounter, rotation; // Used for animation
-  int moveCount;
-  CellStillAnimType stillAnimType;
-  CellMoveAnimType  movementAnimType; //types of animation
-  int stillAnimCount, imageIndex;
-  std::vector<std::string> imageNames;
-  sf::Sprite sprite;
-  sf::Sprite sprite2;
+  int moveCount; // Counter for how many frames are left till movement is complete
+  CellStillAnimType stillAnimType;    // Type of still animation
+  CellMoveAnimType  movementAnimType; // Types of movement animation
+  int stillAnimCount, imageIndex;     // Used for still animation
+
+  std::vector<std::string> imageNames; // Names of images to be drawn
+
+  sf::Sprite sprite;  // SFML sprites
+  sf::Sprite sprite2; // Used for special animations
 
 };
 

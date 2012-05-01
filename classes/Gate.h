@@ -29,13 +29,14 @@ class Gate {
 
   /** UTILITY METHODS **/
   // DRAWING AND ANIMATION
+  // Determine the image for each cell
   virtual void setCellContexts ();
   virtual void draw ( sf::RenderWindow &screen );
-  virtual void setGridData ( int, int, int, int );
   // GAME LOGIC
   virtual void highCycle ();
 
   /** MUTATORS **/
+  void setGridData      ( int, int, int, int );
   void setWeight        ( int );
   void setDest          ( std::string );
   void resetOpenCounter ();
@@ -58,9 +59,6 @@ class Gate {
   int weight; // how long it takes to open
   int openCounter; // counts down till the gate is open
   
-  static int IDCounter;
-  int ID;
-
 };
 
 #endif

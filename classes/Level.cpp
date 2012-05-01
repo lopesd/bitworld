@@ -40,13 +40,18 @@ Level::Level (sf::RenderWindow &newWindow, vector<ControlGroup*> c, vector<CellG
               int w, int h, int cpp)
 : window(newWindow) 
 {
-  controlGroups = c;
+  // TAKE IN UNITS AND CONTROL GROUPS
+  units = u; // Take in units
+
+  controlGroups = c; // Take in Control Groups
   for( int i = 0; i < controlGroups.size(); ++i ) // Tell controlGroups to recognize me as their level overlord
     controlGroups[i]->setLevel( this );
-  units = u;
-  gates = g;
+
+  gates = g; // Take in gates
   for( int i = 0; i < gates.size(); ++i )
     gates[i]->level = this;
+
+  // SET GRID DATA
   width = w;
   height = h;
   cyclesPerPeriod = cpp;
@@ -72,11 +77,13 @@ Level::Level (sf::RenderWindow &newWindow, vector<ControlGroup*> c, vector<CellG
   deafFrames = 0;
   cycleOffset = 20;
 
+  // Set the grid data for all my units
   for (int i = 0; i < units.size(); ++i)
     units[i]->setGridData( gridColWidth, gridRowHeight, top_offset, left_offset );
   for (int i = 0; i < gates.size(); ++i)
     gates[i]->setGridData( gridColWidth, gridRowHeight, top_offset, left_offset );
 
+  // Set sprite stuff
   backgroundSprite.SetImage( ImageCache::GetImage("Dark.jpg") );
   backgroundSprite.Resize( window.GetWidth(), window.GetHeight() );
   highlightSprite.SetImage ( ImageCache::GetImage("blue_transparent.png") );
@@ -89,6 +96,7 @@ Level::Level (sf::RenderWindow &newWindow, vector<ControlGroup*> c, vector<CellG
   stopSprite.SetCenter( stopSprite.GetSize() / 2.f );
   stopSprite.Resize( gridColWidth / 2, gridRowHeight / 2 );
 
+  // Miscellaneous values
   activeGroupIndex = 0;
   activeGroup = controlGroups[0]; // set active group to be the first in the list
   activeGroup->startTurn();
@@ -96,6 +104,7 @@ Level::Level (sf::RenderWindow &newWindow, vector<ControlGroup*> c, vector<CellG
   gameOver = 0;
 }
 
+// Copy constructor must be defined mainly to pass control appropriately
 Level::Level (const Level& L) : window(L.window) {
   activeGroupIndex = L.activeGroupIndex;
   controlGroups = L.controlGroups;
@@ -136,9 +145,10 @@ Level::Level (const Level& L) : window(L.window) {
   activeGroup = controlGroups[activeGroupIndex];
 }
 
+// A "custom destructor" -- deletes everything that the level points to
 void Level::destroy () {
   for( int i = 0; i < units.size(); ++i ) {
-    if( unitsToTransfer.find(units[i]) == unitsToTransfer.end() ) // If the unit is not being transferred
+    if( unitsToTransfer.find(units[i]) == unitsToTransfer.end() ) // If the unit is not being transferred to another level
       delete units[i];
   }
   for( int i = 0; i < controlGroups.size(); ++i ) {
@@ -149,7 +159,8 @@ void Level::destroy () {
   }
 }
 
-void Level::resetGrid () { // Clears and remakes the entire grid
+// Clears and remakes the entire grid
+void Level::resetGrid () { 
   grid[0].clear();
 
   vector<Location> locs;
@@ -165,6 +176,7 @@ void Level::resetGrid () { // Clears and remakes the entire grid
 
 /** UTILITY FUNCTIONS **/
 // USER INPUT
+// Take user input in terms of a location on the screen, and interprets it as a click on its grid
 void Level::prepareInput(int x, int y, int isRightClick) {
   Location Lorder;
 
@@ -196,21 +208,23 @@ void Level::prepareInput(int x, int y, int isRightClick) {
   }
 }
 
+// INPUT HANDLERS
 void Level::handleInput (Location loc) {
 
-  if( deafFrames ) return;
+  if( deafFrames ) return; // Ignore input if animations are happening
 
   map<Location, CellGroup*>::iterator clickedUnit = grid[0].find( loc );
 
-  if (clickedUnit != grid[0].end() ) {
+  if (clickedUnit != grid[0].end() ) { // A unit was clicked
     activeGroup->handleInput ( clickedUnit->second );
   }
-  else {
+  else { // An empty cell was clicked
     CellGroup* nullPointer = 0;
     activeGroup->handleInput ( nullPointer );
   }
 }
 
+// Defer decision to control groups
 void Level::handleInput (Direction dir) {
   if( deafFrames ) return;
   activeGroup->handleInput (dir);
@@ -235,13 +249,14 @@ void Level::controlGroupDone () {
   activeGroup->startTurn();
 }
 
+// Run a period
 void Level::runPeriod () {
   cyclesToRun = cyclesPerPeriod;
 }
 
+// Run a cycle
 void Level::runCycle () {
   
-  //cout << "Part of cycle = " << partOfCycle << endl;
   requestDeafFrames( 1 ); // at least one frame of silence.
 
   if( partOfCycle == 0 ) {
@@ -482,11 +497,12 @@ void Level::killUnit ( CellGroup* unitToDie ) {
   delete unitToDie;                 //Finally, deallocate him
 }
 
+// Unit is flagged by a pulser or sentinel
 void Level::flagUnit ( CellGroup* unitToFlag ) {
   flaggedUnits.insert( unitToFlag ); 
-  //Also include animation for flagging
 }
 
+// Handle a gate opening
 void Level::openGate ( Gate* gate ) {
   isDone = 1;
   destination = gate->destination();
@@ -494,6 +510,7 @@ void Level::openGate ( Gate* gate ) {
   gateDestTag = gate->destinationTag;
 }
 
+// Transfer units from one gate to the next level's gate
 void Level::transferUnits ( Level* newLevel ) {
   int locCounter = 0;
   Gate* destGate = newLevel->gateWithTag( gateDestTag );
@@ -503,29 +520,35 @@ void Level::transferUnits ( Level* newLevel ) {
   }
 }
 
+// Take a unit into level
 void Level::take ( CellGroup* unit ) {
   units.push_back( unit );
   unit->setGridData( gridColWidth, gridRowHeight, top_offset, left_offset );
 
+  // Pass unit to player control. Assume all units transferred must have been the user's.
   for( int i = 0; i < controlGroups.size(); ++i ) {
     if( controlGroups[i]->getPlayer() ) {
       controlGroups[i]->take( unit );
     }
   }
   
+  // Insert the unit in the grid
   for( int i = 0; i < unit->getLocations().size(); ++i )
     grid[0].insert( pair<Location, CellGroup*> ( unit->getLocations()[i], unit ) );
 
+  // Resort grid so that drawing occurs correctly
   sort( units.begin(), units.end(), pointerCompare2 );
 }
 
 /* DRAWING */
 void Level::draw() {
+
   // deafFrames is how long the level will ignore user input. We decrease the count by 1 each frame.
   if( deafFrames ) --deafFrames;
   if( deafFrames == 0 ) {
+    // Perform some game logic
 
-    /*
+    /* // For debugging
     for( int i = 0; i < units.size(); ++i ) {
       cout << "Drawing unit " << units[i]->type() << ", loc = " << units[i]->getLocations()[0]
 	   << ", screen = " << units[i]->getScreenLocations()[0].x << ", "
@@ -578,10 +601,11 @@ void Level::draw() {
 
 }
 
-  void Level::drawGrid() {
+// Draw the lines of the grid
+void Level::drawGrid() {
   sf::Color gridColor(sf::Color(143, 114, 19, 0));
   sf::Color gridOutlineColor(sf::Color(100, 100, 240, 0));
-
+  
   sf::Shape horLine;
   sf::Shape vertLine;
   int addLength;
@@ -624,16 +648,19 @@ void Level::draw() {
   }
 }
 
+// Draw each othe units
 void Level::drawUnits() {
   for (int i = 0; i < units.size(); ++i)
     units[i]->draw( window );
 }
 
+// Draw each of the gates
 void Level::drawGates() {
   for( int i = 0; i < gates.size(); ++i )
     gates[i]->draw( window );
 }
 
+// Draw each of the animations, checking to see if they have finished
 void Level::drawAnimations() {
   for( int i = 0; i < animations.size(); ) {
     animations[i].draw( window );
@@ -644,6 +671,7 @@ void Level::drawAnimations() {
   }
 }
 
+// Draw arrows on grid
 void Level::drawArrows() {
   // Draw arrows for every unit of the active group, if it is a user's group
   if( activeGroup->getPlayer() ) 
@@ -701,6 +729,7 @@ void Level::drawArrows() {
     }
 }
 
+// Draw CPU cycle
 void Level::drawCycle(int offset)
 {
   //Edges of the cycle box
@@ -793,6 +822,7 @@ void Level::drawCycle(int offset)
                                   lowCycleEdge,
                                   4, cycleColor));
 
+  /*
   //Defines a triangle shape in SFML
   int x1 = ARROW_LENGTH * -0.4;
   int x2 = ARROW_LENGTH * 0.4;
@@ -810,12 +840,15 @@ void Level::drawCycle(int offset)
   Triangle.AddPoint((x1 + x2) / 2, y2, arrowColor);
 
   window.Draw(Triangle);
+  */
 }
 
+// Draw level background
 void Level::drawBackground() {
   window.Draw(backgroundSprite);
 }
 
+// Draw orange selection tile
 void Level::highlightSelect() {
 
   if( !deafFrames ) {
@@ -832,10 +865,12 @@ void Level::highlightSelect() {
 
 }
 
+// Add an animation to the animation vector
 void Level::addAnimation ( Animation* anim ) {
   animations.push_back( *anim );
 }
 
+// Set deaf frames to AT LEAST the requested amount
 void Level::requestDeafFrames( int requestedAmount ) {
   if( deafFrames < requestedAmount)
     deafFrames = requestedAmount;

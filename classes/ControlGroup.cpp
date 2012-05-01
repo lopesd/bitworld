@@ -31,9 +31,13 @@ void ControlGroup::take ( CellGroup* unitToTake ) {
 
 void ControlGroup::forfeit ( CellGroup* unitToForfeit ) {
   if( selectedUnit == unitToForfeit ) selectedUnit = 0;
-  for( int i = 0; i < units.size(); ++i )
+  for( int i = 0; i < units.size(); ++i ) // Clumsily remove the unit from my vector
     if( units[i] == unitToForfeit )
       units.erase( units.begin() + i );
+}
+ 
+void ControlGroup::clearSelection () {
+  selectedUnit = 0;
 }
 
 /** ACCESSORS **/
@@ -57,8 +61,3 @@ int ControlGroup::getPlayer() {
 void ControlGroup::setLevel (Level* l) {
   level = l;
 }
-
-void ControlGroup::clearSelection () {
-  selectedUnit = 0;
-}
-

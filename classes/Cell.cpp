@@ -16,7 +16,8 @@ using namespace std;
 
 const extern int FPS;
 
-// Constructor takes location on grid as input
+/** CONSTRUCTORS **/
+
 Cell::Cell (int c, int r) {
   col = c;
   row = r;
@@ -32,6 +33,7 @@ Cell::Cell (int c, int r) {
   a=b=l=r=ar=al=br=bl= -1;
 }
 
+/*
 // Copy constructor is defined to make sure the sprite information is copied
 Cell::Cell ( const Cell& c ) {
   col = c.col;
@@ -51,7 +53,9 @@ Cell::Cell ( const Cell& c ) {
   if ( !c.imageNames.empty() )
     setImages( c.imageNames ); // Set new Cell to have the same one
 }
+*/
 
+/** UTILITY FUNCTIONS **/
 // Move in the given direction. Updates col and row data
 void Cell::move ( Direction dir ) {
   col += dir.x;
@@ -149,6 +153,7 @@ void Cell::setMovementAnimation( CellMoveAnimType type ) {
   if( type == PHASE ) framesToMove = FPS;
 }
 
+// Move to a place on the grid
 void Cell::setGridLocation ( Location newLoc ) {
   col = newLoc.x;
   row = newLoc.y;
@@ -160,7 +165,8 @@ void Cell::draw ( sf::RenderWindow& screen ) {
   //MOVEMENT ANIMATION
   if( moveCount != 0 ) {
     --moveCount;
-    
+
+    // PHASING ANIMATION
     if( movementAnimType == PHASE ) {
 
       if( moveCount == framesToMove/2 ) { //move the sprite at the halfway point
@@ -170,14 +176,18 @@ void Cell::draw ( sf::RenderWindow& screen ) {
 	sprite2.SetPosition( x, y );
       }
       
+      // Increment the unit's transparency.
       alpha = fadeIncrement*abs(moveCount-framesToMove/2);
       sprite.SetColor( sf::Color(255, 255, 255, alpha) );
 
     } else {
+      // NORMAL MOVEMENT ANIMATION
       x += animIncrement.x;
       y += animIncrement.y;
       sprite.Move( animIncrement.x, animIncrement.y );
       sprite2.Move( animIncrement.x, animIncrement.y );
+
+      // Finalize the movement.
       if( moveCount == 0 ) {
 	x = (left_offset+col*width + 0.5*width);
 	y = (top_offset+row*height + 0.5*height);
@@ -190,7 +200,9 @@ void Cell::draw ( sf::RenderWindow& screen ) {
   
   // IN PLACE ANIMATION
   if( stillAnimType == NORMAL ) {
+    // NORMAL STILL ANIMATION
 
+    // Switch linearly between the images given
     if( ++stillAnimCount > 15 ) {
       stillAnimCount = 0;
       if( ++imageIndex >= imageNames.size() ) imageIndex = 0;
@@ -202,13 +214,15 @@ void Cell::draw ( sf::RenderWindow& screen ) {
   }
 
   else if( stillAnimType == PULSER ) {
+    // PULSER STILL ANIMATION
     screen.Draw( sprite );
-    sprite2.SetRotation( rotation++ );
+    sprite2.SetRotation( rotation++ ); // Rotate middle thingy
     screen.Draw( sprite2 );
   }
   
   else if( stillAnimType == WHITEBIT ) {
-    sprite2.SetColor( sf::Color( 255, 255, 255, abs(sin((sinCounter+=2)*PI/180)*255)*(alpha/255) ) );
+    // WHITE BIT STILL ANIMATION
+    sprite2.SetColor( sf::Color( 255, 255, 255, abs(sin((sinCounter+=2)*PI/180)*255)*(alpha/255) ) ); // Glow
     if( sinCounter >= 360 ) sinCounter = 0;
     screen.Draw( sprite2 );
     screen.Draw( sprite );
