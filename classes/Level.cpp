@@ -16,7 +16,6 @@
 #include "WhiteBit.h"
 
 #include <iostream> //Remove later
-#include <unistd.h> //For usleep function
 #include <algorithm> //For the find in vector function
 #include <cstring>
 
@@ -29,7 +28,7 @@ extern int FPS;
 
 // Used to sort the units vector, compare pointers to CellGroup
 struct pointerCompare2 {
-  bool operator() (CellGroup* first, CellGroup* second) { 
+  bool operator() (CellGroup* first, CellGroup* second) {
     return ( first->getWeight() < second->getWeight() );
   }
 } pointerCompare2;
@@ -38,7 +37,7 @@ struct pointerCompare2 {
 /** CONSTRUCTORS **/
 Level::Level (sf::RenderWindow &newWindow, vector<ControlGroup*> c, vector<CellGroup*> u, vector<Gate*> g,
               int w, int h, int cpp)
-: window(newWindow) 
+: window(newWindow)
 {
   // TAKE IN UNITS AND CONTROL GROUPS
   units = u; // Take in units
@@ -160,7 +159,7 @@ void Level::destroy () {
 }
 
 // Clears and remakes the entire grid
-void Level::resetGrid () { 
+void Level::resetGrid () {
   grid[0].clear();
 
   vector<Location> locs;
@@ -256,7 +255,7 @@ void Level::runPeriod () {
 
 // Run a cycle
 void Level::runCycle () {
-  
+
   requestDeafFrames( 1 ); // at least one frame of silence.
 
   if( partOfCycle == 0 ) {
@@ -283,10 +282,8 @@ void Level::runCycle () {
     //cout << "done with cycle. " << endl;
     --cyclesToRun;
     partOfCycle = 0;
+    cycleOffset = 20;
   }
-
-  //cycleOffset = 19; //Set offset for the cycle animation
-  //requestDeafFrames( 20 );
 
 }
 
@@ -363,14 +360,13 @@ void Level::runUpCycle () {
   grid[0].clear(); //Clear old grid
   grid = grid + future;
   future = -future;
-  
 }
 
 // High cycles -- gates check if they should open
 void Level::runHighCycle () {
   for( int i = 0; i < gates.size(); ++i ) {
     gates[i]->highCycle();
-  }  
+  }
 }
 
 // Down cycles -- events, such as pulsing
@@ -403,17 +399,17 @@ void Level::runDownCycle () {
   for( int i = 0; i < units.size(); ++i ) {
     units[i]->downCycle();
   }
-  
+
 }
 
 // Nothing in here yet.
 void Level::runLowCycle () {
-  
+
 }
 
 //Recursive checking if the unit currently at myLoc will move (eg. no head-on collision)
 int Level::willMove ( Location myLoc ) {
-  if( grid[0].find( myLoc ) == grid[0].end() ) 
+  if( grid[0].find( myLoc ) == grid[0].end() )
     cout << "could not find myLoc. OH my goodness gracious SEGFAULT" << endl;
   CellGroup* unit = grid[0][myLoc]; //the unit that owns a cell at the given location
 
@@ -499,7 +495,7 @@ void Level::killUnit ( CellGroup* unitToDie ) {
 
 // Unit is flagged by a pulser or sentinel
 void Level::flagUnit ( CellGroup* unitToFlag ) {
-  flaggedUnits.insert( unitToFlag ); 
+  flaggedUnits.insert( unitToFlag );
 }
 
 // Handle a gate opening
@@ -531,7 +527,7 @@ void Level::take ( CellGroup* unit ) {
       controlGroups[i]->take( unit );
     }
   }
-  
+
   // Insert the unit in the grid
   for( int i = 0; i < unit->getLocations().size(); ++i )
     grid[0].insert( pair<Location, CellGroup*> ( unit->getLocations()[i], unit ) );
@@ -555,57 +551,50 @@ void Level::draw() {
 	   << units[i]->getScreenLocations()[0].y << endl;
     }
     */
-    
+
     //Kill any units that must die
     if( !unitsToDie.empty() ) {
       for( set<CellGroup*>::iterator i = unitsToDie.begin(); i != unitsToDie.end(); ++i )
 	killUnit( *i );
       unitsToDie.clear();
-      
+
       // If a unit has died, check to see if that was the last player's unit
       for( int i = 0; i < controlGroups.size(); ++i ) {
 	if(controlGroups[i]->getPlayer() && !(controlGroups[i]->getUnitsSize()) ) {
-	  gameOver = 1;	
+	  gameOver = 1;
 	  isDone = 1;
 	}
       }
-      
     }
-    
+
     if( cyclesToRun != 0 && !isDone ) { // run cycles if we still need to
       //cout << "Running part of a cycle because cyclesToRun is " << cyclesToRun << endl;
       runCycle();
     }
-    
+
     else { //if there are no deaf frames and no cycles to run, then gates must be reset
       for( int i = 0; i < gates.size(); ++i )
 	gates[i]->resetOpenCounter();
     }
   }
-  
-    
-  
+
   window.Clear();
   drawBackground();
-  
+
   drawGrid();
   drawGates();
   highlightSelect();
   drawUnits();
   drawAnimations();
   drawArrows();
-  
-  if     ( cycleOffset == 0 ) cycleOffset = 20;
-  else if( cycleOffset != 20 ) --cycleOffset;
-  drawCycle(20-cycleOffset);
-
+  drawCycle();
 }
 
 // Draw the lines of the grid
 void Level::drawGrid() {
   sf::Color gridColor(sf::Color(143, 114, 19, 0));
   sf::Color gridOutlineColor(sf::Color(100, 100, 240, 0));
-  
+
   sf::Shape horLine;
   sf::Shape vertLine;
   int addLength;
@@ -666,7 +655,7 @@ void Level::drawAnimations() {
     animations[i].draw( window );
     if( animations[i].isDone() )
       animations.erase( animations.begin() + i );
-    else 
+    else
       ++i;
   }
 }
@@ -674,7 +663,7 @@ void Level::drawAnimations() {
 // Draw arrows on grid
 void Level::drawArrows() {
   // Draw arrows for every unit of the active group, if it is a user's group
-  if( activeGroup->getPlayer() ) 
+  if( activeGroup->getPlayer() )
     for( int i = 0; i < activeGroup->getUnitsSize(); ++i ) {
       CellGroup* unit = activeGroup->getUnits()[i];
       int notSelected = !( unit == activeGroup->getSelectedUnit() );
@@ -730,7 +719,7 @@ void Level::drawArrows() {
 }
 
 // Draw CPU cycle
-void Level::drawCycle(int offset)
+void Level::drawCycle()
 {
   //Edges of the cycle box
   int lowEdge = window.GetHeight() - 25;
@@ -753,7 +742,14 @@ void Level::drawCycle(int offset)
   //Whether currently in an upcycle or downcycle
   bool upCycle = 1;
 
-  if(offset > 9)
+  if(partOfCycle == 1 && cycleOffset > 10)
+    cycleOffset--;
+  if(partOfCycle == 3 && cycleOffset > 0)
+    cycleOffset--;
+  if(partOfCycle == 0)
+    cycleOffset = 20;
+
+  if(cycleOffset > 9)
     upCycle = 0;
 
   sf::Color backgroundColor = sf::Color(0, 0, 0, 180);
@@ -771,11 +767,11 @@ void Level::drawCycle(int offset)
     //High cycle on the left is disappearing
     window.Draw(sf::Shape::Line(leftCycleEdge,
                                 highCycleEdge,
-                                leftCycleEdge + cycleWidth - offset * cycleWidth / 10,
+                                leftCycleEdge + cycleWidth - cycleOffset * cycleWidth / 10,
                                 highCycleEdge,
                                 4, cycleColor));
     //High cycle on the right is appearing
-    window.Draw(sf::Shape::Line(leftCycleEdge + cycleWidth * numOfCycles - offset * cycleWidth / 10,
+    window.Draw(sf::Shape::Line(leftCycleEdge + cycleWidth * numOfCycles - cycleOffset * cycleWidth / 10,
                                 highCycleEdge,
                                 leftCycleEdge + cycleWidth * numOfCycles,
                                 highCycleEdge,
@@ -786,11 +782,11 @@ void Level::drawCycle(int offset)
     //Low cycle on the left is disappearing
     window.Draw(sf::Shape::Line(leftCycleEdge,
                                 lowCycleEdge,
-                                leftCycleEdge + cycleWidth - (offset - 10) * cycleWidth / 10,
+                                leftCycleEdge + cycleWidth - (cycleOffset - 10) * cycleWidth / 10,
                                 lowCycleEdge,
                                 4, cycleColor));
     //Low cycle on the right is appearing
-    window.Draw(sf::Shape::Line(leftCycleEdge + cycleWidth * numOfCycles - (offset - 10) * cycleWidth / 10,
+    window.Draw(sf::Shape::Line(leftCycleEdge + cycleWidth * numOfCycles - (cycleOffset - 10) * cycleWidth / 10,
                                 lowCycleEdge,
                                 leftCycleEdge + cycleWidth * numOfCycles,
                                 lowCycleEdge,
@@ -799,30 +795,29 @@ void Level::drawCycle(int offset)
 
   //Draw the up cycles, conditioned for the appearing upper right line
   for(int count = 2; count < numOfCycles || (!upCycle && count < numOfCycles + 1); count += 2)
-    window.Draw(sf::Shape::Line(leftCycleEdge + cycleWidth * count - offset * cycleWidth / 10,
+    window.Draw(sf::Shape::Line(leftCycleEdge + cycleWidth * count - cycleOffset * cycleWidth / 10,
                                 highCycleEdge,
-                                leftCycleEdge + cycleWidth * (count + 1) - offset * cycleWidth / 10,
+                                leftCycleEdge + cycleWidth * (count + 1) - cycleOffset * cycleWidth / 10,
                                 highCycleEdge,
                                 4, cycleColor));
 
   //Draw the down cycles, conditioned for the disappearing lower left line
   for(int count = numOfCycles - 1; count > 1 || (count > 0 && upCycle); count -= 2)
-    window.Draw(sf::Shape::Line(leftCycleEdge + cycleWidth * count - offset * cycleWidth / 10,
+    window.Draw(sf::Shape::Line(leftCycleEdge + cycleWidth * count - cycleOffset * cycleWidth / 10,
                                 lowCycleEdge,
-                                leftCycleEdge + cycleWidth * (count + 1) - offset * cycleWidth / 10,
+                                leftCycleEdge + cycleWidth * (count + 1) - cycleOffset * cycleWidth / 10,
                                 lowCycleEdge,
                                 4, cycleColor));
 
   //Draw the vertical lines, conditioned for the disappearing and appearing lines
   for(int count = 1; count < numOfCycles + 2; count++)
     if((upCycle && count < numOfCycles + 1) || (!upCycle && count > 1))
-      window.Draw(sf::Shape::Line(leftCycleEdge + cycleWidth * count - offset * cycleWidth / 10,
+      window.Draw(sf::Shape::Line(leftCycleEdge + cycleWidth * count - cycleOffset * cycleWidth / 10,
                                   highCycleEdge,
-                                  leftCycleEdge + cycleWidth * count - offset * cycleWidth / 10,
+                                  leftCycleEdge + cycleWidth * count - cycleOffset * cycleWidth / 10,
                                   lowCycleEdge,
                                   4, cycleColor));
 
-  /*
   //Defines a triangle shape in SFML
   int x1 = ARROW_LENGTH * -0.4;
   int x2 = ARROW_LENGTH * 0.4;
@@ -840,7 +835,6 @@ void Level::drawCycle(int offset)
   Triangle.AddPoint((x1 + x2) / 2, y2, arrowColor);
 
   window.Draw(Triangle);
-  */
 }
 
 // Draw level background
@@ -854,7 +848,7 @@ void Level::highlightSelect() {
   if( !deafFrames ) {
     CellGroup* unit = activeGroup->getSelectedUnit();
     if(unit == 0) return;
-    
+
     vector<FloatPair> groupLocations = unit->getScreenLocations();
 
     for (int i = 0; i < groupLocations.size(); ++i) {

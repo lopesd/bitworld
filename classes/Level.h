@@ -66,7 +66,7 @@ class Level {
   void drawGates        ();
   void drawArrows       ();
   void drawAnimations   ();
-  void drawCycle        ( int offset );
+  void drawCycle        ();
   void drawBackground   ();
   void highlightSelect  (); // Draw the orange selection behind the selected bit
 
@@ -122,10 +122,10 @@ class Level {
 
   /** COMPLETION INFO **/
   int isDone;
-  std::string destination;	
+  std::string destination;
   int gateDestTag;
   int gameOver;
-	
+
   /** SFML OBJECTS AND ANIMATION STUFF **/
   int deafFrames; //The amount of frames to ignore input
   int cycleOffset; //The offset for the CPU cycle animation

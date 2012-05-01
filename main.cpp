@@ -29,7 +29,7 @@ int main (void) {
   // INITIALIZE LIBRARIES AND OBJECTS
   sf::RenderWindow window;
   window.SetFramerateLimit( FPS );
-  window.UseVerticalSync( true );
+//  window.UseVerticalSync( true );
   sf::VideoMode nativeResolution = sf::VideoMode::GetDesktopMode();
 
   if(FULLSCREEN)
