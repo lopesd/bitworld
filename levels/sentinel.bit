@@ -19,8 +19,8 @@
 
 
 ~GRID
-K1a --- --- --- --- --- ;
-S1a B1a --- --- G1c G1a ;
+K1a --- --- --- S2a --- ;
+S1a --- --- --- G1c G1a ;
 --- W1b P1a --- G1d G1b ;
 --- W1a W1c W1d W1e --- ;
 --- --- --- --- --- V1a ;
@@ -31,5 +31,6 @@ V1: -cg user ;
 P1: -pulse wpw -radius 1 ;
 B1: ;
 W1: ;
-S1: -zap zwz -direction d ;
+S1: -zap zwz -direction r ;
+S2: -zap zww -direction d ;
 G1: -weight 3 -destination levels/level_deathrow.bit -tag 1 -dtag 1 ; 

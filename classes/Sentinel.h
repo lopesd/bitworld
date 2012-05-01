@@ -1,6 +1,7 @@
 /** Sentinel.h
  *  The Sentinel is a security bit that detects anomalies within its line of sight.
- *  It zaps in a set sequence. and then 
+ *  It zaps in a set sequence.
+ *  Written for Bitworld by: David Lopes, Casey O'Meilia, Catherine Carothers, Mark Riehm
  */
 
 #ifndef SENTINEL_H
@@ -22,11 +23,11 @@ class Sentinel : public CellGroup {
   void queueStandardActionOrders ();
   //zaps in downCycle 
   void downCycle ();
-  //Draws tracer and 
+  //Draws tracer
   void makeAnimation ( std::vector<Location> locationsToZap );
 
   /** ACCESSORS **/
-	Direction getDirection();
+  Direction getDirection();
 
   /** MUTATORS **/
   void setStandardActionOrders ( std::vector<int> );
@@ -40,8 +41,10 @@ class Sentinel : public CellGroup {
  private:
   std::vector<int> standardActionOrders; //1 for zap, 0 for hold
   std::deque<int> actionQueue;
-	Direction dir; //way the sentinel is facing
-	Location locationToZap; //where bit to be flagged is
+  Direction dir; //way the sentinel is facing
+  float rotation; // rotation of sprite due to sentinel orientation
+  Location locationToZap; //where bit to be flagged is
+
 };
 
 #endif

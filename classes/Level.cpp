@@ -105,6 +105,7 @@ Level::Level (sf::RenderWindow &newWindow, vector<ControlGroup*> c, vector<CellG
 
 // Copy constructor must be defined mainly to pass control appropriately
 Level::Level (const Level& L) : window(L.window) {
+  cout << "In level copy constructor." << endl;
   activeGroupIndex = L.activeGroupIndex;
   controlGroups = L.controlGroups;
   units = L.units;
@@ -259,7 +260,7 @@ void Level::runCycle () {
   requestDeafFrames( 1 ); // at least one frame of silence.
 
   if( partOfCycle == 0 ) {
-    //cout << "Running up cycle."  << endl;
+    //cout << endl << "RUNNING UP CYCLE!."  << endl;
     runUpCycle();
     ++partOfCycle;
   }
@@ -418,7 +419,6 @@ int Level::willMove ( Location myLoc ) {
     cout << "It is a moving whitebit!";
     return 1;
   }
-  cout << endl;
 
   Direction myDir = unit->getMovement(0);
   Location fLoc = myLoc + myDir; //My desired future location
@@ -508,12 +508,26 @@ void Level::openGate ( Gate* gate ) {
 
 // Transfer units from one gate to the next level's gate
 void Level::transferUnits ( Level* newLevel ) {
+
   int locCounter = 0;
   Gate* destGate = newLevel->gateWithTag( gateDestTag );
   for( set<CellGroup*>::iterator it = unitsToTransfer.begin(); it != unitsToTransfer.end(); ++it ) {
     (*it)->setLocation( destGate->getLocations()[locCounter++] );
     newLevel->take( *it );
+
+    for( int i = 0; i < units.size(); ++i ) { //remove the pointer from the units vector
+      if( *it == units[i] ) {
+	units.erase( units.begin() + i );
+	break;
+      }
+    }
+
   }
+
+  gameOver = 0;
+  isDone = 0;
+  cyclesToRun = 0;
+  partOfCycle = 0;
 }
 
 // Take a unit into level

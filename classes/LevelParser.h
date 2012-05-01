@@ -18,7 +18,7 @@ class LevelParser {
 
  public:
   // Parse text file into level object
-  static Level Parse (const char* filename, sf::RenderWindow& window);
+  static Level* Parse (const char* filename, sf::RenderWindow& window);
   static vector<string> getInfoText(string filename);
 
  private:
