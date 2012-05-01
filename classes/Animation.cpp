@@ -25,7 +25,7 @@ Animation::Animation ( Location l ) {
   sizes.resize( 2, 1 );
   alphas.resize( 2, 255 );
   rotations.resize( 2, 0 );
-  duration = 1;
+  duration = 0.7;
 }
 
 /** MUTATORS **/

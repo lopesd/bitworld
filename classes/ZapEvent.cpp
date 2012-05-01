@@ -17,8 +17,9 @@ ZapEvent::ZapEvent ( void* sender, Location l )
 }
 
 void ZapEvent::commit ( Level* level ) { //commits to level
-	CellGroup* zappedUnit = level->unitAtLocation( loc );
-	if(zappedUnit) //if there is a unit at the location
-		if(sentinel->controlGroup != zappedUnit->controlGroup) //if doesn't belong to your control group flag the bit
+  CellGroup* zappedUnit = level->unitAtLocation( loc );
+  if(zappedUnit) //if there is a unit at the location
+    if(sentinel->controlGroup != zappedUnit->controlGroup) //if doesn't belong to your control group flag the bit
 			level->flagUnit(zappedUnit);
 }
+

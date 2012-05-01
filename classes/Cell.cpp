@@ -25,7 +25,7 @@ Cell::Cell (int c, int r) {
   y = 0;
   animIncrement.x = 0; animIncrement.y = 0;
   moveCount = 0;
-  framesToMove = FPS/2;
+  framesToMove = FPS/3;
   alpha = 255;
   stillAnimCount = imageIndex = 0;
   stillAnimType = NORMAL;

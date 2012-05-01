@@ -34,9 +34,8 @@ struct pointerCompare {
   }
 } pointerCompare;
 
-
 // Parse text file into level object
-Level LevelParser::Parse ( const char* filename, sf::RenderWindow& window ) {
+Level* LevelParser::Parse ( const char* filename, sf::RenderWindow& window ) {
   enum Macro {METADATA, GRID, EVENT};
   enum Macro macro = GRID;
   string defaultCg = "AI";
@@ -132,12 +131,12 @@ Level LevelParser::Parse ( const char* filename, sf::RenderWindow& window ) {
 	else if ( token[0] == 'K' ) { // WHITE BIT
 	  unit = new WhiteBit (cellVector);	  
 	  unitsMap[token.substr(0,token.length()-1)] = unit; // may be unnecessary for now, but will probably be necessary for events
-	}/*
+	}
 	else if ( token[0] == 'S' ) {// SENTINEL
 	  unit = new Sentinel (cellVector);
 	  cout <<"hello"<<endl;
 	  unitsMap[token.substr(0,token.length()-1)] = unit; // may be unnecessary for now, but will probably be necessary for events
-	  }*/
+	}
 	else if ( token[0] == 'G' ) {
 	  gate = new Gate (cellVector);
 	  gatesMap[token.substr(0,token.length()-1)] = gate; // may be unnecessary for now, but will probably be necessary for events
@@ -343,7 +342,7 @@ Level LevelParser::Parse ( const char* filename, sf::RenderWindow& window ) {
   controlGroups.push_back( user );
 
   // Finally, create the level object
-  Level level (window, controlGroups, unitsVector, gatesVector, gridX, gridY);
+  Level* level = new Level(window, controlGroups, unitsVector, gatesVector, gridX, gridY);
 
   return level;
 }
