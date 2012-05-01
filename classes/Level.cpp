@@ -261,33 +261,21 @@ void Level::runCycle () {
   requestDeafFrames( 1 ); // at least one frame of silence.
 
   if( partOfCycle == 0 ) {
-    //cout << endl << "RUNNING UP CYCLE!."  << endl;
+    cout << endl << "RUNNING UP CYCLE!."  << endl;
     runUpCycle();
     ++partOfCycle;
-  }
-  else if( partOfCycle == 1 ) {
-    //cout << "Running high cycle." << endl;
-    runHighCycle();
-    ++partOfCycle;
-  }
-  else if( partOfCycle == 2 ) {
-    //cout << "Running down cycle." << endl;
+    cycleOffset = 19; //Set offset for the cycle animation
+    requestDeafFrames( FPS/2 );
+  } else if( partOfCycle == 1 ) {
+    cout << "Running down cycle." << endl;
     runDownCycle();
     ++partOfCycle;
-  }
-  else if( partOfCycle == 3 ) {
-    //cout << "Running low cycle." << endl;
-    runLowCycle();
-    ++partOfCycle;
-  }
-  else if( partOfCycle == 4 ) {
+    requestDeafFrames( FPS/2 );
+  } else if( partOfCycle == 2 ) {
     //cout << "done with cycle. " << endl;
     --cyclesToRun;
     partOfCycle = 0;
   }
-
-  //cycleOffset = 19; //Set offset for the cycle animation
-  //requestDeafFrames( 20 );
 
 }
 
@@ -364,6 +352,8 @@ void Level::runUpCycle () {
   grid[0].clear(); //Clear old grid
   grid = grid + future;
   future = -future;
+
+  runHighCycle();
   
 }
 
@@ -376,8 +366,6 @@ void Level::runHighCycle () {
 
 // Down cycles -- events, such as pulsing
 void Level::runDownCycle () {
-
-  requestDeafFrames( FPS/2 );
 
   // Detect bit death first
   for( int i = 0; i < units.size(); ++i ) {
@@ -404,6 +392,8 @@ void Level::runDownCycle () {
   for( int i = 0; i < units.size(); ++i ) {
     units[i]->downCycle();
   }
+
+  runLowCycle();
   
 }
 
@@ -836,7 +826,7 @@ void Level::drawCycle(int offset)
                                   lowCycleEdge,
                                   4, cycleColor));
 
-  /*
+
   //Defines a triangle shape in SFML
   int x1 = ARROW_LENGTH * -0.4;
   int x2 = ARROW_LENGTH * 0.4;
@@ -854,7 +844,7 @@ void Level::drawCycle(int offset)
   Triangle.AddPoint((x1 + x2) / 2, y2, arrowColor);
 
   window.Draw(Triangle);
-  */
+
 }
 
 // Draw level background

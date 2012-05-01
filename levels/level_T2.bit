@@ -9,10 +9,10 @@
 #many bit-cycles within a
 #period are needed to open it.
 #
-#This gate's weight is 3.
-#If you visit it for all 3
-#cycles of a period, it
-#will open.
+#The gate on the right has a 
+#weight of 3. If you visit it
+#for all 3 cycles of a period,
+#it will open.
 
 ~GRID
 --- --- --- --- --- --- ;
