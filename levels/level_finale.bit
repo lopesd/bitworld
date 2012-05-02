@@ -17,7 +17,7 @@ V1a --- --- --- Y1a Y1b --- --- --- --- --- ;
 --- S1a --- --- --- W1b --- --- --- --- --- ;
 
 ~METADATA
-K1: -speed 2 ;
+K1: -speed 3 ;
 V1: -cg user ;
 P1: -pulse pwp -radius 2 ;
 P2: -pulse wwp -radius 2 -move lllrrr ;

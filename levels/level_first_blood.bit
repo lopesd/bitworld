@@ -18,7 +18,7 @@ G1a --- --- --- --- --- --- --- ;
 K1: -speed 4 ;
 
 P1: -pulse wpw -radius 2 ;
-P2: -pulse pwwwwp -radius 3 ;
+P2: -pulse pww -radius 3 ;
 P3: -pulse wpw -radius 2 ;
 B1: -move usd ;
 B2: -move rsl ;
