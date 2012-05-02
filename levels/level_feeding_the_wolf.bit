@@ -1,0 +1,29 @@
+~DESCRIPTION
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#Feed the Wolf
+#Sometimes the hunger of
+#the enemy is his downfall
+#
+#
+
+~GRID
+--- --- B1a --- --- --- --- --- --- ;
+--- --- --- --- --- P2a --- --- --- ;
+G1a V1a B2a --- --- --- K1a --- --- ;
+--- --- --- --- --- --- --- --- G2a ;
+--- --- B3a --- --- P1a --- --- --- ;
+--- --- --- --- --- --- --- --- --- ;
+
+
+
+~METADATA
+B1: -move rl ;
+B2: -move ud ;
+B3: -move lr ;
+K1: -speed 3 ;
+V1: -cg user ;
+P1: -pulse wpw -radius 2 ;
+P2: -pulse pwp -radius 2 ;
+W1: ;
+G1: -weight 3 -destination levels/ -tag 2 -dtag 2 ;
+G2: -weight 1 -destination levels/ -tag 1 -dtag 1 ;
