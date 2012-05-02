@@ -10,14 +10,16 @@
 
 ~GRID
 --- --- --- --- --- --- --- --- ;
---- --- --- --- --- --- --- --- ;
+--- --- V1a --- --- --- --- --- ;
 G1b --- --- B2a B3a B1a --- G2b ;
---- --- --- --- B4a --- --- --- ;
+--- --- P1a --- B4a --- --- --- ;
 --- --- --- --- --- --- --- --- ;
 
 ~METADATA 
 G1: -weight 3 -destination levels/level_T4.bit -tag 1 -dtag 2 ;
 G2: -weight 3 -destination levels/level_T6.bit -tag 2 -dtag 1 ;
+V1: -cg user ;
+P1: -pulse pwp ;
 B1: ;
 B2: ;
 B3: ;

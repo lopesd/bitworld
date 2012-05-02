@@ -2,6 +2,7 @@
  *  "Animation" class, responsible for drawing an animated event on screen, like a pulse, or corruption.
  *  Can easily instantiated with a type and a location, and then committed to the level object, 
  *  which should draw it once every frame.
+ *  Written for Bitworld by: David Lopes, Casey O'Meilia, Catherine Carothers, Mark Riehm
  */
 
 #ifndef ANIMATION_H
@@ -25,6 +26,7 @@ class Animation {
   // Set images to use
   void addImage            ( std::string name );
   void setImages           ( std::vector<std::string> names );
+  void setColor            ( sf::Color );
 
   // Set location of animation
   void setLocation         ( Location location );
@@ -44,6 +46,10 @@ class Animation {
   void setRotationInterval ( float rotationStart, float rotationEnd );
   void setRotationInterval ( std::vector<float> rotations );
 
+  // Set animation based on a preset
+  void fromCountDownPreset( int begin, int end );
+  void fromCountDownPreset( std::vector<int> nums );
+
   /** UTILITY FUNCTIONS **/
   // Store values of interpolation between "values" in "result"
   void interpolate ( std::vector<float>& values, std::vector<float>& results );
@@ -58,6 +64,7 @@ class Animation {
   void draw   ( sf::RenderWindow& screen );
 
   /** ACCESSORS **/
+  // Return 1 if the animation is finished
   int isDone ();
 
  private:

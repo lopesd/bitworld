@@ -6,6 +6,8 @@
 
 #include "CellGroup.h"
 
+#include "Animation.h"
+
 #include <iostream> // FOR TESTING
 
 using namespace std;
@@ -193,6 +195,11 @@ void CellGroup::setFreeToMove (int f) {
 }
 
 void CellGroup::dropResistance ( int n ) {
+  //Animate resistance drop
+  Animation countDown( getLocations()[0] );
+  countDown.fromCountDownPreset( resistance, resistance - n );
+  countDown.commit( controlGroup->level );
+
   resistance -= n;
   resistanceDropped = 1;
 }

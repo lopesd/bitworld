@@ -9,9 +9,10 @@
 
 using namespace std;
 
+/** CONSTRUCTORS **/
 Pulser::Pulser (vector<Cell> c) : CellGroup(c) {
   weight = 3;
-  maxResistance = resistance = 5;
+  maxResistance = resistance = 4;
   vector<string> imgs;
   //sets the images
   imgs.push_back( "new_pulser_bit.png" );
@@ -22,6 +23,7 @@ Pulser::Pulser (vector<Cell> c) : CellGroup(c) {
   pulseRadius = 2;
 }
 
+/** UTILITY FUNCTIONS **/
 void Pulser::queueStandardActionOrders () {
   for (int i = 0; i < standardActionOrders.size(); ++i ) {
     actionQueue.push_back( standardActionOrders.at(i) );
@@ -40,78 +42,34 @@ void Pulser::downCycle () {
     Location tempLoc;
     //adds all the Locations within pulseRadius to vector 
     for(int i = -pulseRadius; i <= pulseRadius; ++i){
-			for(int j = 0; j <= pulseRadius - abs(i); ++j)
-	  	{
-	    	tempLoc.x = myLocs[0].x + i;
-	    	tempLoc.y = myLocs[0].y + j;
-				locationsToPulse.push_back(tempLoc);
-		    if(j){ //adds negatives but not 0 again
-					tempLoc.x = myLocs[0].x + i;
-					tempLoc.y = myLocs[0].y - j;
-					locationsToPulse.push_back(tempLoc);
-	      }
-	  	}
-     } 
+      for(int j = 0; j <= pulseRadius - abs(i); ++j)
+	{
+	  tempLoc.x = myLocs[0].x + i;
+	  tempLoc.y = myLocs[0].y + j;
+	  locationsToPulse.push_back(tempLoc);
+	  if(j){ //adds negatives but not 0 again
+	    tempLoc.x = myLocs[0].x + i;
+	    tempLoc.y = myLocs[0].y - j;
+	    locationsToPulse.push_back(tempLoc);
+	  }
+	}
+    } 
     
-    makeAnimation( locationsToPulse ); //animates on those locations
-    PulseEvent ev( this, locationsToPulse ); //flags the bits on these locations in pulseEvent
-    ev.commit( controlGroup->level ); //commits the event
+    PulseEvent ev( this, locationsToPulse );
+    ev.commit( controlGroup->level );
   }
   
   actionQueue.pop_front();
   if( actionQueue.empty() ) queueStandardActionOrders();
-
+  
 }
 
-void Pulser::makeAnimation ( vector<Location> locationsToPulse ) {
-
-    // Create glowing animations
-    vector<float> alphas( 3, 0 );
-    alphas[1] = 130;
-    for( int i = 0; i < locationsToPulse.size(); ++i ) {
-      Animation glow( locationsToPulse[i] );
-      glow.addImage( "pulse_glow.png" );
-      glow.setAlphaInterval( alphas );
-      glow.commit( controlGroup->level );
-    }
-    
-    // Create circle pulsing animation
-    Animation pulse( getLocations()[0] );
-    vector<float> sizes( 3, 1 );
-    sizes[0] = 0.001;
-    sizes[1] = 3*(pulseRadius*2)/4;
-    sizes[2] = pulseRadius*2;
-    pulse.addImage( "pulse_radius.png" );
-    pulse.setSizeInterval( sizes );
-    pulse.setAlphaInterval( 255, 0 );
-    
-    pulse.commit( controlGroup->level );
-
-    /*
-    // For the lulz
-    Animation effect = pulse;
-    sizes[1] = 40;
-    sizes[2] = 55;
-    effect.setAlphaInterval( 50, 0 );
-    effect.setSizeInterval( sizes );
-
-    pulse.commit  ( controlGroup->level );
-    effect.commit ( controlGroup->level );
-
-    // For the lulz (2)
-    Animation radar( getLocations()[0] );
-    radar.addImage( "pulse_radar.png" );
-    radar.setSizeInterval( pulseRadius*2+1, pulseRadius*2+1 );
-    radar.setRotationInterval( 0, 360 );
-    radar.setAlphaInterval( 140, 0 );
-    radar.commit( controlGroup->level );
-    */
-}
-
+/** ACCESSORS **/
 int Pulser::getRadius() {
   return pulseRadius;
 }
 
+/** MUTATORS **/
 void Pulser::setRadius(int radius) {
   pulseRadius = radius;
 }

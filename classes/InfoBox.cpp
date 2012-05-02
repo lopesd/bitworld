@@ -1,3 +1,9 @@
+/** InfoBox.cpp
+ *  The InfoBox displays informatio on the right side of the screen that is pertinate to that
+ *  particular level's rules, obstacles, and victory conditions
+ *  Written for Bitworld by: David Lopes, Casey O'Meilia, Catherine Carothers, Mark Riehm
+ */
+
 #define SPACING 40
 #define HEADER_HEIGHT 70
 

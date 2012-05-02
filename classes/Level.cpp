@@ -16,7 +16,6 @@
 #include "WhiteBit.h"
 
 #include <iostream> //Remove later
-#include <unistd.h> //For usleep function
 #include <algorithm> //For the find in vector function
 #include <cstring>
 
@@ -29,7 +28,7 @@ extern int FPS;
 
 // Used to sort the units vector, compare pointers to CellGroup
 struct pointerCompare2 {
-  bool operator() (CellGroup* first, CellGroup* second) { 
+  bool operator() (CellGroup* first, CellGroup* second) {
     return ( first->getWeight() < second->getWeight() );
   }
 } pointerCompare2;
@@ -38,19 +37,25 @@ struct pointerCompare2 {
 /** CONSTRUCTORS **/
 Level::Level (sf::RenderWindow &newWindow, vector<ControlGroup*> c, vector<CellGroup*> u, vector<Gate*> g,
               int w, int h, int cpp)
-: window(newWindow) 
+: window(newWindow)
 {
-  controlGroups = c;
+  // TAKE IN UNITS AND CONTROL GROUPS
+  units = u; // Take in units
+
+  controlGroups = c; // Take in Control Groups
   for( int i = 0; i < controlGroups.size(); ++i ) // Tell controlGroups to recognize me as their level overlord
     controlGroups[i]->setLevel( this );
-  units = u;
-  gates = g;
+
+  gates = g; // Take in gates
   for( int i = 0; i < gates.size(); ++i )
     gates[i]->level = this;
+
+  // SET GRID DATA
   width = w;
   height = h;
   cyclesPerPeriod = cpp;
   cyclesToRun = 0;
+  partOfCycle = 0;
   isDone = 0;
 
   grid = doubleBufferGrid;
@@ -71,11 +76,13 @@ Level::Level (sf::RenderWindow &newWindow, vector<ControlGroup*> c, vector<CellG
   deafFrames = 0;
   cycleOffset = 20;
 
+  // Set the grid data for all my units
   for (int i = 0; i < units.size(); ++i)
     units[i]->setGridData( gridColWidth, gridRowHeight, top_offset, left_offset );
   for (int i = 0; i < gates.size(); ++i)
     gates[i]->setGridData( gridColWidth, gridRowHeight, top_offset, left_offset );
 
+  // Set sprite stuff
   backgroundSprite.SetImage( ImageCache::GetImage("Dark.jpg") );
   backgroundSprite.Resize( window.GetWidth(), window.GetHeight() );
   highlightSprite.SetImage ( ImageCache::GetImage("blue_transparent.png") );
@@ -88,6 +95,7 @@ Level::Level (sf::RenderWindow &newWindow, vector<ControlGroup*> c, vector<CellG
   stopSprite.SetCenter( stopSprite.GetSize() / 2.f );
   stopSprite.Resize( gridColWidth / 2, gridRowHeight / 2 );
 
+  // Miscellaneous values
   activeGroupIndex = 0;
   activeGroup = controlGroups[0]; // set active group to be the first in the list
   activeGroup->startTurn();
@@ -95,7 +103,9 @@ Level::Level (sf::RenderWindow &newWindow, vector<ControlGroup*> c, vector<CellG
   gameOver = 0;
 }
 
+// Copy constructor must be defined mainly to pass control appropriately
 Level::Level (const Level& L) : window(L.window) {
+  cout << "In level copy constructor." << endl;
   activeGroupIndex = L.activeGroupIndex;
   controlGroups = L.controlGroups;
   units = L.units;
@@ -110,6 +120,7 @@ Level::Level (const Level& L) : window(L.window) {
   cyclesToRun = L.cyclesToRun;
   isDone = 0;
   gameOver = 0;
+  partOfCycle = 0;
 
   for( int i = 0; i < controlGroups.size(); ++i) // Tell controlGroups to recognize me as their level overlord
     controlGroups[i]->setLevel( this );
@@ -134,9 +145,10 @@ Level::Level (const Level& L) : window(L.window) {
   activeGroup = controlGroups[activeGroupIndex];
 }
 
+// A "custom destructor" -- deletes everything that the level points to
 void Level::destroy () {
   for( int i = 0; i < units.size(); ++i ) {
-    if( unitsToTransfer.find(units[i]) == unitsToTransfer.end() ) // If the unit is not being transferred
+    if( unitsToTransfer.find(units[i]) == unitsToTransfer.end() ) // If the unit is not being transferred to another level
       delete units[i];
   }
   for( int i = 0; i < controlGroups.size(); ++i ) {
@@ -147,7 +159,8 @@ void Level::destroy () {
   }
 }
 
-void Level::resetGrid () { // Clears and remakes the entire grid
+// Clears and remakes the entire grid
+void Level::resetGrid () {
   grid[0].clear();
 
   vector<Location> locs;
@@ -163,6 +176,7 @@ void Level::resetGrid () { // Clears and remakes the entire grid
 
 /** UTILITY FUNCTIONS **/
 // USER INPUT
+// Take user input in terms of a location on the screen, and interprets it as a click on its grid
 void Level::prepareInput(int x, int y, int isRightClick) {
   Location Lorder;
 
@@ -194,21 +208,23 @@ void Level::prepareInput(int x, int y, int isRightClick) {
   }
 }
 
+// INPUT HANDLERS
 void Level::handleInput (Location loc) {
 
-  if( deafFrames ) return;
+  if( deafFrames ) return; // Ignore input if animations are happening
 
   map<Location, CellGroup*>::iterator clickedUnit = grid[0].find( loc );
 
-  if (clickedUnit != grid[0].end() ) {
+  if (clickedUnit != grid[0].end() ) { // A unit was clicked
     activeGroup->handleInput ( clickedUnit->second );
   }
-  else {
+  else { // An empty cell was clicked
     CellGroup* nullPointer = 0;
     activeGroup->handleInput ( nullPointer );
   }
 }
 
+// Defer decision to control groups
 void Level::handleInput (Direction dir) {
   if( deafFrames ) return;
   activeGroup->handleInput (dir);
@@ -233,14 +249,47 @@ void Level::controlGroupDone () {
   activeGroup->startTurn();
 }
 
+// Run a period
 void Level::runPeriod () {
   cyclesToRun = cyclesPerPeriod;
 }
 
+// Run a cycle
 void Level::runCycle () {
 
-  cycleOffset = 19; //Set offset for the cycle animation
-  requestDeafFrames( 20 );
+  requestDeafFrames( 1 ); // at least one frame of silence.
+
+  if( partOfCycle == 0 ) {
+    //cout << endl << "RUNNING UP CYCLE!."  << endl;
+    runUpCycle();
+    ++partOfCycle;
+  }
+  else if( partOfCycle == 1 ) {
+    //cout << "Running high cycle." << endl;
+    runHighCycle();
+    ++partOfCycle;
+  }
+  else if( partOfCycle == 2 ) {
+    //cout << "Running down cycle." << endl;
+    runDownCycle();
+    ++partOfCycle;
+  }
+  else if( partOfCycle == 3 ) {
+    //cout << "Running low cycle." << endl;
+    runLowCycle();
+    ++partOfCycle;
+  }
+  else if( partOfCycle == 4 ) {
+    //cout << "done with cycle. " << endl;
+    --cyclesToRun;
+    partOfCycle = 0;
+    cycleOffset = 20;
+  }
+
+}
+
+// Run the part of the cycle in which unit movement occurs
+void Level::runUpCycle () {
 
   Location fLoc;
   Direction tempDir;
@@ -312,13 +361,20 @@ void Level::runCycle () {
   grid[0].clear(); //Clear old grid
   grid = grid + future;
   future = -future;
+}
 
-  // HIGH CYCLES //
+// High cycles -- gates check if they should open
+void Level::runHighCycle () {
   for( int i = 0; i < gates.size(); ++i ) {
     gates[i]->highCycle();
   }
+}
 
-  // DOWN CYCLES (NEGATIVE EDGE OF CLOCK) //
+// Down cycles -- events, such as pulsing
+void Level::runDownCycle () {
+
+  requestDeafFrames( FPS/2 );
+
   // Detect bit death first
   for( int i = 0; i < units.size(); ++i ) {
     int dontDie = 0;
@@ -339,31 +395,35 @@ void Level::runCycle () {
     if( !dontDie )
       unitsToDie.insert( units[i] );
   }
+
   // Unit events
   for( int i = 0; i < units.size(); ++i ) {
     units[i]->downCycle();
-  } //End events of unit loop
+  }
+
+}
+
+// Nothing in here yet.
+void Level::runLowCycle () {
+
 }
 
 //Recursive checking if the unit currently at myLoc will move (eg. no head-on collision)
 int Level::willMove ( Location myLoc ) {
-  if( grid[0].find( myLoc ) == grid[0].end() ) 
+  if( grid[0].find( myLoc ) == grid[0].end() )
     cout << "could not find myLoc. OH my goodness gracious SEGFAULT" << endl;
   CellGroup* unit = grid[0][myLoc]; //the unit that owns a cell at the given location
 
   //always return 1 if the unit is a white bit and if there are flaggedUnits it should be chasing.
-  cout << "Checking if " << unit->type() << " will move... ";
   if( strcmp( unit->type().c_str(), "WhiteBit" ) == 0 && !flaggedUnits.empty() ) {
     cout << "It is a moving whitebit!";
     return 1;
   }
-  cout << endl;
 
   Direction myDir = unit->getMovement(0);
   Location fLoc = myLoc + myDir; //My desired future location
   if( (fLoc.x < 0) || (fLoc.y < 0) || (fLoc.x >= width) || (fLoc.y >= height) ) return 0; //Future position is off grid; do not move
   if( (myDir.isZero()) || (grid[0].find(fLoc) == grid[0].end()) ) {
-    cout << "There is no one at the cell I wish to move to. " << endl;
     return 1;   //There is no one there (or I am stopped); I go (there may still be an absorption)
   }
   else { //If there is someone there...
@@ -377,7 +437,7 @@ int Level::willMove ( Location myLoc ) {
 // Handles a merge or absorption between two units who move to the same location
 void Level::handleMerge ( CellGroup* unit1, CellGroup* unit2, Location loc ) {
 
-  cout << "Merge Detected at " << loc << " between a " << unit1->type() << " and a " << unit2->type() << endl;
+  //cout << "Merge Detected at " << loc << " between a " << unit1->type() << " and a " << unit2->type() << endl;
 
   // If they are allowed to merge into one big unit...
   if( 0 ) {
@@ -425,17 +485,20 @@ void Level::killUnit ( CellGroup* unitToDie ) {
     }
   }
   units.erase( find( units.begin(), units.end(), unitToDie ) ); //Remove him from the units vector
-  if( activeGroup->getSelectedUnit() == unitToDie ) activeGroup->clearSelection();
+  if( activeGroup->getSelectedUnit() == unitToDie ) {
+    activeGroup->clearSelection();
+  }
   if( flaggedUnits.find(unitToDie) != flaggedUnits.end() ) flaggedUnits.erase( flaggedUnits.find(unitToDie) );
   unitToDie->controlGroup->forfeit(unitToDie);
   delete unitToDie;                 //Finally, deallocate him
 }
 
+// Unit is flagged by a pulser or sentinel
 void Level::flagUnit ( CellGroup* unitToFlag ) {
-  flaggedUnits.insert( unitToFlag ); 
-  //Also include animation for flagging
+  flaggedUnits.insert( unitToFlag );
 }
 
+// Handle a gate opening
 void Level::openGate ( Gate* gate ) {
   isDone = 1;
   destination = gate->destination();
@@ -443,43 +506,65 @@ void Level::openGate ( Gate* gate ) {
   gateDestTag = gate->destinationTag;
 }
 
+// Transfer units from one gate to the next level's gate
 void Level::transferUnits ( Level* newLevel ) {
+
   int locCounter = 0;
   Gate* destGate = newLevel->gateWithTag( gateDestTag );
   for( set<CellGroup*>::iterator it = unitsToTransfer.begin(); it != unitsToTransfer.end(); ++it ) {
     (*it)->setLocation( destGate->getLocations()[locCounter++] );
     newLevel->take( *it );
+
+    for( int i = 0; i < units.size(); ++i ) { //remove the pointer from the units vector
+      if( *it == units[i] ) {
+	units.erase( units.begin() + i );
+	break;
+      }
+    }
+
   }
+
+  gameOver = 0;
+  isDone = 0;
+  cyclesToRun = 0;
+  partOfCycle = 0;
 }
 
+// Take a unit into level
 void Level::take ( CellGroup* unit ) {
   units.push_back( unit );
   unit->setGridData( gridColWidth, gridRowHeight, top_offset, left_offset );
 
+  // Pass unit to player control. Assume all units transferred must have been the user's.
   for( int i = 0; i < controlGroups.size(); ++i ) {
     if( controlGroups[i]->getPlayer() ) {
       controlGroups[i]->take( unit );
     }
   }
-  
+
+  // Insert the unit in the grid
   for( int i = 0; i < unit->getLocations().size(); ++i )
     grid[0].insert( pair<Location, CellGroup*> ( unit->getLocations()[i], unit ) );
 
+  // Resort grid so that drawing occurs correctly
   sort( units.begin(), units.end(), pointerCompare2 );
 }
 
 /* DRAWING */
 void Level::draw() {
+
   // deafFrames is how long the level will ignore user input. We decrease the count by 1 each frame.
   if( deafFrames ) --deafFrames;
   if( deafFrames == 0 ) {
+    // Perform some game logic
 
-    /*
+    /* // For debugging
     for( int i = 0; i < units.size(); ++i ) {
       cout << "Drawing unit " << units[i]->type() << ", loc = " << units[i]->getLocations()[0]
 	   << ", screen = " << units[i]->getScreenLocations()[0].x << ", "
 	   << units[i]->getScreenLocations()[0].y << endl;
-	   }*/
+    }
+    */
 
     //Kill any units that must die
     if( !unitsToDie.empty() ) {
@@ -490,15 +575,14 @@ void Level::draw() {
       // If a unit has died, check to see if that was the last player's unit
       for( int i = 0; i < controlGroups.size(); ++i ) {
 	if(controlGroups[i]->getPlayer() && !(controlGroups[i]->getUnitsSize()) ) {
-	  gameOver = 1;	
+	  gameOver = 1;
 	  isDone = 1;
 	}
       }
-
     }
 
     if( cyclesToRun != 0 && !isDone ) { // run cycles if we still need to
-      --cyclesToRun;
+      //cout << "Running part of a cycle because cyclesToRun is " << cyclesToRun << endl;
       runCycle();
     }
 
@@ -506,25 +590,21 @@ void Level::draw() {
       for( int i = 0; i < gates.size(); ++i )
 	gates[i]->resetOpenCounter();
     }
-
   }
-  
+
   window.Clear();
   drawBackground();
-  
+
   drawGrid();
-  highlightSelect();
   drawGates();
+  highlightSelect();
   drawUnits();
   drawAnimations();
   drawArrows();
-  
-  if     ( cycleOffset == 0 ) cycleOffset = 20;
-  else if( cycleOffset != 20 ) --cycleOffset;
-  drawCycle(20-cycleOffset);
-
+  drawCycle();
 }
 
+// Draw the lines of the grid
 void Level::drawGrid() {
   sf::Color gridColor(sf::Color(143, 114, 19, 0));
   sf::Color gridOutlineColor(sf::Color(100, 100, 240, 0));
@@ -571,80 +651,89 @@ void Level::drawGrid() {
   }
 }
 
+// Draw each othe units
 void Level::drawUnits() {
   for (int i = 0; i < units.size(); ++i)
     units[i]->draw( window );
 }
 
+// Draw each of the gates
 void Level::drawGates() {
   for( int i = 0; i < gates.size(); ++i )
     gates[i]->draw( window );
 }
 
+// Draw each of the animations, checking to see if they have finished
 void Level::drawAnimations() {
   for( int i = 0; i < animations.size(); ) {
     animations[i].draw( window );
     if( animations[i].isDone() )
       animations.erase( animations.begin() + i );
-    else 
+    else
       ++i;
   }
 }
 
-void Level::drawArrows()
-{
-  vector<Location> groupLocations;
-  CellGroup* unit;
-  unit = activeGroup->getSelectedUnit();
+// Draw arrows on grid
+void Level::drawArrows() {
+  // Draw arrows for every unit of the active group, if it is a user's group
+  if( activeGroup->getPlayer() )
+    for( int i = 0; i < activeGroup->getUnitsSize(); ++i ) {
+      CellGroup* unit = activeGroup->getUnits()[i];
+      int notSelected = !( unit == activeGroup->getSelectedUnit() );
 
-  if(unit == 0)
-    return;
+      if(unit == 0)
+	return;
 
-  // DRAW ON GRID ARROWS
-  // Create and position arrow sprite
-  FloatPair arrowLocation = unit->getMiddle();
-  arrowSprite.SetPosition( left_offset + gridColWidth*arrowLocation.x + gridColWidth/2,
-                           top_offset + gridRowHeight*arrowLocation.y + gridRowHeight/2 );
+      // DRAW ON GRID ARROWS
+      // Create and position arrow sprite
+      FloatPair arrowLocation = unit->getMiddle();
+      arrowSprite.SetPosition( left_offset + gridColWidth*arrowLocation.x + gridColWidth/2,
+			       top_offset + gridRowHeight*arrowLocation.y + gridRowHeight/2 );
+      if( notSelected ) arrowSprite.SetColor( sf::Color( 0, 0, 0, 100) );
+      else              arrowSprite.SetColor( sf::Color( 255, 255, 255, 255 ) );
 
-  for (int i = 0; i < unit->numOfMovements(); ++i) { // For each queued movement in selected unit...
-    // Rotate sprite and draw a(n)...
-    // Upward arrow
-    if ( unit->getMovement(i).x == 0 && unit->getMovement(i).y == -1 ) {
-      arrowSprite.Move( 0, -gridRowHeight/2 );
-      arrowSprite.SetRotation(270);
-      window.Draw( arrowSprite );
-      arrowSprite.Move( 0, -gridRowHeight/2 );
+      for (int i = 0; i < unit->numOfMovements(); ++i) { // For each queued movement in selected unit...
+	// Rotate sprite and draw a(n)...
+	// Upward arrow
+	if ( unit->getMovement(i).x == 0 && unit->getMovement(i).y == -1 ) {
+	  arrowSprite.Move( 0, -gridRowHeight/2 );
+	  arrowSprite.SetRotation(270);
+	  window.Draw( arrowSprite );
+	  arrowSprite.Move( 0, -gridRowHeight/2 );
+	}
+	// Downward arrow
+	else if ( unit->getMovement(i).x == 0 && unit->getMovement(i).y == 1 ) {
+	  arrowSprite.Move( 0, gridRowHeight/2 );
+	  arrowSprite.SetRotation(90);
+	  window.Draw( arrowSprite );
+	  arrowSprite.Move( 0, gridRowHeight/2 );
+	}
+	// Left arrow
+	else if ( unit->getMovement(i).x == -1 && unit->getMovement(i).y == 0 ) {
+	  arrowSprite.Move( -gridColWidth/2, 0 );
+	  arrowSprite.SetRotation(0);
+	  window.Draw( arrowSprite );
+	  arrowSprite.Move( -gridColWidth/2, 0 );
+	}
+	// Right arrow
+	else if ( unit->getMovement(i).x == 1 && unit->getMovement(i).y == 0 ) {
+	  arrowSprite.Move( gridColWidth/2, 0 );
+	  arrowSprite.SetRotation(180);
+	  window.Draw( arrowSprite );
+	  arrowSprite.Move( gridColWidth/2, 0 );
+	}
+	// Stopped
+	else if ( unit->getMovement(i).isZero() ) {
+	  stopSprite.SetPosition( arrowSprite.GetPosition() );
+	  window.Draw( stopSprite );
+	}
+      }
     }
-    // Downward arrow
-    else if ( unit->getMovement(i).x == 0 && unit->getMovement(i).y == 1 ) {
-      arrowSprite.Move( 0, gridRowHeight/2 );
-      arrowSprite.SetRotation(90);
-      window.Draw( arrowSprite );
-      arrowSprite.Move( 0, gridRowHeight/2 );
-    }
-    // Left arrow
-    else if ( unit->getMovement(i).x == -1 && unit->getMovement(i).y == 0 ) {
-      arrowSprite.Move( -gridColWidth/2, 0 );
-      arrowSprite.SetRotation(0);
-      window.Draw( arrowSprite );
-      arrowSprite.Move( -gridColWidth/2, 0 );
-    }
-    // Right arrow
-    else if ( unit->getMovement(i).x == 1 && unit->getMovement(i).y == 0 ) {
-      arrowSprite.Move( gridColWidth/2, 0 );
-      arrowSprite.SetRotation(180);
-      window.Draw( arrowSprite );
-      arrowSprite.Move( gridColWidth/2, 0 );
-    }
-    // Stopped
-    else if ( unit->getMovement(i).isZero() ) {
-      stopSprite.SetPosition( arrowSprite.GetPosition() );
-      window.Draw( stopSprite );
-    }
-  }
 }
 
-void Level::drawCycle(int offset)
+// Draw CPU cycle
+void Level::drawCycle()
 {
   //Edges of the cycle box
   int lowEdge = window.GetHeight() - 25;
@@ -667,7 +756,14 @@ void Level::drawCycle(int offset)
   //Whether currently in an upcycle or downcycle
   bool upCycle = 1;
 
-  if(offset > 9)
+  if(partOfCycle == 1 && cycleOffset > 10)
+    cycleOffset--;
+  if(partOfCycle == 3 && cycleOffset > 0)
+    cycleOffset--;
+  if(partOfCycle == 0)
+    cycleOffset = 20;
+
+  if(cycleOffset > 9)
     upCycle = 0;
 
   sf::Color backgroundColor = sf::Color(0, 0, 0, 180);
@@ -685,11 +781,11 @@ void Level::drawCycle(int offset)
     //High cycle on the left is disappearing
     window.Draw(sf::Shape::Line(leftCycleEdge,
                                 highCycleEdge,
-                                leftCycleEdge + cycleWidth - offset * cycleWidth / 10,
+                                leftCycleEdge + cycleWidth - cycleOffset * cycleWidth / 10,
                                 highCycleEdge,
                                 4, cycleColor));
     //High cycle on the right is appearing
-    window.Draw(sf::Shape::Line(leftCycleEdge + cycleWidth * numOfCycles - offset * cycleWidth / 10,
+    window.Draw(sf::Shape::Line(leftCycleEdge + cycleWidth * numOfCycles - cycleOffset * cycleWidth / 10,
                                 highCycleEdge,
                                 leftCycleEdge + cycleWidth * numOfCycles,
                                 highCycleEdge,
@@ -700,11 +796,11 @@ void Level::drawCycle(int offset)
     //Low cycle on the left is disappearing
     window.Draw(sf::Shape::Line(leftCycleEdge,
                                 lowCycleEdge,
-                                leftCycleEdge + cycleWidth - (offset - 10) * cycleWidth / 10,
+                                leftCycleEdge + cycleWidth - (cycleOffset - 10) * cycleWidth / 10,
                                 lowCycleEdge,
                                 4, cycleColor));
     //Low cycle on the right is appearing
-    window.Draw(sf::Shape::Line(leftCycleEdge + cycleWidth * numOfCycles - (offset - 10) * cycleWidth / 10,
+    window.Draw(sf::Shape::Line(leftCycleEdge + cycleWidth * numOfCycles - (cycleOffset - 10) * cycleWidth / 10,
                                 lowCycleEdge,
                                 leftCycleEdge + cycleWidth * numOfCycles,
                                 lowCycleEdge,
@@ -713,26 +809,26 @@ void Level::drawCycle(int offset)
 
   //Draw the up cycles, conditioned for the appearing upper right line
   for(int count = 2; count < numOfCycles || (!upCycle && count < numOfCycles + 1); count += 2)
-    window.Draw(sf::Shape::Line(leftCycleEdge + cycleWidth * count - offset * cycleWidth / 10,
+    window.Draw(sf::Shape::Line(leftCycleEdge + cycleWidth * count - cycleOffset * cycleWidth / 10,
                                 highCycleEdge,
-                                leftCycleEdge + cycleWidth * (count + 1) - offset * cycleWidth / 10,
+                                leftCycleEdge + cycleWidth * (count + 1) - cycleOffset * cycleWidth / 10,
                                 highCycleEdge,
                                 4, cycleColor));
 
   //Draw the down cycles, conditioned for the disappearing lower left line
   for(int count = numOfCycles - 1; count > 1 || (count > 0 && upCycle); count -= 2)
-    window.Draw(sf::Shape::Line(leftCycleEdge + cycleWidth * count - offset * cycleWidth / 10,
+    window.Draw(sf::Shape::Line(leftCycleEdge + cycleWidth * count - cycleOffset * cycleWidth / 10,
                                 lowCycleEdge,
-                                leftCycleEdge + cycleWidth * (count + 1) - offset * cycleWidth / 10,
+                                leftCycleEdge + cycleWidth * (count + 1) - cycleOffset * cycleWidth / 10,
                                 lowCycleEdge,
                                 4, cycleColor));
 
   //Draw the vertical lines, conditioned for the disappearing and appearing lines
   for(int count = 1; count < numOfCycles + 2; count++)
     if((upCycle && count < numOfCycles + 1) || (!upCycle && count > 1))
-      window.Draw(sf::Shape::Line(leftCycleEdge + cycleWidth * count - offset * cycleWidth / 10,
+      window.Draw(sf::Shape::Line(leftCycleEdge + cycleWidth * count - cycleOffset * cycleWidth / 10,
                                   highCycleEdge,
-                                  leftCycleEdge + cycleWidth * count - offset * cycleWidth / 10,
+                                  leftCycleEdge + cycleWidth * count - cycleOffset * cycleWidth / 10,
                                   lowCycleEdge,
                                   4, cycleColor));
 
@@ -755,16 +851,17 @@ void Level::drawCycle(int offset)
   window.Draw(Triangle);
 }
 
+// Draw level background
 void Level::drawBackground() {
   window.Draw(backgroundSprite);
 }
 
+// Draw orange selection tile
 void Level::highlightSelect() {
 
   if( !deafFrames ) {
     CellGroup* unit = activeGroup->getSelectedUnit();
-    if(unit == 0)
-      return;
+    if(unit == 0) return;
 
     vector<FloatPair> groupLocations = unit->getScreenLocations();
 
@@ -776,10 +873,12 @@ void Level::highlightSelect() {
 
 }
 
+// Add an animation to the animation vector
 void Level::addAnimation ( Animation* anim ) {
   animations.push_back( *anim );
 }
 
+// Set deaf frames to AT LEAST the requested amount
 void Level::requestDeafFrames( int requestedAmount ) {
   if( deafFrames < requestedAmount)
     deafFrames = requestedAmount;

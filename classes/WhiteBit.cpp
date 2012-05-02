@@ -27,6 +27,7 @@ WhiteBit::WhiteBit (vector<Cell> c) : CellGroup (c) {
   }
   speed = 3;
   chosen = 0;
+  homeCell = getLocations()[0];
 
 }
 
@@ -43,7 +44,7 @@ void WhiteBit::findClosest( set<CellGroup*> flaggedBits, map<Location, CellGroup
   Location white = getLocations()[0];
   int distance = 100; //intitalize to a large value for checking purposes
   for( set<CellGroup*>::iterator it = flaggedBits.begin(); it != flaggedBits.end(); ++it ) { //search the future grid
-    for( map<Location, CellGroup*>::iterator jt = grid.begin(); jt != grid.end(); ++jt ) {   //for the location of the chosen bit
+    for( map<Location, CellGroup*>::iterator jt = grid.begin(); jt != grid.end(); ++jt ) {   //for the location of a flagged bit
       if( jt->second == *it ) {
 	
 	temp = jt->first;
@@ -60,13 +61,24 @@ void WhiteBit::findClosest( set<CellGroup*> flaggedBits, map<Location, CellGroup
 
 }
 
+Direction WhiteBit::phaseBack () {
+  Direction dir = {0,0};
+  if( !(getLocations()[0] == homeCell) ) { // I am not at home
+    dir.x =  homeCell.x - getLocations()[0].x;
+    dir.y =  homeCell.y - getLocations()[0].y;
+  }
+  
+  return dir;
+}
+
 //attempts to take the shortest route to the closest flagged bit
 Direction WhiteBit::findMove ( map<Location, CellGroup*> grid, set<CellGroup*> flaggedUnits ) {
 
   findClosest( flaggedUnits, grid );
   if( !chosen ) {
-    Direction dir = {0,0};
-    return dir;
+    return phaseBack();
+    //Direction dir = {0,0};
+    //return dir;
   }
 
   vector<Direction> possibles;
@@ -78,7 +90,6 @@ Direction WhiteBit::findMove ( map<Location, CellGroup*> grid, set<CellGroup*> f
 
       //bounds checking
       if( floc.x < 0 || floc.y < 0 || floc.x >= controlGroup->level->getWidth() || floc.y >= controlGroup->level->getHeight() ) {
-	cout << floc << ", in direction " << dir << " is out of range." << endl;
       } else {
 	
 	if( grid.find(floc) != grid.end() ) { //if someone is already there
@@ -86,7 +97,6 @@ Direction WhiteBit::findMove ( map<Location, CellGroup*> grid, set<CellGroup*> f
 	    return dir; //WE HAVE FOUND THE CHOSEN ONE
 	  } 
 	  else if( grid[floc] == this ) {  //in case of (0,0), the one there is myself.
-	    cout << "Adding " << floc << " to possibles, because I am there " << endl;
 	    possibles.push_back( dir );
 	  }
 	} else { //there is no one in the way, add to possibles
@@ -100,7 +110,6 @@ Direction WhiteBit::findMove ( map<Location, CellGroup*> grid, set<CellGroup*> f
 	floc = getLocations()[0] + dir2;
 
 	if( floc.x < 0 || floc.y < 0 || floc.x >= controlGroup->level->getWidth() || floc.y >= controlGroup->level->getHeight() ) {
-	  cout << floc << ", in direction " << dir2 << " is out of range." << endl;
 	} else {
 	  
 	  if( grid.find(floc) != grid.end() ) {

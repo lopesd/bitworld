@@ -13,7 +13,6 @@ using namespace std;
 // Initialize static map
 map<string, sf::Image> ImageCache::images;
 
-
 // Load all images in the given directory (not recursive)
 int ImageCache::LoadFromDirectory ( const char* folder ) {
 

@@ -1,3 +1,9 @@
+/** UserControlGroup.cpp
+ *  The User Control Group handles interaction between the user and the units he controls.
+ *  It keeps track of the selected unit and allows users to issue orders.
+ *  Written for Bitworld by: David Lopes, Casey O'Meilia, Catherine Carothers, Mark Riehm
+*/
+
 #ifndef USERCONTROLGROUP_H
 #define USERCONTROLGROUP_H
 
@@ -9,17 +15,24 @@
 class UserControlGroup : public ControlGroup {
 
  public:
-  UserControlGroup (std::vector<CellGroup*>);
+  /** CONSTRUCTORS **/
+  UserControlGroup ( std::vector<CellGroup*> );
 
+  /** UTILITY FUNCTIONS **/
+  // Start the turn
   void startTurn   ();
-  void handleInput (CellGroup* clickedUnit);
-  void handleInput (Direction dir);
-  void handleInput (sf::Key::Code);
 
+  // Input handlers
+  void handleInput ( CellGroup* clickedUnit );
+  void handleInput ( Direction dir );
+  void handleInput ( sf::Key::Code );
+
+  // Take a unit into my control
   void take ( CellGroup* unitTotake );
 
  private:
-  void toggleSelection (CellGroup* unit);
+  // Toggle selection of a unit on or off
+  void toggleSelection ( CellGroup* unit );
 };
 
 #endif

@@ -2,6 +2,7 @@
  *  "Animation" class, responsible for drawing an animated event on screen, like a pulse, or corruption.
  *  Can easily instantiated with a type and a location, and then committed to the level object, 
  *  which should draw it once every frame.
+ *  Written for Bitworld by: David Lopes, Casey O'Meilia, Catherine Carothers, Mark Riehm
  */
 
 #include "Animation.h"
@@ -24,7 +25,7 @@ Animation::Animation ( Location l ) {
   sizes.resize( 2, 1 );
   alphas.resize( 2, 255 );
   rotations.resize( 2, 0 );
-  duration = 1;
+  duration = 0.7;
 }
 
 /** MUTATORS **/
@@ -35,6 +36,10 @@ void Animation::addImage ( string name ) {
 
 void Animation::setImages ( vector<string> names ) {
   imageNames = names;
+}
+
+void Animation::setColor ( sf::Color cor ) {
+  sprite.SetColor( cor );
 }
 
 void Animation::setLocation ( Location l ) {
@@ -75,6 +80,29 @@ void Animation::setRotationInterval ( vector<float> r ) {
   rotations = r;
 }
 
+// Preset counter type animation. Interpolates between the given numbers
+void Animation::fromCountDownPreset ( int begin, int end ) {
+  vector<int> nums;
+  int increment = begin > end ? -1 : 1 ;
+  for( ; begin != end; begin+=increment ) {
+    nums.push_back( begin );
+  }
+  nums.push_back( begin );
+  fromCountDownPreset( nums );
+}
+
+// Preset counter type animation. Interpolates between the given numbers
+void Animation::fromCountDownPreset ( vector<int> nums ) {
+  imageNames.clear();
+  // Places images sequentially in the imgNames vector
+  for( int i = 0; i < nums.size(); ++i ) {
+    if( nums[i] == 1 ) imageNames.push_back( "one.png" );
+    else if( nums[i] == 2 ) imageNames.push_back( "two.png" );
+    else if( nums[i] == 3 ) imageNames.push_back( "three.png" );
+    else if( nums[i] == 4 ) imageNames.push_back( "four.png" );
+    else if( nums[i] == 0 ) imageNames.push_back( "zero.png" );
+  }
+}
 
 /** UTILITY FUNCTIONS **/
 
@@ -85,7 +113,7 @@ void Animation::interpolate( vector<float>& values, vector<float>& results ) {
   int divisions = values.size() - 1;
   int subsectionSize = results.size()/divisions;
   int i, j;
-  for( i = 0; i < divisions; ++i ) {
+  for( i = 0; i < divisions; ++i ) { // Interpolate!
     float valueStep = (values[i+1] - values[i]) / subsectionSize;
     for( j = 0; j < subsectionSize; ++j ) {
       results[i*subsectionSize + j] = value;
@@ -116,6 +144,7 @@ void Animation::init ( Level* level ) {
 
   maxFrameCount = (float)FPS * duration;
 
+  // Clear and resize the vectors to be interpolated into
   imageForFrame.clear();
   sizeForFrame.clear();
   alphaForFrame.clear();
@@ -203,18 +232,12 @@ void Animation::draw ( sf::RenderWindow& screen ) {
 
   }
 
-  /*
-  //For debugging
-  cout << "Drawing sprite. FrameCount = " << frameCount
-       << " size = " << sizeForFrame[frameCount] << ", alpha = " << alphaForFrame[frameCount] 
-       << ", angle = " << rotationForFrame[frameCount] << endl;
-  */
-
   screen.Draw( sprite );
-  
 
   if( ++frameCount >= maxFrameCount ) done = 1;
 }
+
+/** ACCESSORS **/
 
 int Animation::isDone () {
   return done;

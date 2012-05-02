@@ -21,15 +21,11 @@ class Pulser : public CellGroup {
   
   //pulses in downCycle
   void downCycle ();
-  
-  //makes pulsed locations purple
-  void makeAnimation ( std::vector<Location> locationsToPulse );
 
   /** ACCESSORS **/
   int getRadius();
 
-  /** MUTATORS **/
-  
+  /** MUTATORS **/  
   //sets pulse radius
   void setRadius (int radius);
   
@@ -43,7 +39,6 @@ class Pulser : public CellGroup {
   std::vector<int> standardActionOrders; //1 for pulse, 0 for hold
   std::deque<int> actionQueue;
   int pulseRadius; //how far it pulses
-  int SAOCounter;
 
 };
 

@@ -1,19 +1,19 @@
+/** main.cpp
+ *  BITWORLD
+ *  CREATED BY: DAVID LOPES, CASEY O'MEILIA, CATHERINE CAROTHERS, MARK RIEHM
+ *  FUNDAMENTALS OF COMPUTING II, University of Notre Dame, Spring 2012
+ */
+
 #define FULLSCREEN 0
-#define LEVELFILE "levels/level_feeding_the_wolf.bit"
+#define LEVELFILE "levels/level_T1.bit"
 
-int FPS = 30;
+int FPS = 30; // Frames per second
 
-#include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
-#include <SFML/Window.hpp>
 #include <iostream>
+#include <map>
 
-#include "classes/structures.h"
 #include "classes/Level.h"
-#include "classes/Bit.h"
-#include "classes/Cell.h"
-#include "classes/ControlGroup.h"
-#include "classes/UserControlGroup.h"
 #include "classes/LevelParser.h"
 #include "classes/ImageCache.h"
 #include "classes/InfoBox.h"
@@ -22,12 +22,10 @@ using namespace std;
 
 int main (void) {
 
-  //sf::Clock clock; //The whole thing crashes if I don't initialize a clock for some reason...
-
   // INITIALIZE LIBRARIES AND OBJECTS
   sf::RenderWindow window;
   window.SetFramerateLimit( FPS );
-  window.UseVerticalSync( true );
+//  window.UseVerticalSync( true );
   sf::VideoMode nativeResolution = sf::VideoMode::GetDesktopMode();
 
   if(FULLSCREEN)
@@ -36,15 +34,19 @@ int main (void) {
   else
     window.Create(sf::VideoMode(1280, 720), "BitWorld", sf::Style::Close,
                   sf::WindowSettings(24, 8, 4));
-
+  
   ImageCache::LoadFromDirectory( "./images/" ); // Initialize image cache
+
   int doNotQuit = 1;
   
   while (doNotQuit) {
-    //  Level level = LevelParser::parse (LEVELFILE, window);
-    Level* level = new Level( LevelParser::Parse (LEVELFILE, window) );
-    //cout << "game over status is: " << level->getGameOver() << endl;
+
+    Level* level = LevelParser::Parse( LEVELFILE, window );
     InfoBox* infoBox = new InfoBox(LEVELFILE, *level, window);
+    
+    // Keep track of created levels
+    map<string, Level*> levels;
+    levels.insert( pair<string, Level*> ( string(LEVELFILE), level) );
     
     // INITIALIZE INPUT VARIABLES
     Location   Lorder; // Input interpreted as location
@@ -143,27 +145,34 @@ int main (void) {
 	    }
 	}
       
-      if(level->getGameOver() )//player lost
-	{
+      if(level->getGameOver() ) { // player lost
 	  level->destroy();
+	  delete level;
+	  delete infoBox;
 	  break;
 	  //isDone = 1;
 	}
       
       if( level->done() && !(level->getGameOver()) ) {
-	cout << "Level is done and the new level should be " << level->nextLevel () << endl;
-	string newLevel = level->nextLevel();
+	//cout << "Level is done and the new level should be " << level->nextLevel () << endl;
+	string nxtLvlString = level->nextLevel();
 	
-	Level* nextLevel = new Level( LevelParser::Parse( newLevel.c_str(), window) );
-	level->transferUnits( nextLevel );
+	Level* nextLevel;
+	if( levels.find( nxtLvlString ) != levels.end() ) { // The level has previously been created
+	  nextLevel = levels[nxtLvlString];
+	} else {
+	  nextLevel  = LevelParser::Parse( nxtLvlString.c_str(), window);
+	  levels[nxtLvlString] = nextLevel;
+	}
 
-	level->destroy();
-	delete level;
+	level->transferUnits( nextLevel );	  
 	level = nextLevel;
+
 	delete infoBox;
-	infoBox = new InfoBox( newLevel.c_str(), *level, window );
+	infoBox = new InfoBox( nxtLvlString.c_str(), *level, window );
+	
       }
-      
+    
       window.Clear();
       
       level->draw(); //Draw level on window
@@ -171,7 +180,7 @@ int main (void) {
       window.Display(); //Display window
     }
     
-    // GAME OVER SCREEN LOGIC STUFF BEGINS HERE LOLZ
+    // GAME OVER SCREEN LOGIC STUFF BEGINS HERE
     
     pressSpaceToStart = 0;
     window.Clear();
@@ -181,36 +190,28 @@ int main (void) {
     window.Draw(GameOverScreen);
     window.Display();
     while(!pressSpaceToStart){
-			while(window.GetEvent(endingEvent)) {
-				if(endingEvent.Type == sf::Event::KeyPressed) {
-	  			if(endingEvent.Key.Code == sf::Key::Space) {
-	    			pressSpaceToStart = 1;
-	  			}
-	  			else if(endingEvent.Key.Code == sf::Key::Escape) {
-	  			  window.Close();
-	    			pressSpaceToStart = 1;
-	    			doNotQuit = 0;
-	    			return 0;
-					}
+      while(window.GetEvent(endingEvent)) {
+	if(endingEvent.Type == sf::Event::KeyPressed) {
+	  if(endingEvent.Key.Code == sf::Key::Space) {
+	    pressSpaceToStart = 1;
+	  }
+	  else if(endingEvent.Key.Code == sf::Key::Escape) {
+	    window.Close();
+	    pressSpaceToStart = 1;
+	    doNotQuit = 0;
+	    return 0;
+	  }
 	  
-				}
-				else if (endingEvent.Type == sf::Event::Closed) { //in case user wants to close the window rather than playing
-	  			window.Close();
-	  			doNotQuit = 0;
-	  			return 0;
-				}
-			}
-		}
 	}
+	else if (endingEvent.Type == sf::Event::Closed) { //in case user wants to close the window rather than playing
+	  window.Close();
+	  doNotQuit = 0;
+	  return 0;
+	}
+      }
+    }
+  }
   
   return 0;
   
 }
-
-struct compareCellGroup {
-  bool operator() ( CellGroup* first, CellGroup* second ) {
-    return (first->getWeight() < second->getWeight());
-  }
-} compareCellGroup;
-
-  

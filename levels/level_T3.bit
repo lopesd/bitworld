@@ -1,24 +1,25 @@
 ~DESCRIPTION
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #Tutorial 3
-#A gate's weight determines how
-#many bit-cycles within a
-#period are needed to open it.
+#A viral bit, such as yours,
+#can corrupt a simple bit by
+#standing next to it for
+#a cycle.
 #
-#This gate's weight is 3.
-#If you visit it for all 3
-#cycles of a period, it
-#will open.
+#This gate's weight is 9.
+#You will need three bits on it
+#for all three period cycles
+#to open it.
 
 ~GRID
---- --- --- --- --- --- ;
---- --- --- --- --- G2a ;
---- --- --- --- --- G2b ;
-V1a --- --- --- --- G2c ;
---- --- --- --- --- G2d ;
---- --- --- --- --- --- ;
---- --- --- --- --- --- ;
+--- --- --- --- --- --- --- ;
+G1a --- --- --- --- --- G2a ;
+G1b --- --- B1a --- --- G2b ;
+G1c --- --- --- --- --- G2c ;
+--- --- --- --- B2a --- --- ;
 
 ~METADATA
-V1: -cg user ;
-G2: -weight 3 -destination levels/level_T1.bit ;
+B1: ;
+B2: ;
+G1: -weight 3 -destination levels/level_T2.bit -tag 1 -dtag 2 ;
+G2: -weight 9 -destination levels/level_T4.bit -tag 2 -dtag 1 ;

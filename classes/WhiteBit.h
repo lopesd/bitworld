@@ -25,21 +25,26 @@ class WhiteBit : public CellGroup {
   
   //sets chosen to be the closest bit
   void findClosest ( std::set<CellGroup*> flaggedBits, std::map<Location, CellGroup*> grid );
-   
+  
   //Override the drop resistance function so the white bit cannot be corrupted 
-	void dropResistance ( int n ) {}; 
-	
-	/** MUTATORS **/
-	
-	//sets the movement speed for the whiteBit
+  void dropResistance ( int n ) {}; 
+  
+  /** MUTATORS **/
+  
+  //sets the movement speed for the whiteBit
   void setSpeed ( int );
-
-	/**ACCESSORS **/
-	
-	//used for checking if Bit is a whiteBit and Debugging
+  
+  /**ACCESSORS **/
+  
+  //used for checking if Bit is a whiteBit and Debugging
   std::string type () {return std::string("WhiteBit");}
-
+  
  private:
+  // Return to original position
+  Direction phaseBack ();
+  // Original position
+  Location homeCell;
+  
   CellGroup* chosen; //closest flagged bit
   Location chosenLoc; //future location of chosen bit
   int speed; //how far it can move in one cycle

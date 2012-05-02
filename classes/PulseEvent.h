@@ -1,8 +1,8 @@
-/*  PulseEvent.h
- *  Commits an event by flagging a bit at Location loc if an enemy bit exists there. Created by
- *  a Pulser.
+/** PulseEvent.h
+ *  A pulse event is instantiated by the pulser and commited to a level.
+ *  It handles the pulsing logic (detecting units) as well as animation.
  *  Written for Bitworld by: David Lopes, Casey O'Meilia, Catherine Carothers, Mark Riehm
- */
+*/
 
 #ifndef PULSE_EVENT_H
 #define PULSE_EVENT_H
@@ -14,17 +14,18 @@ class Pulser; //forward declare viral bit
 class PulseEvent : public Event {
   
  public:
- 	/** CONSTRUCTOR **/
+  /** CONSTRUCTORS **/
   PulseEvent( void* sender, std::vector<Location> locs );
 
-	/** UTILITY **/
-	
-	//commits it to Level
+  /** UTILITY FUNCTIONS **/
+  // Commit to a given level
   void commit( Level* level );
 
  private:
-  Pulser* pulser;
-  std::vector<Location> locs; //locations to pulse
+  void makePulseAnimation ( Level* level ); // Create the generic purple pulse animation
+  void makeDetectAnimation ( Location loc, Level* level ); // Create the white flash the signals a detection
+  Pulser* pulser; // Pointer to the sender, cast as a pulser
+  std::vector<Location> locs; // Vector of locations that need to be pulsed
 
 };
 
