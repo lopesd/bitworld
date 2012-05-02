@@ -18,23 +18,27 @@ class Pulser : public CellGroup {
   
   /** UTILITY FUNCTIONS **/
   void queueStandardActionOrders (); 
+  
+  //pulses in downCycle
   void downCycle ();
-  void makeAnimation ( std::vector<Location> locationsToPulse );
 
   /** ACCESSORS **/
   int getRadius();
 
-  /** MUTATORS **/
+  /** MUTATORS **/  
+  //sets pulse radius
   void setRadius (int radius);
+  
+  //sets the orders for the pulser 
   void setStandardActionOrders ( std::vector<int> );
   
+  //Used for debugging and checking type of bit
   std::string type () {return std::string("Pulser");}
 
  private:
   std::vector<int> standardActionOrders; //1 for pulse, 0 for hold
   std::deque<int> actionQueue;
-  int pulseRadius;
-  int SAOCounter;
+  int pulseRadius; //how far it pulses
 
 };
 

@@ -1,20 +1,28 @@
 ~DESCRIPTION
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #Tutorial 2
-#In this area, three 'cycles'
-#define a 'period', and you can 
-#move one square per cycle.
+#In this area, three 'cycles' define
+#a 'period', and you can move one
+#square per cycle.
+#
+#A gate's weight determines how many
+#bit-cycles within a period are 
+#needed to open it. A counter
+#indicates how much is left. 
+#
+#The gate on the right has a 
+#weight of 3. If you visit it
+#for all 3 cycles of a period,
+#it will open.
 
 ~GRID
---- --- --- --- --- --- --- --- ;
-G2b --- --- --- --- --- --- G1c ;
-G2a --- --- P1a --- --- --- G1a ;
-G2c --- --- --- --- --- --- G1b ;
-B1a --- K1a --- --- --- --- --- ;
+--- --- --- --- --- --- ;
+G1b --- --- --- --- G2c ;
+G1a --- --- --- --- G2a ;
+G1c --- --- --- --- G2b ;
+--- --- --- --- --- --- ;
 
 ~METADATA
-K1: -speed 2 ;
-P1: -radius 2 -pulse wwp ;
-B1: -cg user ;
-G1: -weight 1 -destination levels/level_C1.bit -tag 2 -dtag 1 ;
-G2: -weight 3 -destination levels/level_T3.bit -tag 1 -dtag 1 ;
+G1: -weight 3 -destination levels/level_T1.bit -tag 1 -dtag 1 -locked ;
+G2: -weight 3 -destination levels/level_T3.bit -tag 2 -dtag 1 ;
+

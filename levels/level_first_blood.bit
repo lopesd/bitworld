@@ -1,6 +1,6 @@
 ~DESCRIPTION
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#Kill
+#First Blood
 #These Pulsers pulse at different
 #frequencies. Carefully study
 #Them in order to not get caught
@@ -9,14 +9,14 @@
 --- --- B2a --- --- --- --- --- ;
 --- B1a K1a --- --- P1a --- --- ;
 --- --- B3a --- --- --- --- --- ;
-G1b --- --- --- P2a --- --- G2a ;
-G1a V1a --- --- --- --- --- --- ;
-G1c W1b --- --- --- W1b --- --- ;
+--- --- --- --- P2a --- --- G2a ;
+G1a --- --- --- --- --- --- --- ;
+--- W2a --- --- --- W1b --- --- ;
 --- --- --- P3a --- W1a --- --- ;
 
 ~METADATA
 K1: -speed 4 ;
-V1: -cg user ;
+
 P1: -pulse wpw -radius 2 ;
 P2: -pulse pwwwwp -radius 3 ;
 P3: -pulse wpw -radius 2 ;
@@ -24,5 +24,6 @@ B1: -move usd ;
 B2: -move rsl ;
 B3: -move rsl ;
 W1: ;
-G1: -weight 3 -destination levels/level_sentinel.bit -tag 2 -dtag 2 ;
-G2: -weight 3 -destination levels/level_deathrow.bit -tag 1 -dtag 1 ;
+W2: ;
+G1: -weight 3 -destination levels/level_white_bit_move.bit -tag 1 -dtag 2 ;
+G2: -weight 3 -destination levels/level_camping.bit -tag 2 -dtag 1 ;

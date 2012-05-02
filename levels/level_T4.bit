@@ -1,25 +1,27 @@
 ~DESCRIPTION
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #Tutorial 4
-#The pulser periodically
-#detects all anomalies within
-#its range and flags them
-#for destruction.
-#
-#The white bit is in charge of
-#consuming flagged bits. Apart
-#from the pulser's help, it is
-#blind to system anomalies.
+#Bits can collide with one
+#another. This will result in a 
+#merge of the bits. The bit
+#with the higher weight wins
+
+#The viral bit is heavier than a 
+#bit and every other bit is
+#heavier than the viral bit 
 
 ~GRID
 --- --- --- --- --- --- --- --- --- --- ;
-G1a --- --- --- --- --- --- --- --- G2a ;
-G1b --- --- --- --- P1a --- K1a --- G2b ;
-G1c --- --- --- --- --- --- --- --- G2c ;
+G1a --- --- --- --- B3a --- --- --- --- ;
+G1b --- --- --- --- B1a --- --- --- G2b ;
+G1c --- --- --- --- B2a --- --- --- --- ;
 --- --- --- --- --- --- --- --- --- --- ;
 
 ~METADATA
-K1: -speed 3 ;
-G1: -weight 1 -destination levels/level_T5.bit
-G2: tag:2 dest(map:4,gate:1) weight:3 priorities(b) -destination levels/level_T4.bit
-P1: radius:2 pattern(p,w,p)
+
+B1: -move lrlr ;
+B2: -move su ;
+B3: -move rlrl ;
+G1: -weight 9 -destination levels/level_T3.bit -tag 1 -dtag 2 ;
+G2: -weight 3 -destination levels/level_T5.bit -tag 2 -dtag 1 ;
+

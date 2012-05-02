@@ -1,0 +1,37 @@
+~DESCRIPTION
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#Maze
+#Navigate through the maze without
+#getting detected. Make sure your
+#hiding spot is actually safe
+#before you get there
+
+~GRID
+--- W1b --- --- S2a W5a --- W10c ---  ;
+--- W1a --- --- --- W5b --- W10b ---  ;
+G1a V1a --- --- --- W5c K1a W10 ---  ;
+--- W2a --- W3a --- --- --- P1a ---  ;
+--- W2b --- --- --- W6a --- W9a ---  ;
+--- W2c --- W4a --- W6b --- --- ---  ;
+--- W2d --- W4b --- --- --- W8c ---  ;
+--- W2e --- W4c --- W7a --- W8b G2a  ;
+--- W2f S1a W4d --- W7b S3a W8a ---  ;
+
+~METADATA
+K1: -speed 4 ;
+S1: -zap zww -direction u ;
+S2: -zap wwz -direction d ;
+S3: -zap zwwwww -direction u ;
+P1: -pulse wwwwwp -radius 2 ;
+W1: ;
+W2: ;
+W3: ;
+W4: ;
+W5: ;
+W6: ;
+W7: ;
+W8: ;
+W9: ;
+W10 ;
+G1: -locked -weight 3 -destination levels/level_feeding_the_wolf.bit -tag 1 -dtag 2 ;
+G2: -weight 3 -destination levels/level_out_of_sight.bit -tag 2 -dtag 1 ;

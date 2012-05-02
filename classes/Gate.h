@@ -29,26 +29,30 @@ class Gate {
 
   /** UTILITY METHODS **/
   // DRAWING AND ANIMATION
+  // Determine the image for each cell
   virtual void setCellContexts ();
+  virtual void setCellImages ();
   virtual void draw ( sf::RenderWindow &screen );
-  virtual void setGridData ( int, int, int, int );
   // GAME LOGIC
   virtual void highCycle ();
 
   /** MUTATORS **/
+  void setLocked        ( int );
+  void setGridData      ( int, int, int, int );
   void setWeight        ( int );
   void setDest          ( std::string );
   void resetOpenCounter ();
 
   /** ACCESSORS **/
+  int getLocked ();
   std::string destination ();
   std::set<CellGroup*> getUnitsToTransfer ();
   std::vector<Location> getLocations ();
 
   /** PUBLIC DATA MEMBERS **/
   Level* level;
-  int tag;
-  int destinationTag;
+  int    tag;
+  int    destinationTag;
 
  private:
   std::vector<Cell> cells;
@@ -57,7 +61,8 @@ class Gate {
 
   int weight; // how long it takes to open
   int openCounter; // counts down till the gate is open
-
+  int locked; // determines if the gate opens or not
+  
 };
 
 #endif

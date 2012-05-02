@@ -7,11 +7,11 @@ dep=    classes/Cell.cpp \
 	classes/Pulser.cpp \
 	classes/ViralBit.cpp \
 	classes/WhiteBit.cpp \
-	classes/Sentinel.cpp\
+	classes/Sentinel.cpp \
 	classes/Event.cpp \
 	classes/CorruptEvent.cpp \
 	classes/PulseEvent.cpp \
-	classes/ZapEvent.cpp\
+	classes/ZapEvent.cpp \
 	classes/Animation.cpp \
 	classes/Gate.cpp \
 	classes/ControlGroup.cpp \
@@ -30,7 +30,10 @@ $(main): $(objects) main.cpp
 	$(link) -g main.cpp $(objects) $(libs) -o $@
 
 classes/*.o: %.o: %.cpp %.h
-	$(compile) -g $<  -o  $@
+	$(compile) $<  -o  $@
 
 clean:
 	rm -rf classes/*~ *~ $(main) $(main).o $(objects)
+
+release: $(dep) main.cpp
+	g++ -O3 $(dep) main.cpp $(libs) -o main

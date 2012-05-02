@@ -1,5 +1,13 @@
+/** InfoBox.cpp
+ *  The InfoBox displays informatio on the right side of the screen that is pertinate to that
+ *  particular level's rules, obstacles, and victory conditions
+ *  Written for Bitworld by: David Lopes, Casey O'Meilia, Catherine Carothers, Mark Riehm
+ */
+
 #define SPACING 40
-#define HEADER_HEIGHT 70
+#define HEADER_HEIGHT 65
+#define TITLEFONTSIZE 45
+#define TEXTFONTSIZE 17
 
 #include "InfoBox.h"
 #include "LevelParser.h"
@@ -9,12 +17,12 @@ using namespace std;
 InfoBox::InfoBox(const char* filename, Level& newLevel, sf::RenderWindow& newWindow)
 :level(newLevel), window(newWindow)
 {
-  if(!infoTextFont.LoadFromFile("fonts/Courier.ttf", 17))
+  if(!infoTextFont.LoadFromFile("fonts/Courier.ttf", TEXTFONTSIZE))
   {
     cout << "Can't load the infobox font file." << endl;
     exit(0);
   }
-  if(!infoTitleFont.LoadFromFile("fonts/Courier.ttf", 50))
+  if(!infoTitleFont.LoadFromFile("fonts/Courier.ttf", TITLEFONTSIZE))
   {
     cout << "Can't load the infobox font file." << endl;
     exit(0);
@@ -32,14 +40,14 @@ InfoBox::InfoBox(const char* filename, Level& newLevel, sf::RenderWindow& newWin
   yCenter = (topBorder + bottomBorder) / 2.0;
 
   //Determine the spacing of the title characters
-  renderTitle = sf::String(infoText[0].c_str(), infoTextFont, 50);
+  renderTitle = sf::String(infoText[0].c_str(), infoTextFont, TITLEFONTSIZE);
   titleCharacterWidth = renderTitle.GetCharacterPos(1).x - renderTitle.GetCharacterPos(0).x;
   titleCharsPerLine = (rightBorder - leftBorder) / titleCharacterWidth;
 
   //Add necessary spaces to the beginning of the title to center it
   title += infoText[0];
 
-  renderTitle = sf::String(title.c_str(), infoTitleFont, 50);
+  renderTitle = sf::String(title.c_str(), infoTitleFont, TITLEFONTSIZE);
 }
 
 void InfoBox::draw()
@@ -74,9 +82,9 @@ void InfoBox::drawText()
 {
   for(int count = 1; count < infoText.size(); count++)
   {
-    sf::String renderInfo = sf::String(infoText[count].c_str(), infoTextFont, 17);
+    sf::String renderInfo = sf::String(infoText[count].c_str(), infoTextFont, TEXTFONTSIZE);
     renderInfo.SetColor(sf::Color::Black);
-    renderInfo.SetPosition(leftBorder, topBorder + 20 * count + 50);
+    renderInfo.SetPosition(leftBorder, topBorder + TEXTFONTSIZE * count + HEADER_HEIGHT);
     window.Draw(renderInfo);
   }
 }

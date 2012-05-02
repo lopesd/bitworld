@@ -1,0 +1,24 @@
+~DESCRIPTION
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#Camping
+#The best way to defend a position 
+#is to sit right next to it and wait. 
+#Distractions are key here.
+~GRID
+
+--- --- --- --- B1a --- ;
+--- --- --- --- --- --- ;
+G1a --- --- P1a --- --- ;
+K1a W1c --- --- --- --- ;
+G2a W1b W1a --- --- --- ;
+
+
+~METADATA
+B1: ;
+K1: -speed 4 ;
+V1: -cg user ;
+P1: -pulse pwp -radius 2 ;
+W1: ;
+
+G1: -weight 3 -destination levels/level_first_blood.bit -tag 1 -dtag 2 ;
+G2: -weight 3 -destination levels/level_gauntlet.bit -tag 2 -dtag 1 ;
