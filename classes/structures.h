@@ -9,7 +9,7 @@
 
 #include <iostream>
 
-enum CellStillAnimType   { NORMAL, PULSER, WHITEBIT };
+enum CellStillAnimType   { NORMAL, PULSER, WHITEBIT, GATE };
 enum CellMoveAnimType    { WALK, PHASE };
 enum AnimType            { PULSE, CORRUPT, DETECT, GLOW };
 

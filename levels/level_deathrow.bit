@@ -19,10 +19,10 @@
 
 ~GRID
 --- P1a K1a P2a K2a P3a K3a --- ;
-W2m W1b W1c W1d W1e W1f W1g W1h ;
-W2l G2a --- --- --- --- --- G1a ;
+W1a W1b W1c W1d W1e W1f W1g W1h ;
+V1a --- --- --- --- --- --- G1a ;
 W2a W2b W2c W2d W2e W2f W2g W2h ;
-W2k K6a P6a K5a P5a K4a P4a W2j ;
+--- K6a P6a K5a P5a K4a P4a --- ;
 
 ~METADATA
 V1: -cg user ;
@@ -42,4 +42,3 @@ K6: -speed 3 ;
 W1: ;
 W2: ;
 G1: -weight 3 -destination levels/level_T1.bit -tag 2 -dtag 1 ; 
-G2: -weight 3 -destination levels/level_T1.bit -tag 1 -dtag 1 ; 

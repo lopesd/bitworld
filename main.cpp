@@ -5,7 +5,6 @@
  */
 
 #define FULLSCREEN 0
-#define LEVELFILE "levels/level_T1.bit"
 
 int FPS = 30; // Frames per second
 
@@ -41,20 +40,12 @@ int main (void) {
   int doNotQuit = 1;
   int victory = 0;
   
-  while (doNotQuit) {
-
-    Level* level = LevelParser::Parse( LEVELFILE, window );
-    InfoBox* infoBox = new InfoBox(LEVELFILE, *level, window);
-    
-    // Keep track of created levels
-    map<string, Level*> levels;
-    levels.insert( pair<string, Level*> ( string(LEVELFILE), level) );
-    
-    // INITIALIZE INPUT VARIABLES
+  while (doNotQuit) {    
+    // INITIALIZE INPUT VARIABLES //
     Location   Lorder; // Input interpreted as location
     Direction  Dorder; // Input interperted as direction
     
-    //START SCREEN
+    // START SCREEN //
     //sets up and displays start screen graphics
     int pressSpaceToStart = 0;
     sf::Event startingEvent;
@@ -64,10 +55,10 @@ int main (void) {
     window.Clear(sf::Color(0,0,0));
     window.Draw(StartScreen);
     window.Display();
-    
+
+    string startingLevel;
     //loop for start screen
     while (!pressSpaceToStart) {
-      //cout << "press space to start" << endl;
       while(window.GetEvent(startingEvent)) {
 	if (startingEvent.Type == sf::Event::Closed) { //in case user wants to close the window rather than playing
 	  window.Close();
@@ -75,16 +66,28 @@ int main (void) {
 	  return 0;
 	}
 	else if(startingEvent.Type == sf::Event::KeyPressed) 
-	  if(startingEvent.Key.Code == sf::Key::Space)  //if the user pressed space, then yeah
-	    pressSpaceToStart = 1;
-	  else if(startingEvent.Key.Code == sf::Key::Escape) {
+
+	  if(startingEvent.Key.Code == sf::Key::Escape) {
 	    window.Close();
 	    doNotQuit = 0;
 	    return 0;
-	  } 
+	  } else if(startingEvent.Key.Code == sf::Key::Space)  { // Play the game
+	    pressSpaceToStart = 1;
+	    startingLevel = "levels/level_spotlight.bit";
+	  } else if( startingEvent.Key.Code == sf::Key::T ) { // Play the tutorial
+	    pressSpaceToStart = 1;
+	    startingLevel = "levels/level_T1.bit";
+	  }
+	
       }
     }
     
+    Level* level = LevelParser::Parse( startingLevel.c_str(), window );
+    InfoBox* infoBox = new InfoBox( startingLevel.c_str(), *level, window );
+    
+    // Keep track of created levels
+    map<string, Level*> levels;
+    levels.insert( pair<string, Level*> ( startingLevel, level) );
     
     // MAIN LOOP
     while (window.IsOpened()) {

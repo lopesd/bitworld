@@ -35,12 +35,12 @@ void ViralBit::downCycle () {
     
     for( int j = 0; j < 4; ++j ) {
       if( CellGroup* unit = controlGroup->level->unitAtLocation(temp[j]) ) // if there is an enemy unit, drop resitance until 0 and then corrupt it
-				if( unit->controlGroup != controlGroup ) {
-	  			unit->dropResistance();
-	  			if( unit->getResistance() <= 0 ) {
-	    			unitsToCorrupt.push_back( unit );
-	  			}
-				}
+	if( unit->controlGroup != controlGroup ) {
+	  unit->dropResistance();
+	  if( unit->getResistance() <= 0 ) {
+	    unitsToCorrupt.push_back( unit );
+	  }
+	}
     }
   }
 

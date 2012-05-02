@@ -16,8 +16,8 @@
 #Visit the gate to open it.
 
 ~GRID
---- --- --- --- G1b ;
---- V1a --- --- G1a ;
+--- --- --- --- G1a ;
+--- V1a --- --- G1b ;
 --- --- --- --- G1c ;
 
 ~METADATA

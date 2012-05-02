@@ -48,6 +48,7 @@ void Gate::setCellContexts () {
 
 }
 
+// Set the image of each piece of the gate based on adjacent pieces
 void Gate::setCellImages () {
 
   for( int i = 0; i < cells.size(); ++i ) {
@@ -106,12 +107,56 @@ void Gate::setCellImages () {
     imgName += ".png";
   
     // imgName should now be a string indicating the correct image
-  
-    cells[i].setImage( imgName );
+
+    if( !locked && i == 0 ) { // Place the number image on the first cell only.
+      string number;
+      if     ( weight == 1 ) number =  "one.png";
+      else if( weight == 2 ) number =  "two.png";
+      else if( weight == 3 ) number =  "three.png";
+      else if( weight == 4 ) number =  "four.png";
+      else if( weight == 5 ) number =  "five.png";
+      else if( weight == 6 ) number =  "six.png";
+      else if( weight == 7 ) number =  "seven.png";
+      else if( weight == 8 ) number =  "eight.png";
+      else if( weight == 9 ) number =  "nine.png";
+      else if( weight == 0 ) number =  "zero.png";
+
+      vector<string> imgNames;
+      imgNames.push_back( imgName );
+      imgNames.push_back( number );
+      
+      cells[i].setImages( imgNames, GATE );
+
+    } else { // Otherwise, just set the image
+      cells[i].setImage( imgName );
+    }
+    
+    // Rotate and flip the sprite as necessary to make the pieces fit with each other
     cells[i].setSpriteRotation( rotation );
     if(horizFlip) cells[i].flipSprite();
   }    
   
+}
+
+// Update the little number image that indicates the gate's current open counter
+void Gate::updateNumberImage () {
+
+  if( !locked ) {
+    string number;
+    if     ( openCounter == 1 ) number =  "one.png";
+    else if( openCounter == 2 ) number =  "two.png";
+    else if( openCounter == 3 ) number =  "three.png";
+    else if( openCounter == 4 ) number =  "four.png";
+    else if( openCounter == 5 ) number =  "five.png";
+    else if( openCounter == 6 ) number =  "six.png";
+    else if( openCounter == 7 ) number =  "seven.png";
+    else if( openCounter == 8 ) number =  "eight.png";
+    else if( openCounter == 9 ) number =  "nine.png";
+    else if( openCounter == 0 ) number =  "zero.png";
+  
+    cells[0].setSecondSpriteImage( number );
+  }
+
 }
 
 // Draw the gate on the given sfml window
@@ -129,7 +174,6 @@ void Gate::highCycle () {
 
     unitsToTransfer.clear();
     int foundUnit = 0;
-    //int prevOpenCounter = openCounter; // Used for animation
     for( int i = 0; i < cells.size(); ++i ) { 
       CellGroup* unitOnMe = level->unitAtLocation( cells[i].getGridLocation() );
       if( unitOnMe ) { // There is a unit on me
@@ -147,6 +191,7 @@ void Gate::highCycle () {
       Animation anim( getLocations()[0] );
       anim.fromCountDownPreset( openCounter, openCounter );
       anim.commit( level );
+      updateNumberImage();
     }
 
     if( openCounter <= 0 ) { //Gate opens
@@ -160,7 +205,6 @@ void Gate::highCycle () {
 /** MUTATORS **/
 void Gate::setLocked ( int l ) {
   locked = l;
-  cout << "Setting locked to " << l << endl;
   setCellImages(); //Update the images of a locked gate
 }
 
@@ -173,6 +217,7 @@ void Gate::setGridData ( int w, int h, int t, int l ) {
 void Gate::setWeight ( int w ) {
   weight = w;
   openCounter = weight;
+  updateNumberImage();
 }
 
 void Gate::setDest ( std::string s ) {
@@ -181,6 +226,7 @@ void Gate::setDest ( std::string s ) {
 
 void Gate::resetOpenCounter () {
   openCounter = weight;
+  updateNumberImage();
 }
 
 /** ACCESSORS **/

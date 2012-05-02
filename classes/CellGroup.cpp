@@ -183,19 +183,26 @@ void CellGroup::clearMovementQueue () {
   pathHead = getMiddle();
 }
 
-void CellGroup::setGridData (int w, int h, int t, int l) {
+void CellGroup::setGridData ( int w, int h, int t, int l ) {
   for (int i = 0; i < cells.size(); ++i) {
     cells[i].setGridData( w, h, t, l );
   }
   pathHead = getMiddle();
 }
 
-void CellGroup::setFreeToMove (int f) {
+void CellGroup::setFreeToMove ( int f ) {
   freeToMove = f;
 }
 
 void CellGroup::dropResistance ( int n ) {
-  //Animate resistance drop
+  Animation green( getLocations()[0] );
+  vector<float> alphas( 3, 0 );
+  alphas[1] = 200;
+  green.addImage( "corruption.png" );
+  green.setAlphaInterval( alphas );
+  //green.setColor( sf::Color(50, 255, 50 ) );
+  green.commit( controlGroup->level );
+  
   Animation countDown( getLocations()[0] );
   countDown.fromCountDownPreset( resistance, resistance - n );
   countDown.commit( controlGroup->level );

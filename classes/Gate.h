@@ -32,6 +32,7 @@ class Gate {
   // Determine the image for each cell
   virtual void setCellContexts ();
   virtual void setCellImages ();
+  virtual void updateNumberImage ();
   virtual void draw ( sf::RenderWindow &screen );
   // GAME LOGIC
   virtual void highCycle ();
