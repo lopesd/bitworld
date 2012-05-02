@@ -9,7 +9,7 @@
 ~GRID
 --- --- W1b --- --- --- --- S2a --- --- ;
 --- --- W1a --- --- --- --- --- --- --- ;
-G1a V1a --- --- W3e --- --- --- --- --- ;
+G1a --- --- --- W3e --- --- --- --- --- ;
 --- B1a W2a --- W3d --- --- --- --- G2a ;
 --- --- W2b --- W3c --- --- P1a --- --- ;
 --- --- W2c --- W3b K1a --- --- --- --- ;
@@ -26,5 +26,5 @@ P1: -pulse wwp -radius 1 -move lurd ;
 W1: ;
 W2: ;
 W3: ;
-G1: -weight 3 -destination levels/ -tag 2 -dtag 2 ;
-G2: -weight 3 -destination levels/ -tag 1 -dtag 1 ;
+G1: -weight 3 -destination levels/ -tag 1 -dtag 2 ;
+G2: -weight 3 -destination levels/ -tag 2 -dtag 1 ;

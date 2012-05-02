@@ -93,7 +93,7 @@ int main (void) {
 	  // Window closed
 	  if (Event.Type == sf::Event::Closed) {
 	    window.Close();
-	    doNotQuit = 1;
+	    doNotQuit = 0;
 	    return 0;
 	  }	
 	  
@@ -101,9 +101,9 @@ int main (void) {
 	    switch(Event.Key.Code) {
 	    case sf::Key::Escape:       // Escape key pressed
 	      window.Close();
-	      doNotQuit = 1;
-	      break;
+	      doNotQuit = 0;
 	      return 0;
+	      break;
 	    case sf::Key::Left:
 	      Dorder.x = -1;
 	      Dorder.y = 0;

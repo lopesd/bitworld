@@ -1,0 +1,24 @@
+~DESCRIPTION
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#Tutorial 7
+#Sentinels are units that can see
+#in a straight line until it reaches
+#a unit or wall. If it sees an 
+#anomaly it flags it for destruction 
+#by a white bit
+
+~GRID
+--- --- --- --- --- --- --- ;
+--- --- --- --- --- --- --- ;
+G1a --- --- --- --- K1a G2a ;
+--- --- --- --- --- --- --- ;
+--- --- --- --- --- --- --- ;
+--- --- --- S1a --- --- --- ;
+
+
+~METADATA
+K1: -speed 4 ;
+S1: -zap zww -direction u ;
+
+G1: -weight 3 -destination levels/level_T6.bit -tag 1 -dtag 2 ;
+G2: -weight 3 -destination levels/level_deathrow.bit -tag 2 -dtag 1 ;

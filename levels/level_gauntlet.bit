@@ -8,19 +8,17 @@
 ~GRID
 --- --- S1a S2a S3a S4a S5a --- --- --- ;
 G1a --- --- --- --- --- --- --- --- --- ;
-G1b --- --- --- --- --- --- --- --- G2b ;
-Glc --- --- --- --- --- --- K1a --- G2a ;
---- V1a --- --- --- --- --- --- --- G2c ;
+--- --- --- --- --- --- --- --- --- G2a ;
+--- --- --- --- --- --- --- K1a --- --- ;
+--- --- --- --- --- --- --- --- --- --- ;
 --- --- --- --- --- --- --- --- --- --- ;
 
 ~METADATA
 K1: -speed 4 ;
-V1: -cg user ;
 S1: -zap zwz -direction d ;
 S2: -zap wzw -direction d ;
 S3: -zap zwz -direction d ;
 S4: -zap zzw -direction d ;
 S5: -zap wwz -direction d ;
-W1: ;
-G1: -weight 3 -destination levels/level_gauntlet.bit -tag 2 -dtag 2 ;
-G2: -weight 3 -destination levels/level_gauntlet.bit -tag 1 -dtag 1 ;
+G1: -locked -weight 3 -destination levels/level_gauntlet.bit -tag 1 -dtag 2 ;
+G2: -weight 3 -destination levels/level_feeding_the_wolf.bit -tag 2 -dtag 1 ;
