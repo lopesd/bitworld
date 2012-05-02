@@ -205,6 +205,11 @@ Level* LevelParser::Parse ( const char* filename, sf::RenderWindow& window ) {
 	      gate->setWeight( newWeight );
 	    }
 
+	    // -locked sets a gate to locked status
+	    else if( strcmp(token.c_str(), "-locked") == 0 ) {
+	      gate->setLocked( 1 );
+	    }
+
 	    // -destination sets the destination of a gate
 	    else if( strcmp(token.c_str(), "-destination") == 0 ) {
 	      file >> token;

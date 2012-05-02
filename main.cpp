@@ -12,6 +12,7 @@ int FPS = 30; // Frames per second
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <map>
+#include <cstring>
 
 #include "classes/Level.h"
 #include "classes/LevelParser.h"
@@ -38,6 +39,7 @@ int main (void) {
   ImageCache::LoadFromDirectory( "./images/" ); // Initialize image cache
 
   int doNotQuit = 1;
+  int victory = 0;
   
   while (doNotQuit) {
 
@@ -154,11 +156,13 @@ int main (void) {
 	}
       
       if( level->done() && !(level->getGameOver()) ) {
-	//cout << "Level is done and the new level should be " << level->nextLevel () << endl;
 	string nxtLvlString = level->nextLevel();
 	
 	Level* nextLevel;
-	if( levels.find( nxtLvlString ) != levels.end() ) { // The level has previously been created
+	if( strcmp( nxtLvlString.c_str(), "victory" ) == 0 ) { // user has won!
+	  victory = 1;
+	  break;
+	} else if( levels.find( nxtLvlString ) != levels.end() ) { // The level has previously been created
 	  nextLevel = levels[nxtLvlString];
 	} else {
 	  nextLevel  = LevelParser::Parse( nxtLvlString.c_str(), window);
@@ -181,13 +185,19 @@ int main (void) {
     }
     
     // GAME OVER SCREEN LOGIC STUFF BEGINS HERE
-    
-    pressSpaceToStart = 0;
-    window.Clear();
-    sf::Sprite GameOverScreen(ImageCache::GetImage("GameOver.png"));
+
+    sf::Sprite GameOverScreen;
     GameOverScreen.SetPosition(window.GetWidth()/2 - (GameOverScreen.GetSize().x/2) , GameOverScreen.GetSize().y/2);
+
+    if( !victory ) {
+      GameOverScreen.SetImage( ImageCache::GetImage("GameOver.png") );
+    } else {
+      GameOverScreen.SetImage( ImageCache::GetImage("Victory.png") );
+    }
+
     window.Clear(sf::Color(0,0,0));
     window.Draw(GameOverScreen);
+    pressSpaceToStart = 0;
     window.Display();
     while(!pressSpaceToStart){
       while(window.GetEvent(endingEvent)) {

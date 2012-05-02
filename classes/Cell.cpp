@@ -33,28 +33,6 @@ Cell::Cell (int c, int r) {
   a=b=l=r=ar=al=br=bl= -1;
 }
 
-/*
-// Copy constructor is defined to make sure the sprite information is copied
-Cell::Cell ( const Cell& c ) {
-  col = c.col;
-  row = c.row;
-  stillAnimCount = c.stillAnimCount;
-  imageIndex = c.imageIndex;
-  stillAnimType = c.stillAnimType;
-  animIncrement = c.animIncrement;
-  moveCount = c.moveCount;
-  framesToMove = c.framesToMove;
-  alpha = c.alpha;
-  sinCounter = rotation = 0;
-  a=b=l=r=ar=al=br=bl= -1;
-
-  setGridData( c.width, c.height, c.top_offset, c.left_offset );
-  // If Cell being copied had an image
-  if ( !c.imageNames.empty() )
-    setImages( c.imageNames ); // Set new Cell to have the same one
-}
-*/
-
 /** UTILITY FUNCTIONS **/
 // Move in the given direction. Updates col and row data
 void Cell::move ( Direction dir ) {
@@ -104,6 +82,7 @@ void Cell::setCellContext( int a_, int b_, int l_, int r_, int ar_, int al_, int
 
 // Update image. Image must be loaded in the ImageCache beforehand
 void Cell::setImage ( string name ) {
+  imageNames.clear();
   imageNames.push_back( name );
   sprite.SetImage( ImageCache::GetImage(name) );
   sprite.SetCenter( sprite.GetSize() / 2.f );
