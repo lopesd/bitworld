@@ -12,7 +12,10 @@ using namespace std;
 Bit::Bit (vector<Cell> c) : CellGroup (c) { 
   weight = 1;
   // Set images
+  vector<string> imgs;
+  imgs.push_back( "new_simple_bit.png" );
+  imgs.push_back( "new_simple_bit2.png" );
   for (int i = 0; i < cells.size(); ++i) {
-    cells[i].setImage( "new_simple_bit.png" );
+    cells[i].setImages( imgs );
   }
 }

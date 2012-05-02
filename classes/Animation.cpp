@@ -25,7 +25,7 @@ Animation::Animation ( Location l ) {
   sizes.resize( 2, 1 );
   alphas.resize( 2, 255 );
   rotations.resize( 2, 0 );
-  duration = 0.7;
+  duration = 0.5;
 }
 
 /** MUTATORS **/
@@ -100,6 +100,9 @@ void Animation::fromCountDownPreset ( vector<int> nums ) {
     else if( nums[i] == 2 ) imageNames.push_back( "two.png" );
     else if( nums[i] == 3 ) imageNames.push_back( "three.png" );
     else if( nums[i] == 4 ) imageNames.push_back( "four.png" );
+    else if( nums[i] == 5 ) imageNames.push_back( "five.png" );
+    else if( nums[i] == 6 ) imageNames.push_back( "six.png" );
+    else if( nums[i] == 7 ) imageNames.push_back( "seven.png" );
     else if( nums[i] == 0 ) imageNames.push_back( "zero.png" );
   }
 }

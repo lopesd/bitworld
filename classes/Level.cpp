@@ -274,7 +274,7 @@ void Level::runCycle () {
     //cout << "done with cycle. " << endl;
     --cyclesToRun;
     partOfCycle = 0;
-    cycleOffset = 20;
+    //cycleOffset = 20;
   }
 
 }
