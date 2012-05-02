@@ -1,28 +1,24 @@
 ~DESCRIPTION
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #Tutorial 1
-#This is a viral bit. You 
-#control it.
-#You can queue up movements by
-#clicking on your viral bit and
-#using the arrow keys to move or
-#the 's' key to wait a cycle.
-#Alternatively, you can right
-#mouse click in the desired
-#direction.
+#This is a viral bit. You control it.
 #
-#You can end your turn and 
-#commit the movements with 
-#the space bar.
+#You can queue up to three movements
+#by clicking on your viral bit and
+#using the arrow keys to move or the
+#'s' key to wait a cycle.
+#Alternatively, you can right mouse
+#click in the desired direction.
+#
+#You can end your turn and commit
+#the movements with the space bar.
 #
 #Visit the gate to open it.
 
 ~GRID
---- --- --- --- --- --- ;
---- --- --- --- --- G1b ;
-V1a --- --- --- --- G1a ;
---- --- --- --- --- G1c ;
---- --- --- --- --- --- ;
+--- --- --- --- G1b ;
+--- V1a --- --- G1a ;
+--- --- --- --- G1c ;
 
 ~METADATA
 V1: -cg user ;

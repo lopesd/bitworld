@@ -134,7 +134,6 @@ Level* LevelParser::Parse ( const char* filename, sf::RenderWindow& window ) {
 	}
 	else if ( token[0] == 'S' ) {// SENTINEL
 	  unit = new Sentinel (cellVector);
-	  cout <<"hello"<<endl;
 	  unitsMap[token.substr(0,token.length()-1)] = unit; // may be unnecessary for now, but will probably be necessary for events
 	}
 	else if ( token[0] == 'G' ) {
@@ -204,6 +203,11 @@ Level* LevelParser::Parse ( const char* filename, sf::RenderWindow& window ) {
 	      int newWeight;
 	      file >> newWeight;
 	      gate->setWeight( newWeight );
+	    }
+
+	    // -locked sets a gate to locked status
+	    else if( strcmp(token.c_str(), "-locked") == 0 ) {
+	      gate->setLocked( 1 );
 	    }
 
 	    // -destination sets the destination of a gate

@@ -1,0 +1,28 @@
+~DESCRIPTION
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#Name
+#Description
+#
+#
+#
+
+~GRID
+--- --- --- --- --- --- --- ;
+--- --- --- --- --- --- --- ;
+--- --- --- --- --- --- --- ;
+--- --- --- --- --- --- --- ;
+--- --- --- --- --- --- --- ;
+--- --- --- --- --- --- --- ;
+--- --- --- --- --- --- --- ;
+
+
+~METADATA
+B1: ;
+K1: -speed 4 ;
+V1: -cg user ;
+S1: -zap zww -direction u ;
+P1: -pulse wwwwwp -radius 2 ;
+W1: ;
+
+G1: -weight 3 -destination levels/ -tag 1 -dtag 2 ;
+G2: -weight 3 -destination levels/ -tag 2 -dtag 1 ;

@@ -1,0 +1,30 @@
+~DESCRIPTION
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#Out of Sight
+#There is strength in numbers,
+#but also chaos. Use it.
+#
+#
+
+~GRID
+--- --- W1b --- --- --- --- S2a --- --- ;
+--- --- W1a --- --- --- --- --- --- --- ;
+G1a --- --- --- W3e --- --- --- --- --- ;
+--- B1a W2a --- W3d --- --- --- --- G2a ;
+--- --- W2b --- W3c --- --- P1a --- --- ;
+--- --- W2c --- W3b K1a --- --- --- --- ;
+--- --- W2d S1a W3a --- --- --- --- --- ;
+
+
+~METADATA
+B1: ;
+K1: -speed 4 ;
+V1: -cg user ;
+S1: -zap zwz -direction u ;
+S2: -zap zzz -direction d ;
+P1: -pulse wwp -radius 1 -move lurd ;
+W1: ;
+W2: ;
+W3: ;
+G1: -weight 3 -destination levels/ -tag 1 -dtag 2 ;
+G2: -weight 3 -destination levels/ -tag 2 -dtag 1 ;
