@@ -5,7 +5,7 @@
  */
 
 #define FULLSCREEN 0
-#define LEVELFILE "levels/level_T1.bit"
+#define LEVELFILE "levels/level_checker.bit"
 
 int FPS = 60; // Frames per second
 

@@ -97,3 +97,5 @@ void Sentinel::setStandardActionOrders ( std::vector<int> s ) {
   standardActionOrders = s;
   queueStandardActionOrders();
 }
+//Sentinel can't be corrupted
+void Sentinel::dropResistance ( int n ){}

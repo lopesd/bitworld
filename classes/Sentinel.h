@@ -32,6 +32,9 @@ class Sentinel : public CellGroup {
   /** MUTATORS **/
   void setStandardActionOrders ( std::vector<int> );
   
+    //overloaded so can't be corrupted
+  void dropResistance ( int n );
+  
   //sets which way it is facing
   void setDirection(Direction d);
   

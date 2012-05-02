@@ -1,8 +1,8 @@
 ~DESCRIPTION
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#Every Day I'm Spirallin'
-#Sentinels be off da hook,
-#yo. 
+#Spiraling
+#Be sure to double-check the
+#zap pattern of each sentinel!
 
 ~GRID
 --- --- --- --- --- --- --- --- --- ;
@@ -12,7 +12,7 @@
 --- S1a --- S5a G2a S7a --- S3a --- ;
 --- W1k --- W5b --- --- --- W4a --- ;
 --- W1j --- W5a S4a W4d W4c W4b --- ;
-V1a W1i --- --- --- --- --- --- --- ;
+--- W1i --- --- --- --- --- --- --- ;
 G1a W1h W1g W1f W1e W1d W1c W1b W1a ;
 
 ~METADATA
@@ -31,5 +31,5 @@ W3: ;
 W4: ;
 W5: ;
 W6: ;
-G1: -weight 3 -destination levels/level_T1.bit -tag 1 -dtag 1 ; 
-G2: -weight 1 -destination levels/level_T2.bit -tag 2 -dtag 1 ; 
+G1: -weight 3 -destination levels/level_camping.bit -tag 1 -dtag 1 ; 
+G2: -weight 1 -destination levels/level_doubletake.bit -tag 2 -dtag 1 ; 
