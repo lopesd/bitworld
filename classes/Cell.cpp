@@ -30,7 +30,7 @@ Cell::Cell (int c, int r) {
   stillAnimCount = imageIndex = 0;
   stillAnimType = NORMAL;
   sinCounter = rotation = 0;
-  a=b=l=r=ar=al=br=bl= -1;
+  a=b=l=r=ar=al=br=bl= -1; //initially define the cell as having nothing around it
 }
 
 /** UTILITY FUNCTIONS **/
@@ -82,6 +82,7 @@ void Cell::setCellContext( int a_, int b_, int l_, int r_, int ar_, int al_, int
 
 // Update image. Image must be loaded in the ImageCache beforehand
 void Cell::setImage ( string name ) {
+  stillAnimType = NORMAL;
   imageNames.clear();
   imageNames.push_back( name );
   sprite.SetImage( ImageCache::GetImage(name) );
@@ -115,10 +116,16 @@ void Cell::setImages ( vector<string> imgs, enum CellStillAnimType aType ) {
   else cout << "ERROR >> Image vector passed is empty." << endl;
 }
 
+// Set the image for the second, optional sprite, in case of additional animations
+void Cell::setSecondSpriteImage ( string imageName ) {
+  sprite2.SetImage( ImageCache::GetImage( imageName ) );
+  sprite2.SetCenter( sprite2.GetSize() / 2.f );
+}
+
 // Set the rotation for the sprite
 void Cell::setSpriteRotation ( float r ) {
   sprite.SetRotation( r );
-  sprite2.SetRotation( r );
+  //sprite2.SetRotation( r );
 }
 
 // Flip the sprite horizontally 
@@ -190,6 +197,12 @@ void Cell::draw ( sf::RenderWindow& screen ) {
     
     screen.Draw( sprite );
     
+  }
+
+  else if( stillAnimType == GATE ) {
+    // GATE STILL ANIMATION
+    screen.Draw( sprite );
+    screen.Draw( sprite2 ); //simply draw the number
   }
 
   else if( stillAnimType == PULSER ) {

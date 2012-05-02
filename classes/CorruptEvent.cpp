@@ -18,10 +18,11 @@ CorruptEvent::CorruptEvent ( void* sender, vector<CellGroup*> u )
 
 /** UTILITY FUNCTIONS **/
 void CorruptEvent::commit ( Level* level ) {
-
+  
   for( int k = 0; k < unitsToCorrupt.size(); ++k ) {
+    unitsToCorrupt[k]->corrupt();
     unitsToCorrupt[k]->controlGroup->forfeit( unitsToCorrupt[k] );
     viralBit->controlGroup->take( unitsToCorrupt[k] );
   }
-
+  
 }

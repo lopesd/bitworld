@@ -1,0 +1,38 @@
+~DESCRIPTION
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#Spotlight
+#Move slow, and use the simple bit
+#block the sentinel's vision.
+#
+#
+
+~GRID
+--- W1d --- --- --- W2d --- ;
+--- W1a K2a G2a K1a W2a --- ;
+--- W1b --- --- --- W2b --- ;
+--- W1c S1a --- --- W2c --- ;
+--- W1e --- --- --- W2e --- ;
+--- W1f --- --- --- W2f --- ;
+--- W1g --- --- B1a W2g --- ;
+--- W1h --- --- --- W2h --- ;
+P3a W1i --- --- --- W2i P4a ;
+--- W1k --- --- --- W2k --- ;
+--- W1j --- G1a --- W2j --- ;
+--- W1l --- --- --- W2l --- ;
+P1a W1m --- --- --- W2m P2a ;
+
+
+
+~METADATA
+P1: -radius 3 -move ussussussussussussussussdwwdwwdwwdwwdwwdwwdwwdww -pulse p ;
+P2: -radius 3 -move ussussussussussussussussdwwdwwdwwdwwdwwdwwdwwdww -pulse p ;
+P3: -radius 3 -move ussussussussussussussussdwwdwwdwwdwwdwwdwwdwwdww -pulse p ;
+P4: -radius 3 -move ussussussussussussussussdwwdwwdwwdwwdwwdwwdwwdww -pulse p ;
+K1: -speed 4 ;
+K2: -speed 4 ;
+S1: -zap z -direction r ;
+B1: ;
+W1: ;
+W2: ;
+G1: -locked -weight 1 -destination levels/level_white_bit_move.bit -tag 1 -dtag 2 ;
+G2: -weight 1 -destination levels/level_first_blood.bit -tag 2 -dtag 1 ;

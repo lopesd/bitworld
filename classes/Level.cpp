@@ -940,7 +940,7 @@ int Level::getHeight () {
 }
 
 int Level::getGameOver() {
-  if( deafFrames ) return 0; // Level is not complete until animations finish
+  if( deafFrames && !partOfCycle ) return 0; // Level is not complete until animations finish
   return gameOver;
 }
 

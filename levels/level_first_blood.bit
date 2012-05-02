@@ -25,5 +25,5 @@ B2: -move rsl ;
 B3: -move rsl ;
 W1: ;
 W2: ;
-G1: -weight 3 -destination levels/level_white_bit_move.bit -tag 1 -dtag 2 ;
+G1: -weight 3 -destination levels/level_spotlight.bit -tag 1 -dtag 2 ;
 G2: -weight 3 -destination levels/level_camping.bit -tag 2 -dtag 1 ;

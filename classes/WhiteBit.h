@@ -15,7 +15,7 @@
 class WhiteBit : public CellGroup {
 
  public:
- 	/** CONSTRUCTOR **/
+  /** CONSTRUCTOR **/
   WhiteBit (std::vector<Cell> cells);
   
   /** UTILITY FUNCTIONS **/
@@ -40,13 +40,8 @@ class WhiteBit : public CellGroup {
   std::string type () {return std::string("WhiteBit");}
   
  private:
-  // Return to original position
-  Direction phaseBack ();
-  // Original position
-  Location homeCell;
-  
+  Location chosenLoc;
   CellGroup* chosen; //closest flagged bit
-  Location chosenLoc; //future location of chosen bit
   int speed; //how far it can move in one cycle
 
 };

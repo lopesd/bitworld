@@ -36,6 +36,7 @@ class Cell {
   void setImage  ( std::string imageName );
   void setImage  ( const char* imageName );
   void setImages ( std::vector<std::string>, CellStillAnimType = NORMAL );
+  void setSecondSpriteImage ( std::string imageName );
 
   // Manipulate sprite directly
   void setSpriteRotation ( float r );

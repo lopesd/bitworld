@@ -29,7 +29,7 @@ W2: ;
 G1: -weight 3 -locked -destination levels/level_spiraling -tag 1 -dtag 2 ; 
 G2: -weight 1 -destination levels/level_doubletake.bit -tag 2 -dtag 3 ; 
 G3: -weight 1 -destination levels/level_doubletake.bit -tag 3 -dtag 4 ; 
-G4: -weight 1 -destination levels/level_doubletake.bit-tag 4 -dtag 5 ; 
+G4: -weight 1 -destination levels/level_doubletake.bit -tag 4 -dtag 5 ; 
 G5: -weight 1 -destination levels/level_doubletake.bit -tag 5 -dtag 6 ; 
 G6: -weight 1 -destination levels/level_gauntlet.bit -tag 6 -dtag 1 ; 
 

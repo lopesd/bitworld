@@ -16,7 +16,6 @@ G2a W1b W1a --- --- --- ;
 ~METADATA
 B1: ;
 K1: -speed 4 ;
-V1: -cg user ;
 P1: -pulse pwp -radius 2 ;
 W1: ;
 

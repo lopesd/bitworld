@@ -27,7 +27,6 @@ WhiteBit::WhiteBit (vector<Cell> c) : CellGroup (c) {
   }
   speed = 3;
   chosen = 0;
-  homeCell = getLocations()[0];
 
 }
 
@@ -61,24 +60,13 @@ void WhiteBit::findClosest( set<CellGroup*> flaggedBits, map<Location, CellGroup
 
 }
 
-Direction WhiteBit::phaseBack () {
-  Direction dir = {0,0};
-  if( !(getLocations()[0] == homeCell) ) { // I am not at home
-    dir.x =  homeCell.x - getLocations()[0].x;
-    dir.y =  homeCell.y - getLocations()[0].y;
-  }
-  
-  return dir;
-}
-
 //attempts to take the shortest route to the closest flagged bit
 Direction WhiteBit::findMove ( map<Location, CellGroup*> grid, set<CellGroup*> flaggedUnits ) {
 
   findClosest( flaggedUnits, grid );
   if( !chosen ) {
-    return phaseBack();
-    //Direction dir = {0,0};
-    //return dir;
+    Direction dir = {0,0};
+    return dir;
   }
 
   vector<Direction> possibles;

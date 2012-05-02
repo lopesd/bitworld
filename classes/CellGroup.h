@@ -57,6 +57,7 @@ class CellGroup {
   virtual void setMaxResistance (int);
   virtual void dropResistance ( int n = 1 ); //can be overloaded for a unit that can't be corrupted
   virtual void resetResistance (); //can be overloaded for, say, a unit that doesn't recover resistance
+  virtual void corrupt ();
 
   //PUBLIC MEMBER VARIABLES
   ControlGroup* controlGroup;
