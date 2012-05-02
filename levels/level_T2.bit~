@@ -16,5 +16,5 @@ B1a --- K1a --- --- --- --- --- ;
 K1: -speed 2 ;
 P1: -radius 2 -pulse wwp ;
 B1: -cg user ;
-G1: -weight 1 -destination levels/level_C1.bit -tag 2 -dtag 1 ;
-G2: -weight 3 -destination levels/level_T3.bit -tag 1 -dtag 1 ;
+G1: -weight 1 -destination levels/level_T1.bit -tag 2 -dtag 1 ;
+G2: -weight 3 -destination levels/level_T1.bit -tag 1 -dtag 1 ;

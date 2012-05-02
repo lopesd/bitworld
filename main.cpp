@@ -1,5 +1,5 @@
 #define FULLSCREEN 0
-#define LEVELFILE "levels/sentinel.bit"
+#define LEVELFILE "levels/level_C1.bit"
 
 int FPS = 30;
 
