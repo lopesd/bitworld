@@ -33,5 +33,5 @@ W7: ;
 W8: ;
 W9: ;
 W10 ;
-G1: -locked -weight 3 -destination levels/level_level_feeding_the_wolf.bit -tag 1 -dtag 2 ;
+G1: -locked -weight 3 -destination levels/level_feeding_the_wolf.bit -tag 1 -dtag 2 ;
 G2: -weight 3 -destination levels/level_out_of_sight.bit -tag 2 -dtag 1 ;

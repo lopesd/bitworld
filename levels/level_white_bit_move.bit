@@ -14,8 +14,8 @@ G1a --- --- --- K1a --- --- ;
 
 ~METADATA
 K1: -speed 3 ;
-P1: -pulse wwwp -radius 2 ;
+P1: -pulse wwp -radius 1 ;
 B1: -move usd ;
 W1: ;
 G1: -weight 3 -destination levels/level_white_bit_move.bit -tag 1 -dtag 2 ;
-G2: -weight 3 -destination levels/level_kill.bit -tag 2 -dtag 1 ;
+G2: -weight 3 -destination levels/level_first_blood.bit -tag 2 -dtag 1 ;
