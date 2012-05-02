@@ -5,9 +5,9 @@
  */
 
 #define SPACING 40
-#define HEADER_HEIGHT 70
+#define HEADER_HEIGHT 65
 #define TITLEFONTSIZE 45
-#define TEXTFONTSIZE 18
+#define TEXTFONTSIZE 17
 
 #include "InfoBox.h"
 #include "LevelParser.h"
@@ -84,7 +84,7 @@ void InfoBox::drawText()
   {
     sf::String renderInfo = sf::String(infoText[count].c_str(), infoTextFont, TEXTFONTSIZE);
     renderInfo.SetColor(sf::Color::Black);
-    renderInfo.SetPosition(leftBorder, topBorder + TEXTFONTSIZE * count + 60);
+    renderInfo.SetPosition(leftBorder, topBorder + TEXTFONTSIZE * count + HEADER_HEIGHT);
     window.Draw(renderInfo);
   }
 }

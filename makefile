@@ -30,7 +30,10 @@ $(main): $(objects) main.cpp
 	$(link) -g main.cpp $(objects) $(libs) -o $@
 
 classes/*.o: %.o: %.cpp %.h
-	$(compile) -g $<  -o  $@
+	$(compile) $<  -o  $@
 
 clean:
 	rm -rf classes/*~ *~ $(main) $(main).o $(objects)
+
+release: $(dep) main.cpp
+	g++ -O3 $(dep) main.cpp $(libs) -o main
