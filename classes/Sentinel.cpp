@@ -42,18 +42,19 @@ void Sentinel::downCycle () {
 	tempLoc = tempLoc + dir;
       }
       else
-	break;
+				break;
     }
     if(controlGroup->level->unitAtLocation(tempLoc)) 
       {
     	if(controlGroup->level->unitAtLocation(tempLoc)->controlGroup != controlGroup) //if unit at end is of different control group save loc for event
 	  {
 	    locationToZap = tempLoc; 
+		 ZapEvent ev( this, locationToZap); //zap at locationToZaP
+   	 ev.commit( controlGroup->level );
 	  }
       }
     
-    ZapEvent ev( this, locationToZap); //zap at locationToZaP
-    ev.commit( controlGroup->level );
+
     
     makeAnimation( locationsToZap); //animation for tracer of zap
   }

@@ -50,3 +50,6 @@ void Byte::setCellContexts () {
   }  
 
 }
+
+//Byte can't be corrupted
+void Byte::dropResistance ( int n ){}

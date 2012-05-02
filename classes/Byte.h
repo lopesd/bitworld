@@ -15,6 +15,10 @@ class Byte : public CellGroup {
   /** CONSTRUCTORS **/
   // The cells passed should be correctly placed
   Byte ( std::vector<Cell> cells );
+  
+  /**UTILITY **/
+  //overloaded so can't be corrupted
+  void dropResistance ( int n );
 
   /** ACCESSORS **/
   // Indicates what kind of unit it is

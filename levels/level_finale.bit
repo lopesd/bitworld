@@ -1,0 +1,33 @@
+~DESCRIPTION
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#Finale
+#God speed, little bit
+#
+#
+
+~GRID
+
+G1a --- --- --- --- --- K1a W2a W2b W2c G2a ;
+V1a --- --- --- Y1a Y1b --- --- --- --- --- ;
+--- --- --- --- Y1c Y1d --- --- P1a S3a --- ;
+--- --- --- --- --- --- --- S4a --- --- --- ;
+--- --- --- --- --- --- --- --- --- --- --- ;
+--- --- --- --- --- --- --- --- --- P2a --- ;
+--- --- --- S2a --- W1a --- --- --- --- --- ;
+--- S1a --- --- --- W1b --- --- --- --- --- ;
+
+~METADATA
+K1: -speed 2 ;
+V1: -cg user ;
+P1: -pulse pwp -radius 2 ;
+P2: -pulse wwp -radius 2 -move lllrrr ;
+S1: -zap zwz -direction u -move rrll ;
+S2: -zap zww -direction u -move llrr ;
+S3: -zap zwz -direction l -move ullddrru ;
+S4: -zap zwz -direction l -move rruulldd ;
+W1: ;
+W2: ;
+Y1: -move duudsduu ;
+
+G1: -weight 3 -destination levels/level_out_of_sight.bit -tag 1 -dtag 2 -locked ;
+G2: -weight 1 -destination victory -tag 2 -dtag 1 ;
