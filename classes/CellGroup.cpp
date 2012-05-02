@@ -12,6 +12,8 @@
 
 using namespace std;
 
+const extern int FPS;
+
 /** CONSTRUCTORS **/
 CellGroup::CellGroup ( vector<Cell> c ) {
   freeToMove = 1;
@@ -50,14 +52,16 @@ void CellGroup::handleNeighbors (vector<CellGroup*> neighbors) {}
 void CellGroup::move (Direction dir) {
   for( int i = 0; i < cells.size(); ++i ) {
     cells[i].move( dir );
-    controlGroup->level->requestDeafFrames( cells[i].getMoveCount() );
+    //controlGroup->level->requestDeafFrames( cells[i].getMoveCount() );
+    controlGroup->level->requestDeafFrames( FPS/3 ); // taking the liberty to hard code...
   }
-
+  
   locations.clear();
   for (int i = 0; i < cells.size(); i++) //update the locations vector
     locations.push_back( cells.at(i).getGridLocation() );
 }
 
+// Queue standard movement orders, in case they exist (AI)
 void CellGroup::queueStandardMovementOrders () {
   Direction dir;
   for( int i = 0; i < standardMovementOrders.size(); ++i ) {
@@ -66,6 +70,7 @@ void CellGroup::queueStandardMovementOrders () {
   }
 }
 
+// Issue one individual order
 void CellGroup::issueMovementOrder ( Direction dir ) {
   movementQueue.push_back(dir);
   pathHead.x += dir.x;
@@ -112,6 +117,7 @@ vector<FloatPair> CellGroup::getScreenLocations () {
   return locs;
 }
 
+// Get future desired locations for each cell
 vector<Location> CellGroup::getLocationPathHeads () {
   vector<Location> locs = getLocations();
   for( int i = 0; i < movementQueue.size(); ++i ) 
@@ -120,6 +126,7 @@ vector<Location> CellGroup::getLocationPathHeads () {
   return locs;
 }
 
+// Get a specific movement in the queue
 Direction CellGroup::getMovement( int num ) {
   if( movementQueue.size() == 0 ) {
     Direction dir = {0,0};
@@ -161,7 +168,7 @@ int CellGroup::numOfMovements() {
 }
 
 /** MUTATORS **/
-// NEVER USE THIS FUNCTION EXCEPT IN CASE OF EMERGENCY AND CERTAINTY THAT UNIT IS 1 CELL BIG
+// Only use this function if the unit is 1 cell big
 void CellGroup::setLocation ( Location newLoc ) {
   for( int i = 0; i < cells.size(); ++i ) {
     cells[i].setGridLocation( newLoc );
@@ -195,20 +202,25 @@ void CellGroup::setFreeToMove ( int f ) {
 }
 
 void CellGroup::dropResistance ( int n ) {
-  Animation green( getLocations()[0] );
-  vector<float> alphas( 3, 0 );
-  alphas[1] = 200;
-  green.addImage( "corruption.png" );
-  green.setAlphaInterval( alphas );
-  //green.setColor( sf::Color(50, 255, 50 ) );
-  green.commit( controlGroup->level );
-  
-  Animation countDown( getLocations()[0] );
-  countDown.fromCountDownPreset( resistance, resistance - n );
-  countDown.commit( controlGroup->level );
-
   resistance -= n;
   resistanceDropped = 1;
+}
+
+// Corrupt the unit -- we assume he is a bit. 
+void CellGroup::corrupt () {
+  
+  Animation baseImage( getLocations()[0] );
+  baseImage.addImage( "new_simple_bit.png" );
+  baseImage.commit( controlGroup->level );
+  Animation fadeIn( getLocations()[0] );
+  fadeIn.addImage( "corruptedBit.png" );
+  fadeIn.setAlphaInterval( 0, 255 );
+  fadeIn.commit( controlGroup->level );
+  
+  for( int i = 0; i < cells.size(); ++i ) {
+    cells[i].setImage( "corruptedBit.png" );
+  }
+
 }
 
 void CellGroup::resetResistance () {

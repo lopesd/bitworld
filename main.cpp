@@ -6,7 +6,7 @@
 
 #define FULLSCREEN 0
 
-int FPS = 30; // Frames per second
+int FPS = 60; // Frames per second
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
@@ -25,7 +25,7 @@ int main (void) {
   // INITIALIZE LIBRARIES AND OBJECTS
   sf::RenderWindow window;
   window.SetFramerateLimit( FPS );
-//  window.UseVerticalSync( true );
+  window.UseVerticalSync( true );
   sf::VideoMode nativeResolution = sf::VideoMode::GetDesktopMode();
 
   if(FULLSCREEN)
@@ -98,7 +98,7 @@ int main (void) {
 	  // Window closed
 	  if (Event.Type == sf::Event::Closed) {
 	    window.Close();
-	    doNotQuit = 1;
+	    doNotQuit = 0;
 	    return 0;
 	  }	
 	  
@@ -106,9 +106,9 @@ int main (void) {
 	    switch(Event.Key.Code) {
 	    case sf::Key::Escape:       // Escape key pressed
 	      window.Close();
-	      doNotQuit = 1;
-	      break;
+	      doNotQuit = 0;
 	      return 0;
+	      break;
 	    case sf::Key::Left:
 	      Dorder.x = -1;
 	      Dorder.y = 0;
@@ -190,14 +190,14 @@ int main (void) {
     // GAME OVER SCREEN LOGIC STUFF BEGINS HERE
 
     sf::Sprite GameOverScreen;
-    GameOverScreen.SetPosition(window.GetWidth()/2 - (GameOverScreen.GetSize().x/2) , GameOverScreen.GetSize().y/2);
 
     if( !victory ) {
       GameOverScreen.SetImage( ImageCache::GetImage("GameOver.png") );
     } else {
-      GameOverScreen.SetImage( ImageCache::GetImage("Victory.png") );
+      GameOverScreen.SetImage( ImageCache::GetImage("victoryScreen.png") );
     }
 
+    GameOverScreen.SetPosition(window.GetWidth()/2 - (GameOverScreen.GetSize().x/2) , GameOverScreen.GetSize().y/2);
     window.Clear(sf::Color(0,0,0));
     window.Draw(GameOverScreen);
     pressSpaceToStart = 0;

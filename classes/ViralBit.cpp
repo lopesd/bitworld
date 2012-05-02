@@ -11,10 +11,11 @@ using namespace std;
 ViralBit::ViralBit (vector<Cell> c) : CellGroup (c) { 
   weight = 2;
   vector<string> imgs;
-  imgs.push_back( "new_viral_bit.png" );
-  imgs.push_back( "new_viral_bit2.png" );
+  imgs.push_back( "viralBitExperiment3.png" );
+  imgs.push_back( "viralBitExperiment3_2.png" );
   for (int i = 0; i < cells.size(); ++i) { //sets the images for the viral bit
-    cells[i].setImages( imgs );
+    cells[i].setImage( "viral_bit_experiment5.png" );
+    //cells[i].setImages( imgs );
   }
 }
 

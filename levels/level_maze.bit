@@ -19,7 +19,6 @@ G1a V1a --- --- --- W5c K1a W10 ---  ;
 
 ~METADATA
 K1: -speed 4 ;
-V1: -cg user ;
 S1: -zap zww -direction u ;
 S2: -zap wwz -direction d ;
 S3: -zap zwwwww -direction u ;
@@ -34,5 +33,5 @@ W7: ;
 W8: ;
 W9: ;
 W10 ;
-G1: -weight 3 -destination levels/level_gauntlet.bit -tag 2 -dtag 2 ;
-G2: -weight 3 -destination levels/level_gauntlet.bit -tag 1 -dtag 1 ;
+G1: -locked -weight 3 -destination levels/level_level_feeding_the_wolf.bit -tag 1 -dtag 2 ;
+G2: -weight 3 -destination levels/level_out_of_sight.bit -tag 2 -dtag 1 ;

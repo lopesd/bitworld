@@ -155,6 +155,8 @@ void Gate::updateNumberImage () {
     else if( openCounter == 0 ) number =  "zero.png";
   
     cells[0].setSecondSpriteImage( number );
+  } else {
+    
   }
 
 }
@@ -205,7 +207,8 @@ void Gate::highCycle () {
 /** MUTATORS **/
 void Gate::setLocked ( int l ) {
   locked = l;
-  setCellImages(); //Update the images of a locked gate
+  setCellContexts();
+  updateNumberImage();
 }
 
 void Gate::setGridData ( int w, int h, int t, int l ) {

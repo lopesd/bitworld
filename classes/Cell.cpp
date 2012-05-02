@@ -30,7 +30,7 @@ Cell::Cell (int c, int r) {
   stillAnimCount = imageIndex = 0;
   stillAnimType = NORMAL;
   sinCounter = rotation = 0;
-  a=b=l=r=ar=al=br=bl= -1;
+  a=b=l=r=ar=al=br=bl= -1; //initially define the cell as having nothing around it
 }
 
 /** UTILITY FUNCTIONS **/
@@ -82,6 +82,7 @@ void Cell::setCellContext( int a_, int b_, int l_, int r_, int ar_, int al_, int
 
 // Update image. Image must be loaded in the ImageCache beforehand
 void Cell::setImage ( string name ) {
+  stillAnimType = NORMAL;
   imageNames.clear();
   imageNames.push_back( name );
   sprite.SetImage( ImageCache::GetImage(name) );

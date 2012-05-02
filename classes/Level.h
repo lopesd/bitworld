@@ -41,46 +41,24 @@ class Level {
   void handleInput  (sf::Key::Code);
 
   /* RUNNING */
-  // Called by the Control Group when it is done with its turn
-  void controlGroupDone ();
-
-  // Self explanatory
-  void runPeriod     ();
-  void runCycle      ();
-  void runUpCycle    ();
-  void runHighCycle  ();
-  void runDownCycle  ();
-  void runLowCycle   ();
-  int  willMove      ( Location myLoc );
-  void handleMerge   ( CellGroup*, CellGroup*, Location ); // Handles two units moving to the same location
-  void killUnit      ( CellGroup* unitToDie );
-  void flagUnit      ( CellGroup* unitToFlag );
-  void openGate      ( Gate* gate );
-  void transferUnits ( Level* newLevel );
-  void take          ( CellGroup* unit );
+  void controlGroupDone ();                      // Called by the Control Group when it is done with its turn
+  void flagUnit      ( CellGroup* unitToFlag ); // flag a given unit for the white bits
+  void openGate      ( Gate* gate );            // handle an open gate event
+  void transferUnits ( Level* newLevel );       // Transfer units to a new level
+  void take          ( CellGroup* unit );       // Take units into control
 
   /* DRAWING */
-  void draw             (); // Draw everything -- also used for some constant checking
-  void drawGrid         ();
-  void drawUnits        ();
-  void drawGates        ();
-  void drawArrows       ();
-  void drawAnimations   ();
-  void drawCycle        ();
-  void drawBackground   ();
-  void highlightSelect  (); // Draw the orange selection behind the selected bit
-
-  void addAnimation     ( Animation* anim ); // Add an animation to be drawn
-
-  void requestDeafFrames (int amount);  // Sets the amount of deaf frames to AT LEAST the requested amount.
+  void draw             ();                   // Draw everything -- also used for some constant checking
+  void addAnimation     ( Animation* anim );  // Add an animation to be drawn
+  void requestDeafFrames (int amount);        // Sets the amount of deaf frames to AT LEAST the requested amount.
 
   /* ACCESSORS */
   // Self explanatory, mostly
   CellGroup* unitAtLocation ( Location ); // Returns 0 if there is no unit at that location
   Gate*      gateWithTag    ( int tag );
   std::string nextLevel     ();
-  int destinationGate ();
   std::set<CellGroup*> getFlaggedUnits ();
+  int destinationGate ();
   int done ();
   int getTopOffset();
   int getBottomOffset();
@@ -94,6 +72,27 @@ class Level {
   int getCellHeight();
   
  private:
+  /** DRAWING FUNCTIONS **/
+  void drawGrid         ();
+  void drawUnits        ();
+  void drawGates        ();
+  void drawArrows       ();
+  void drawAnimations   ();
+  void drawCycle        ();
+  void drawBackground   ();
+  void highlightSelect  (); // Draw the orange selection behind the selected bit
+
+  /** RUNNING **/
+  void runPeriod     (); // Called whenever a period should be run
+  void runCycle      ();
+  void runUpCycle    ();
+  void runHighCycle  ();
+  void runDownCycle  ();
+  void runLowCycle   ();
+  int  willMove      ( Location myLoc );
+  void handleMerge   ( CellGroup*, CellGroup*, Location ); // Handles two units moving to the same location
+  void killUnit      ( CellGroup* unitToDie );
+
   /** UNITS, CONTROL GROUPS, GRIDS **/
   ControlGroup*                     activeGroup;
   int                               activeGroupIndex;

@@ -1,24 +1,26 @@
 ~DESCRIPTION
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #Tutorial 6
-#There are times when bits
-#must die.
+#The pulser bit periodically
+#detects all anomalies within
+#its range and flags them
+#for destruction.
 #
-#Any bit dies when its four
-#adjacent sides are visited
-#by other bits.
+#The white bit is in charge of
+#consuming flagged bits. Apart
+#from the pulser's help, it is
+#blind to system anomalies
+#(and also kind of dumb).
 
 ~GRID
---- --- --- --- --- --- --- --- ;
---- --- --- --- --- --- --- --- ;
-G1b --- --- B2a B3a B1a --- G2b ;
---- --- --- --- B4a --- --- --- ;
---- --- --- --- --- --- --- --- ;
+--- --- --- --- --- --- --- --- --- --- ;
+G1a --- --- --- --- --- --- --- --- --- ;
+G1b --- --- --- --- P1a --- K1a --- G2b ;
+G1c --- --- --- --- --- --- --- --- --- ;
+--- --- --- --- --- --- --- --- --- --- ;
 
-~METADATA 
-G1: -weight 3 -destination levels/level_T4.bit -tag 1 -dtag 2 ;
-G2: -weight 3 -destination levels/level_T6.bit -tag 2 -dtag 1 ;
-B1: ;
-B2: ;
-B3: ;
-B4: ;
+~METADATA
+K1: -speed 3 ;
+G1: -weight 9 -destination levels/level_T5.bit -tag 1 -dtag 2 ;
+G2: -weight 3 -destination levels/level_T7.bit -tag 2 -dtag 1 ;
+P1: -radius 2 -pulse wpw ;

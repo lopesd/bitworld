@@ -23,5 +23,6 @@ G1c --- --- --- --- G2c ;
 --- --- --- --- --- --- ;
 
 ~METADATA
+
 G1: -weight 3 -destination levels/level_T1.bit -tag 1 -dtag 1 -locked ;
 G2: -weight 3 -destination levels/level_T3.bit -tag 2 -dtag 1 ;
