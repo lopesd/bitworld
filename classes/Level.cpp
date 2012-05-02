@@ -74,7 +74,7 @@ Level::Level (sf::RenderWindow &newWindow, vector<ControlGroup*> c, vector<CellG
   bottom_offset = window.GetHeight() - top_offset - gridRowHeight*height;
   right_offset = left_offset;
   deafFrames = 0;
-  cycleOffset = 20;
+  cycleOffset = FPS;
 
   // Set the grid data for all my units
   for (int i = 0; i < units.size(); ++i)
@@ -263,7 +263,6 @@ void Level::runCycle () {
     cout << endl << "RUNNING UP CYCLE!."  << endl;
     runUpCycle();
     ++partOfCycle;
-    cycleOffset = 19; //Set offset for the cycle animation
     requestDeafFrames( FPS/2 );
   } else if( partOfCycle == 1 ) {
     cout << "Running down cycle." << endl;
@@ -274,7 +273,6 @@ void Level::runCycle () {
     //cout << "done with cycle. " << endl;
     --cyclesToRun;
     partOfCycle = 0;
-    //cycleOffset = 20;
   }
 
 }
@@ -751,14 +749,14 @@ void Level::drawCycle()
   //Whether currently in an upcycle or downcycle
   bool upCycle = 1;
 
-  if(partOfCycle == 1 && cycleOffset > 10)
+  if(partOfCycle == 1 && cycleOffset > FPS / 2)
     cycleOffset--;
-  if(partOfCycle == 3 && cycleOffset > 0)
+  if(partOfCycle == 2 && cycleOffset > 0)
     cycleOffset--;
   if(partOfCycle == 0)
-    cycleOffset = 20;
+    cycleOffset = FPS;
 
-  if(cycleOffset > 9)
+  if(cycleOffset > FPS / 2)
     upCycle = 0;
 
   sf::Color backgroundColor = sf::Color(0, 0, 0, 180);
@@ -776,11 +774,11 @@ void Level::drawCycle()
     //High cycle on the left is disappearing
     window.Draw(sf::Shape::Line(leftCycleEdge,
                                 highCycleEdge,
-                                leftCycleEdge + cycleWidth - cycleOffset * cycleWidth / 10,
+                                leftCycleEdge + cycleWidth - cycleOffset * cycleWidth / FPS * 2,
                                 highCycleEdge,
                                 4, cycleColor));
     //High cycle on the right is appearing
-    window.Draw(sf::Shape::Line(leftCycleEdge + cycleWidth * numOfCycles - cycleOffset * cycleWidth / 10,
+    window.Draw(sf::Shape::Line(leftCycleEdge + cycleWidth * numOfCycles - cycleOffset * cycleWidth / FPS * 2,
                                 highCycleEdge,
                                 leftCycleEdge + cycleWidth * numOfCycles,
                                 highCycleEdge,
@@ -791,11 +789,11 @@ void Level::drawCycle()
     //Low cycle on the left is disappearing
     window.Draw(sf::Shape::Line(leftCycleEdge,
                                 lowCycleEdge,
-                                leftCycleEdge + cycleWidth - (cycleOffset - 10) * cycleWidth / 10,
+                                leftCycleEdge + cycleWidth - (cycleOffset - FPS / 2) * cycleWidth / FPS * 2,
                                 lowCycleEdge,
                                 4, cycleColor));
     //Low cycle on the right is appearing
-    window.Draw(sf::Shape::Line(leftCycleEdge + cycleWidth * numOfCycles - (cycleOffset - 10) * cycleWidth / 10,
+    window.Draw(sf::Shape::Line(leftCycleEdge + cycleWidth * numOfCycles - (cycleOffset - FPS / 2) * cycleWidth / FPS * 2,
                                 lowCycleEdge,
                                 leftCycleEdge + cycleWidth * numOfCycles,
                                 lowCycleEdge,
@@ -804,26 +802,26 @@ void Level::drawCycle()
 
   //Draw the up cycles, conditioned for the appearing upper right line
   for(int count = 2; count < numOfCycles || (!upCycle && count < numOfCycles + 1); count += 2)
-    window.Draw(sf::Shape::Line(leftCycleEdge + cycleWidth * count - cycleOffset * cycleWidth / 10,
+    window.Draw(sf::Shape::Line(leftCycleEdge + cycleWidth * count - cycleOffset * cycleWidth / FPS * 2,
                                 highCycleEdge,
-                                leftCycleEdge + cycleWidth * (count + 1) - cycleOffset * cycleWidth / 10,
+                                leftCycleEdge + cycleWidth * (count + 1) - cycleOffset * cycleWidth / FPS * 2,
                                 highCycleEdge,
                                 4, cycleColor));
 
   //Draw the down cycles, conditioned for the disappearing lower left line
   for(int count = numOfCycles - 1; count > 1 || (count > 0 && upCycle); count -= 2)
-    window.Draw(sf::Shape::Line(leftCycleEdge + cycleWidth * count - cycleOffset * cycleWidth / 10,
+    window.Draw(sf::Shape::Line(leftCycleEdge + cycleWidth * count - cycleOffset * cycleWidth / FPS * 2,
                                 lowCycleEdge,
-                                leftCycleEdge + cycleWidth * (count + 1) - cycleOffset * cycleWidth / 10,
+                                leftCycleEdge + cycleWidth * (count + 1) - cycleOffset * cycleWidth / FPS * 2,
                                 lowCycleEdge,
                                 4, cycleColor));
 
   //Draw the vertical lines, conditioned for the disappearing and appearing lines
   for(int count = 1; count < numOfCycles + 2; count++)
     if((upCycle && count < numOfCycles + 1) || (!upCycle && count > 1))
-      window.Draw(sf::Shape::Line(leftCycleEdge + cycleWidth * count - cycleOffset * cycleWidth / 10,
+      window.Draw(sf::Shape::Line(leftCycleEdge + cycleWidth * count - cycleOffset * cycleWidth / FPS * 2,
                                   highCycleEdge,
-                                  leftCycleEdge + cycleWidth * count - cycleOffset * cycleWidth / 10,
+                                  leftCycleEdge + cycleWidth * count - cycleOffset * cycleWidth / FPS * 2,
                                   lowCycleEdge,
                                   4, cycleColor));
 

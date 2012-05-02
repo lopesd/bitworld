@@ -7,7 +7,7 @@
 #define FULLSCREEN 0
 #define LEVELFILE "levels/level_T1.bit"
 
-int FPS = 30; // Frames per second
+int FPS = 60; // Frames per second
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
@@ -26,7 +26,7 @@ int main (void) {
   // INITIALIZE LIBRARIES AND OBJECTS
   sf::RenderWindow window;
   window.SetFramerateLimit( FPS );
-//  window.UseVerticalSync( true );
+  window.UseVerticalSync( true );
   sf::VideoMode nativeResolution = sf::VideoMode::GetDesktopMode();
 
   if(FULLSCREEN)
