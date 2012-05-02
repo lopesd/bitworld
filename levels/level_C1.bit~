@@ -1,0 +1,35 @@
+~DESCRIPTION
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#Every Day I'm Spirallin'
+#Sentinels be off da hook,
+#yo. 
+
+~GRID
+--- --- --- --- --- --- --- --- --- ;
+--- W2c W2d W2e S2a W3a W3b W3c --- ;
+--- W2b --- --- --- --- --- W3d --- ;
+--- W2a --- W6a S6a K1a --- W3e --- ;
+--- S1a --- S5a G2a S7a --- S3a --- ;
+--- W1k --- W5b --- --- --- W4a --- ;
+--- W1j --- W5a S4a W4d W4c W4b --- ;
+V1a W1i --- --- --- --- --- --- --- ;
+G1a W1h W1g W1f W1e W1d W1c W1b W1a ;
+
+~METADATA
+V1: -cg user ;
+S1: -zap zww -direction l ;
+S2: -zap wzw -direction u ;
+S3: -zap zzw -direction r ;
+S4: -zap zzw -direction d ;
+S5: -zap wzz -direction l ;
+S6: -zap wzz -direction u ;
+S7: -zap zzw -direction r ;
+K1: -speed 3 ;
+W1: ;
+W2: ;
+W3: ;
+W4: ;
+W5: ;
+W6: ;
+G1: -weight 3 -destination levels/level_T1.bit -tag 1 -dtag 1 ; 
+G2: -weight 1 -destination levels/level_T2.bit -tag 2 -dtag 1 ; 

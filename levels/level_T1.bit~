@@ -22,5 +22,11 @@
 
 ~METADATA
 V1: -cg user ;
+<<<<<<< HEAD
+P1: -pulse wpw -radius 3 ;
+B1: ;
+W1: ;
+G1: -weight 3 -destination levels/level_C1.bit -tag 1 -dtag 1 ; 
+=======
 G1: -weight 1 -destination levels/level_T2.bit -tag 1 -dtag 1 ; 
-
+>>>>>>> b6dee99abb0d7c4b6186dbb739689937aa0d973b

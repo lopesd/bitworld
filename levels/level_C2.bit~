@@ -1,0 +1,33 @@
+~DESCRIPTION
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#Spiralling
+#Be sure to double-check the
+#zap pattern of each sentinel!
+
+~GRID
+G1a --- --- --- --- --- W2a K1a S2a ;
+W1a W1b W1c W1d W1e --- W2b S1a G3a ;
+G2a W1m --- G5a W1f --- W2c --- --- ;
+--- W1l G6a P1a W1g --- W2d --- --- ;
+--- W1k W1j W1i W1h --- W2e --- --- ;
+--- --- --- --- --- --- W2f --- --- ;
+W2m W2l W2k W2j W2i W2h W2g --- --- ;
+S3a G4a --- --- --- --- --- --- --- ;
+S4a --- --- --- --- --- --- --- --- ;
+
+~METADATA
+V1: -cg user ;
+S1: -zap zww -direction d ;
+S2: -zap wzw -direction d ;
+S3: -zap zww -direction r ;
+S4: -zap wwz -direction r ;
+K1: -speed 3 ;
+W1: ;
+W2: ;
+G1: -weight 3 -destination levels/level_C2.bit -tag 1 -dtag 1 ; 
+G2: -weight 1 -destination levels/level_C2.bit -tag 2 -dtag 1 ; 
+G3: -weight 1 -destination levels/level_C2.bit -tag 1 -dtag 1 ; 
+G4: -weight 1 -destination levels/level_C2.bit -tag 1 -dtag 1 ; 
+G5: -weight 1 -destination levels/level_C2.bit -tag 1 -dtag 1 ; 
+G6: -weight 1 -destination levels/level_C2.bit -tag 1 -dtag 1 ; 
+
