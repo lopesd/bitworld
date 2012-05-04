@@ -101,11 +101,12 @@ Level* LevelParser::Parse ( const char* filename, sf::RenderWindow& window ) {
       //METADATA: create unit objects
       else if (macro == METADATA) {
 
-	// IF THERE ARE NO CELLS ASSOCIATED WITH THAT UNIT, THROW ERROR MESSAGE
+	/* // IF THERE ARE NO CELLS ASSOCIATED WITH THAT UNIT, THROW ERROR MESSAGE
 	if ( cellsMap.find( token.substr(0,2) ) == cellsMap.end() ) {
 	  cout << "WARNING: Unit description in metadata does not match any units in grid. "
 	       << "\"" << token << "\" will be instantiated with an empty cell vector. " << endl;
 	}
+	*/
 
 	vector<Cell> cellVector;
 	map<char,Cell> tempMap = cellsMap[ token.substr(0,token.length()-1) ];

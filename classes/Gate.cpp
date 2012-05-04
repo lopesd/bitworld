@@ -182,7 +182,7 @@ void Gate::highCycle () {
 	if( strcmp(unitOnMe->CGGroupName.c_str(), "user") == 0 ) {
 	  unitsToTransfer.insert( unitOnMe );
 	  foundUnit = 1;
-	  --openCounter;
+	  if( openCounter != 0 ) --openCounter;
 	}
       }
     }

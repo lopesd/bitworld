@@ -263,9 +263,7 @@ void Level::runCycle () {
     runUpCycle();
     ++partOfCycle;
     requestDeafFrames( FPS/2 );
-    cout << endl << "RUNNING UP CYCLE!. partofcycle is " << partOfCycle << endl;
   } else if( partOfCycle == 1 ) {
-    cout << "Running down cycle. " << partOfCycle << endl;
     runDownCycle();
     ++partOfCycle;
     requestDeafFrames( FPS/2 );

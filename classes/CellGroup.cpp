@@ -80,8 +80,11 @@ void CellGroup::issueMovementOrder ( Direction dir ) {
 // MOVEMENT OCCURS ON THE UPCYCLE
 void CellGroup::upCycle () {
   // If no queued orders...
-  if( movementQueue.empty() )
+  if( movementQueue.empty() && standardMovementOrders.empty() )
     return;
+  // If new orders can be given...
+  if( movementQueue.empty() && !standardMovementOrders.empty() )
+    queueStandardMovementOrders();
 
   if ( freeToMove ) {
     move( movementQueue.front() );
@@ -217,8 +220,11 @@ void CellGroup::corrupt () {
   fadeIn.setAlphaInterval( 0, 255 );
   fadeIn.commit( controlGroup->level );
   
+  vector<string> imgs;
+  imgs.push_back( "corruptedBit.png" );
+  imgs.push_back( "corruptedBit2.png" );
   for( int i = 0; i < cells.size(); ++i ) {
-    cells[i].setImage( "corruptedBit.png" );
+    cells[i].setImages( imgs, NORMAL );
   }
 
 }
