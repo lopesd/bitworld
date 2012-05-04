@@ -9,13 +9,13 @@
 --- B1a --- --- W1b --- --- ;
 --- --- --- --- W1c --- G2a ;
 --- --- --- --- P1a --- --- ;
-G1a --- --- --- K1a --- --- ;
+V1a --- --- --- K1a --- --- ;
 
 
 ~METADATA
+V1: -cg user ;
 K1: -speed 3 ;
 P1: -pulse wwp -radius 1 ;
 B1: -move usd ;
 W1: ;
-G1: -weight 3 -destination levels/level_deathrow.bit -tag 1 -dtag 2 ;
-G2: -weight 3 -destination levels/level_spotlight.bit -tag 2 -dtag 1 ;
+G2: -weight 3 -destination levels/level_deathrow.bit -tag 2 -dtag 1 ;

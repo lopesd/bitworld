@@ -20,9 +20,5 @@ S2: -zap wzw -direction d ;
 S3: -zap zwz -direction d ;
 S4: -zap zzw -direction d ;
 S5: -zap wwz -direction d ;
-<<<<<<< HEAD
 G1: -locked -weight 3 -destination levels/level_doubletake.bit -tag 1 -dtag 2 ;
-=======
-G1: -weight -locked 3 -destination levels/level_camping.bit -tag 1 -dtag 2 ;
->>>>>>> 5fe38a09d466ca4b3d2bfcb2c9e0cf8e087b3f30
 G2: -weight 3 -destination levels/level_feeding_the_wolf.bit -tag 2 -dtag 1 ;

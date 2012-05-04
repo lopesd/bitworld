@@ -33,5 +33,5 @@ S1: -zap z -direction r ;
 B1: ;
 W1: ;
 W2: ;
-G1: -locked -weight 1 -destination levels/level_white_bit_move.bit -tag 1 -dtag 2 ;
+G1: -locked -weight 1 -destination levels/level_deathrow.bit -tag 1 -dtag 2 ;
 G2: -weight 1 -destination levels/level_first_blood.bit -tag 2 -dtag 1 ;

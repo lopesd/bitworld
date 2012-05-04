@@ -26,5 +26,5 @@ P1: -pulse wwp -radius 1 -move lurd ;
 W1: ;
 W2: ;
 W3: ;
-G1: -weight 3 -destination levels/level_maze.bit -tag 1 -dtag 2 ;
+G1: -locked -weight 3 -destination levels/level_maze.bit -tag 1 -dtag 2 ;
 G2: -weight 3 -destination levels/level_finale.bit -tag 2 -dtag 1 ;
