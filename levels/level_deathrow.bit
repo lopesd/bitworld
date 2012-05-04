@@ -7,12 +7,11 @@
 ~GRID
 --- P1a K1a P2a K2a P3a K3a --- ;
 W2m W1b W1c W1d W1e W1f W1g W1h ;
-W2l V1a --- --- --- --- --- G2a ;
+W2l G1a --- --- --- --- --- G2a ;
 W2a W2b W2c W2d W2e W2f W2g W2h ;
 --- K6a P6a K5a P5a K4a P4a --- ;
 
 ~METADATA
-V1: -cg user ;
 P1: -pulse pwpw -radius 2 ;
 P2: -pulse pwpw -radius 2 ;
 P3: -pulse pwpw -radius 2 ;
@@ -28,4 +27,5 @@ K6: -speed 3 ;
 
 W1: ;
 W2: ;
-G2: -weight 3 -destination levels/level_white_bit_move.bit -tag 2 -dtag 1 ; 
+G2: -locked -weight 3 -destination levels/level_white_bit_move.bit -tag 1 -dtag 2 ;
+G2: -weight 3 -destination levels/level_spotlight.bit -tag 2 -dtag 1 ; 
