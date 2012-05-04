@@ -551,14 +551,6 @@ void Level::draw() {
   if( deafFrames == 0 ) {
     // Perform some game logic
 
-    /* // For debugging
-    for( int i = 0; i < units.size(); ++i ) {
-      cout << "Drawing unit " << units[i]->type() << ", loc = " << units[i]->getLocations()[0]
-	   << ", screen = " << units[i]->getScreenLocations()[0].x << ", "
-	   << units[i]->getScreenLocations()[0].y << endl;
-    }
-    */
-
     //Kill any units that must die
     if( !unitsToDie.empty() ) {
       for( set<CellGroup*>::iterator i = unitsToDie.begin(); i != unitsToDie.end(); ++i )
@@ -574,7 +566,7 @@ void Level::draw() {
       }
     }
 
-    if( cyclesToRun != 0 && !isDone ) { // run cycles if we still need to
+    if( cyclesToRun != 0 && !done() ) { // run cycles if we still need to
       //cout << "Running part of a cycle because cyclesToRun is " << cyclesToRun << endl;
       runCycle();
     }
@@ -908,7 +900,7 @@ string Level::nextLevel () {
 }
 
 int Level::done () {
-  if( deafFrames || !partOfCycle ) return 0; // Level is not complete until animations finish
+  if( deafFrames || partOfCycle ) return 0; // Level is not complete until animations finish
   return isDone;
 }
 

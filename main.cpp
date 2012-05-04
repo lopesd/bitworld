@@ -51,13 +51,14 @@ int main (void) {
     int pressSpaceToStart = 0;
     sf::Event startingEvent;
     sf::Event endingEvent;
-    sf::Sprite StartScreen(ImageCache::GetImage("Bitworld.png"));
+    sf::Sprite StartScreen(ImageCache::GetImage("startScreen.png"));
     StartScreen.SetPosition(window.GetWidth()/2 - (StartScreen.GetSize().x/2) , StartScreen.GetSize().y/2);
     window.Clear(sf::Color(0,0,0));
     window.Draw(StartScreen);
     window.Display();
 
     string startingLevel;
+    int choseTutorial = 0;
     //loop for start screen
     while (!pressSpaceToStart) {
       while(window.GetEvent(startingEvent)) {
@@ -78,6 +79,7 @@ int main (void) {
 	  } else if( startingEvent.Key.Code == sf::Key::T ) { // Play the tutorial
 	    pressSpaceToStart = 1;
 	    startingLevel = "levels/level_T1.bit";
+	    choseTutorial = 1;
 	  }
 	
       }
@@ -152,7 +154,6 @@ int main (void) {
 	}
       
       if( level->getGameOver() ) { // player lost
-	cout << "level is done. " << endl;
 	level->destroy();
 	delete level;
 	delete infoBox;
@@ -195,7 +196,10 @@ int main (void) {
     if( !victory ) {
       GameOverScreen.SetImage( ImageCache::GetImage("GameOver.png") );
     } else {
-      GameOverScreen.SetImage( ImageCache::GetImage("victoryScreen.png") );
+      if( !choseTutorial )
+	GameOverScreen.SetImage( ImageCache::GetImage("victoryScreen.png") );
+      else 
+	GameOverScreen.SetImage( ImageCache::GetImage("tutorialOverScreen.png") );
     }
 
     GameOverScreen.SetPosition(window.GetWidth()/2 - (GameOverScreen.GetSize().x/2) , GameOverScreen.GetSize().y/2);
