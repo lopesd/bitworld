@@ -32,4 +32,4 @@ W4: ;
 W5: ;
 W6: ;
 G1: -locked -weight 3 -destination levels/level_camping.bit -tag 1 -dtag 1 ; 
-G2: -weight 1 -destination levels/level_doubletake.bit -tag 2 -dtag 1 ; 
+G2: -weight 1 -destination levels/level_gauntlet.bit -tag 2 -dtag 1 ; 
