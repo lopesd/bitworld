@@ -75,7 +75,7 @@ int main (void) {
 	    return 0;
 	  } else if(startingEvent.Key.Code == sf::Key::Space)  { // Play the game
 	    pressSpaceToStart = 1;
-	    startingLevel = "levels/level_deathrow.bit";
+	    startingLevel = "levels/level_white_bit_move.bit";
 	  } else if( startingEvent.Key.Code == sf::Key::T ) { // Play the tutorial
 	    pressSpaceToStart = 1;
 	    startingLevel = "levels/level_T1.bit";
