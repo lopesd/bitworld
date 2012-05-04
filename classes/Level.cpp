@@ -260,12 +260,12 @@ void Level::runCycle () {
   requestDeafFrames( 1 ); // at least one frame of silence.
 
   if( partOfCycle == 0 ) {
-    cout << endl << "RUNNING UP CYCLE!."  << endl;
     runUpCycle();
     ++partOfCycle;
     requestDeafFrames( FPS/2 );
+    cout << endl << "RUNNING UP CYCLE!. partofcycle is " << partOfCycle << endl;
   } else if( partOfCycle == 1 ) {
-    cout << "Running down cycle." << endl;
+    cout << "Running down cycle. " << partOfCycle << endl;
     runDownCycle();
     ++partOfCycle;
     requestDeafFrames( FPS/2 );
@@ -683,8 +683,14 @@ void Level::drawArrows() {
       FloatPair arrowLocation = unit->getMiddle();
       arrowSprite.SetPosition( left_offset + gridColWidth*arrowLocation.x + gridColWidth/2,
 			       top_offset + gridRowHeight*arrowLocation.y + gridRowHeight/2 );
-      if( notSelected ) arrowSprite.SetColor( sf::Color( 0, 0, 0, 100) );
-      else              arrowSprite.SetColor( sf::Color( 255, 255, 255, 255 ) );
+      if( notSelected ) {
+	arrowSprite.SetColor( sf::Color( 0, 0, 0, 100) );
+	stopSprite.SetColor( sf::Color( 0, 0, 0, 100) );
+      } else {
+	arrowSprite.SetColor( sf::Color( 255, 255, 255, 255 ) );
+	stopSprite.SetColor( sf::Color( 255, 255, 255, 255 ) );
+      }
+	
 
       for (int i = 0; i < unit->numOfMovements(); ++i) { // For each queued movement in selected unit...
 	// Rotate sprite and draw a(n)...
@@ -902,7 +908,7 @@ string Level::nextLevel () {
 }
 
 int Level::done () {
-  if( deafFrames ) return 0; // Level is not complete until animations finish
+  if( deafFrames || !partOfCycle ) return 0; // Level is not complete until animations finish
   return isDone;
 }
 
@@ -940,7 +946,7 @@ int Level::getHeight () {
 }
 
 int Level::getGameOver() {
-  if( deafFrames && !partOfCycle ) return 0; // Level is not complete until animations finish
+  if( deafFrames || partOfCycle ) return 0; // Level is not complete until animations finish
   return gameOver;
 }
 

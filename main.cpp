@@ -150,13 +150,13 @@ int main (void) {
 	    }
 	}
       
-      if(level->getGameOver() ) { // player lost
-	  level->destroy();
-	  delete level;
-	  delete infoBox;
-	  break;
-	  //isDone = 1;
-	}
+      if( level->getGameOver() ) { // player lost
+	cout << "level is done. " << endl;
+	level->destroy();
+	delete level;
+	delete infoBox;
+	break;
+      }
       
       if( level->done() && !(level->getGameOver()) ) {
 	string nxtLvlString = level->nextLevel();
