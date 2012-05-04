@@ -6,7 +6,6 @@
 
 #define FULLSCREEN 0
 
-
 int FPS = 60; // Frames per second
 
 #include <SFML/Graphics.hpp>
