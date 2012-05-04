@@ -79,3 +79,6 @@ void Pulser::setStandardActionOrders ( std::vector<int> s ) {
   standardActionOrders = s;
   queueStandardActionOrders();
 }
+
+//Pulser can't be corrupted
+void Pulser::dropResistance ( int n ){}

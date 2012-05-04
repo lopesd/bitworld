@@ -74,7 +74,7 @@ Level::Level (sf::RenderWindow &newWindow, vector<ControlGroup*> c, vector<CellG
   bottom_offset = window.GetHeight() - top_offset - gridRowHeight*height;
   right_offset = left_offset;
   deafFrames = 0;
-  cycleOffset = FPS;
+  cycleOffset = 0;
 
   // Set the grid data for all my units
   for (int i = 0; i < units.size(); ++i)
@@ -755,12 +755,12 @@ void Level::drawCycle()
   //Whether currently in an upcycle or downcycle
   bool upCycle = 1;
 
-  if(partOfCycle == 1 && cycleOffset > FPS / 2)
-    cycleOffset--;
-  if(partOfCycle == 2 && cycleOffset > 0)
-    cycleOffset--;
+  if(partOfCycle == 1 && cycleOffset < FPS / 2)
+    cycleOffset++;
+  if(partOfCycle == 2 && cycleOffset < FPS)
+    cycleOffset++;
   if(partOfCycle == 0)
-    cycleOffset = FPS;
+    cycleOffset = 0;
 
   if(cycleOffset > FPS / 2)
     upCycle = 0;

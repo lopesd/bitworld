@@ -29,6 +29,9 @@ class Pulser : public CellGroup {
   //sets pulse radius
   void setRadius (int radius);
   
+    //overloaded so can't be corrupted
+  void dropResistance ( int n );
+  
   //sets the orders for the pulser 
   void setStandardActionOrders ( std::vector<int> );
   

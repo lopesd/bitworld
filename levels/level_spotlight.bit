@@ -17,7 +17,7 @@
 --- W1h --- --- --- W2h --- ;
 P3a W1i --- --- --- W2i P4a ;
 --- W1k --- --- --- W2k --- ;
---- W1j --- V1a --- W2j --- ;
+--- W1j --- G1a --- W2j --- ;
 --- W1l --- --- --- W2l --- ;
 P1a W1m --- --- --- W2m P2a ;
 
@@ -30,10 +30,9 @@ P3: -radius 3 -move ussussussussussussussussdwwdwwdwwdwwdwwdwwdwwdww -pulse p ;
 P4: -radius 3 -move ussussussussussussussussdwwdwwdwwdwwdwwdwwdwwdww -pulse p ;
 K1: -speed 4 ;
 K2: -speed 4 ;
-V1: -cg user ;
 S1: -zap z -direction r ;
 B1: ;
 W1: ;
 W2: ;
-
-G2: -weight 1 -destination levels/level_kill.bit -tag 2 -dtag 1 ;
+G1: -locked -weight 1 -destination levels/level_white_bit_move.bit -tag 1 -dtag 2 ;
+G2: -weight 1 -destination levels/level_first_blood.bit -tag 2 -dtag 1 ;
